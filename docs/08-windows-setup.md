@@ -4,7 +4,7 @@ title: Native Windows setup
 description: Run the application with PowerShell, uv, Node.js, and native PostgreSQL without Ubuntu or WSL.
 tags: [windows, powershell, setup, git]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T18:54:06Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-25T20:03:24Z"}
 sources:
   - resource: "User requirement: native Windows, no Ubuntu, author hanesh-g with the supplied email"
   - resource: 02-technical-design.md
@@ -129,7 +129,9 @@ VS Code terminal 2, from the repository root:
 .\scripts\Start-Frontend.ps1
 ```
 
-Open the frontend address shown by Vite in your browser. Sign in as the first institution. If using the default API CORS configuration, use the `localhost` frontend origin, not a different host spelling. `VITE_API_BASE_URL` defaults to the local backend's `/api/v1` route prefix.
+Open the frontend address shown by Vite in your browser. Sign in as the first institution. With `APP_ENV=local`, the backend supports both `http://localhost:5173` and `http://127.0.0.1:5173` when either is configured. This also supports older generated `.env` files after updating the code and restarting the backend. Hosted mode does not expand its explicit allowlist. `VITE_API_BASE_URL` defaults to the local backend's `/api/v1` route prefix.
+
+If sign-in reports that the API cannot be reached, keep the backend terminal open and check readiness from another PowerShell terminal with `Invoke-RestMethod http://127.0.0.1:8000/api/v1/health`. A connection failure means no reachable API at that address; an HTTP 503 means its database readiness check failed. A healthy response with a browser-only failure calls for checking the browser origin and frontend API URL. Do not change passwords or regenerate keys to troubleshoot a browser connection error.
 
 ## 7. Walk through the demo
 

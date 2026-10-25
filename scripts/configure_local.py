@@ -25,7 +25,7 @@ values = {
     "PII_KEY": base64.b64encode(secrets.token_bytes(32)).decode(),
     "HMAC_KEY": base64.b64encode(secrets.token_bytes(32)).decode(),
     "JWT_ISSUER": "apaar-demo", "JWT_AUDIENCE": "apaar-web",
-    "ALLOWED_ORIGINS": "http://localhost:5173",
+    "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173",
     "REGISTRY_MODE": "mock", "MOCK_REGISTRY_OUTAGE": "false",
     "DEMO_PASSWORD": demo,
 }

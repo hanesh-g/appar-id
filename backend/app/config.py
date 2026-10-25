@@ -47,4 +47,13 @@ class Settings(BaseSettings):
         values = [v.strip().rstrip("/") for v in self.allowed_origins.split(",") if v.strip()]
         if "*" in values:
             raise ValueError("Use exact frontend origins, not a wildcard")
+        if self.app_env == "local":
+            # Vite prints 127.0.0.1 while existing local .env files use localhost.
+            # Treat only these two exact development origins as aliases. Hosted
+            # environments must continue to use their explicit allowlist.
+            aliases = {
+                "http://localhost:5173": "http://127.0.0.1:5173",
+                "http://127.0.0.1:5173": "http://localhost:5173",
+            }
+            values = list(dict.fromkeys([*values, *(aliases[v] for v in values if v in aliases)]))
         return values

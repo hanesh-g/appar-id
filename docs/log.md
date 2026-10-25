@@ -2,6 +2,8 @@
 
 ## 2026-10-26
 
+- Fixed the reported local browser/API origin mismatch. Local mode now recognises the exact localhost/127.0.0.1 pair on port 5173 even for existing `.env` files; new configuration lists both. Hosted origin lists remain exact. All five focused preflight/rejection tests passed; style checks passed. User confirmed a healthy local API/database response and that using localhost resolved the browser issue.
+
 - Fixed the reported native Windows setup failure: npm's PowerShell wrapper accessed a missing `$MyInvocation.Statement` property under the helpers' strict mode. Initialization and frontend startup now explicitly call `npm.cmd`; the prerequisite check and Windows manual commands use the command shims too.
 - The fix preserves existing `.env` settings, dependency locks, and strict error checking. Native Windows execution is still not available in this cloud machine; the report confirms the original failure, not an end-to-end Windows pass.
 

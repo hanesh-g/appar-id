@@ -158,6 +158,7 @@ Implement test-only fault injection outside public API routes. Create fresh data
 | Routing | Direct HTTP request to frontend nested `/records` | 200 and application HTML | Same | Local Vite; hosted SPA rewrite unverified |
 | Dependencies | `uv sync --frozen`; `npm ci --offline` from cache | Frozen installs reproduced | Same | Committed lockfiles |
 | Windows / hosting / CI | Native Windows, Render, Vercel, GitHub Actions | **Not run** in those environments | — | Follow Windows/engineering guides |
+| Local origin follow-up | `uv run --frozen pytest -q tests/test_local_cors.py` | **5 passed**; localhost/IPv4 preflights accepted locally, unexpected origins/ports denied, hosted aliases denied | Follow-up fix | `backend/tests/test_local_cors.py`; user also confirmed API/database health on Windows |
 
 Record passed, failed, skipped, and not-run outcomes separately. Never treat zero tests or only an open port as readiness.
 
