@@ -1,5 +1,10 @@
 # Documentation update log
 
+## 2026-10-26
+
+- Fixed the reported native Windows setup failure: npm's PowerShell wrapper accessed a missing `$MyInvocation.Statement` property under the helpers' strict mode. Initialization and frontend startup now explicitly call `npm.cmd`; the prerequisite check and Windows manual commands use the command shims too.
+- The fix preserves existing `.env` settings, dependency locks, and strict error checking. Native Windows execution is still not available in this cloud machine; the report confirms the original failure, not an end-to-end Windows pass.
+
 ## 2026-10-25
 
 - Implemented and verified the local Python/PostgreSQL/React core: scoped accounts, CSV review, transactional commit/correction, lifecycle, intake reporting, history, and audit correlation. Final evidence is recorded in the checklist.

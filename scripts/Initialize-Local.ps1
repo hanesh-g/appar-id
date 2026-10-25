@@ -2,7 +2,9 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 Push-Location (Split-Path $PSScriptRoot -Parent)
 try {
-    foreach ($tool in @("git", "uv", "node", "npm")) {
+    # Invoke the Windows command shim; npm.ps1 is incompatible with strict mode
+    # in some Node.js/PowerShell versions ($MyInvocation.Statement is absent).
+    foreach ($tool in @("git", "uv", "node", "npm.cmd")) {
         if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) {
             throw "Install $tool using docs/08-windows-setup.md, then open a new PowerShell terminal."
         }
@@ -18,7 +20,7 @@ try {
     } else { Write-Host "Existing .env preserved." }
     Push-Location frontend
     try {
-        npm ci
+        npm.cmd ci
         if ($LASTEXITCODE -ne 0) { throw "Frontend dependency installation failed" }
     } finally { Pop-Location }
     Write-Host "Dependencies prepared. Follow the native PostgreSQL step in docs/08-windows-setup.md."

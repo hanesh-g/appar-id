@@ -4,7 +4,7 @@ title: Native Windows setup
 description: Run the application with PowerShell, uv, Node.js, and native PostgreSQL without Ubuntu or WSL.
 tags: [windows, powershell, setup, git]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-25T18:54:06Z"}
 sources:
   - resource: "User requirement: native Windows, no Ubuntu, author hanesh-g with the supplied email"
   - resource: 02-technical-design.md
@@ -38,10 +38,12 @@ Open a new PowerShell terminal after installation. Verify:
 git --version
 uv --version
 node --version
-npm --version
+npm.cmd --version
 ```
 
-If PowerShell blocks the `npm.ps1` shim, use `npm.cmd` for manual npm commands, or set a process-only execution policy for this trusted project session as shown below. Do not change machine-wide execution policy merely to run the project.
+Use `npm.cmd` and `npx.cmd` in PowerShell. These invoke Node's Windows command wrappers directly, avoiding both PowerShell execution-policy errors and strict-mode failures in `npm.ps1` such as a missing `$MyInvocation.Statement` property. The checked-in helpers use `npm.cmd` while retaining strict mode for their own error checking. Do not change machine-wide execution policy merely to run npm.
+
+If setup already created `.env` and then failed in `npm.ps1`, pull the helper fix and rerun `scripts/Initialize-Local.ps1`. It preserves the existing `.env` and chosen password. For an immediate manual dependency-install retry from the repository root, run `npm.cmd --prefix frontend ci`.
 
 ## 2. Get the repository and set your identity
 
@@ -154,17 +156,17 @@ uv run --frozen ruff check app migrations tests
 uv run --frozen ruff format --check app migrations tests
 uv run --frozen pytest -q
 Set-Location ../frontend
-npm run lint
-npm run format:check
-npm run test -- --run
-npm run build
+npm.cmd run lint
+npm.cmd run format:check
+npm.cmd run test -- --run
+npm.cmd run build
 ```
 
 For the browser smoke, keep both servers running and use the synthetic seeded accounts:
 
 ```powershell
-npx playwright install chromium
-npm run smoke
+npx.cmd playwright install chromium
+npm.cmd run smoke
 ```
 
 The smoke mutates the synthetic first-institution dataset. It expects the documented demo programme/data and must not be pointed at a real-data deployment.
