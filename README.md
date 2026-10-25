@@ -1,8 +1,16 @@
 # APAAR Student Data Platform — build pack
 
-Planning documents for an AI-assisted SIH 2026 prototype. The backend will use Python. The frontend will run on Vercel. The backend will run on Render with managed PostgreSQL.
+An AI-assisted SIH 2026 prototype with a Python FastAPI backend, PostgreSQL, and a React/TypeScript frontend. Native Windows development uses PowerShell. Ubuntu and WSL are not required. Deployment targets are Vercel and Render.
 
-**Current state:** documentation only. No application, dependency installation, deployment, or passing application tests are claimed. The two-day constraint sets the scope; it does not prove delivery time.
+**Current state:** local core implemented and verified with PostgreSQL integration tests, frontend tests/build, and a real-browser journey. Hosted deployment is not yet configured or verified. APAAR checks are simulated; all provided student fixtures are synthetic. See the [current evidence](docs/05-progress-checklist.md).
+
+## Start on Windows
+
+Follow the [native Windows setup](docs/08-windows-setup.md). It covers tools, your Git identity, dependency installation, native PostgreSQL, migrations, seed accounts, startup, and checks. Docker is optional.
+
+Your required repository-local author and committer are `hanesh-g <haneshgourishetti@gmail.com>`. The initializer and [Git identity helper](scripts/Set-GitIdentity.ps1) set both identity fields. GitHub account attribution also requires the email to be verified on GitHub.
+
+Implemented core: institution-scoped login, programmes, CSV validation, mock identity checks, dry-run intake preview, transactional/idempotent commit, correction upload, enrolment status/history, dashboard, and safe audit history. Student-consent verification and an LLM assistant remain optional future features.
 
 ## Read in this order
 
@@ -15,6 +23,8 @@ Planning documents for an AI-assisted SIH 2026 prototype. The backend will use P
 | [Progress checklist](docs/05-progress-checklist.md) | What is finished, what is blocked, and where is the evidence? |
 | [AI development workflow](docs/06-ai-development-workflow.md) | How do we give an AI agent bounded tasks and reliable project context? |
 | [OKF assessment](docs/07-okf-assessment.md) | What is Open Knowledge Format, and how do we use it without adding deployment work? |
+| [Native Windows setup](docs/08-windows-setup.md) | How do I run this on Windows without Ubuntu? |
+| [Backend engineering and deployment](docs/09-backend-engineering.md) | Which engineering controls exist, and what remains before hosting or real-data use? |
 
 The `docs/` directory is an [OKF v0.2 knowledge bundle](docs/index.md). Its concept files contain YAML metadata and links for people and AI assistants. It needs no running OKF service.
 

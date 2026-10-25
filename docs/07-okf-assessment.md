@@ -4,7 +4,7 @@ title: OKF assessment
 description: Explain the verified canonical project and its limited role in this prototype.
 tags: [okf, knowledge, sources, architecture]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T17:11:45Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
 sources:
   - id: catalog
     resource: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/a8291a1a656669b8766fd4ff0f985505fb955e94/README.md
@@ -89,6 +89,8 @@ docs/
   05-progress-checklist.md          # Delivery Checklist
   06-ai-development-workflow.md     # Playbook
   07-okf-assessment.md              # Reference
+  08-windows-setup.md               # Playbook
+  09-backend-engineering.md          # Engineering Standard
 ```
 
 Each concept has parseable frontmatter and a descriptive type. `status: draft` means the proposed content has not received human approval. Generation metadata states that AI produced it. No human `verified` marker is invented.

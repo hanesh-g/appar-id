@@ -4,13 +4,15 @@ title: Technical design
 description: Define the Python stack, data, API, deployment, and security contracts.
 tags: [apaar, python, fastapi, architecture, deployment]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T17:11:45Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
 sources:
   - resource: "User-uploaded APAAR ID Student Data Platform (SIH26263) Phase-by-Phase Build Guide.pdf, 18 pages"
   - resource: 01-problem-and-scope.md
 ---
 
 # 02 — Technical design
+
+Implementation update: core code now exists. Native Windows with PowerShell and PostgreSQL is the local default; Docker Compose is optional. Node 22.12+ or Node 24 is supported. The first frontend uses custom CSS/native controls rather than Tailwind/shadcn. Tests use the current Starlette-compatible HTTPX2 client. See [Windows setup](08-windows-setup.md), [engineering controls](09-backend-engineering.md), and [execution evidence](05-progress-checklist.md). The tables below retain the original design where noted; actual dependency versions are pinned in lockfiles.
 
 ## 1. Architecture baseline
 
@@ -41,18 +43,18 @@ Use the current checkout. Cloud tasks are already isolated; do not create a Git 
 | Tokens | PyJWT with a fixed allowed algorithm | Short-lived signed access tokens. |
 | Field protection | `cryptography` AES-GCM + keyed HMAC lookup | Separate encryption and lookup keys. |
 | Backend tests | pytest + HTTPX | Use a dedicated PostgreSQL test database for integration tests. |
-| Frontend runtime | Node.js 22.12 or higher within pinned Node 22 | Confirm compatibility with the selected Vite release before locking. |
+| Frontend runtime | Node 22.12+ within Node 22, or Node 24 | Node 24.19.0 used for verified builds. |
 | Web application | React + TypeScript + Vite | Exact compatible releases resolved in the first phase. |
-| UI | Tailwind CSS + shadcn/ui + Lucide icons | Review generated components for keyboard access. |
+| UI | Custom CSS + native controls + Lucide icons | Avoid an extra component-generation step in the core. |
 | Routing/data | React Router + TanStack Query | Central request/error handling. |
 | Charts | Recharts | Label counts, filters, and data freshness. |
 | Frontend packages | npm + `package-lock.json` | `npm ci` for repeatable installs. |
 | Frontend checks | TypeScript, ESLint, Vitest/Testing Library | Test meaningful state/error behaviour. |
 | Browser smoke | Playwright | One deployed/core journey; avoid broad test expansion. |
-| Local runtime | Docker Compose for PostgreSQL | Frontend and API can run on the host. |
+| Local runtime | Native Windows PostgreSQL; optional Docker Compose | Python/Node run natively; WSL is not required. |
 | Deployment | Vercel + Render + managed PostgreSQL | Human provisions accounts and approves costs. |
 
-These tools are selections, not verified installed dependencies. At implementation start, check compatibility, pin actual versions, generate locks, and run the first build. Do not select packages solely because they are newest.
+Dependencies are installed and locked. Core checks ran in the cloud machine. The Windows setup is cross-platform implementation guidance, not a claim that a Windows machine was tested. Hosting and optional components are unverified until their own checks run.
 
 ## 3. Proposed layout
 

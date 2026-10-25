@@ -1,0 +1,3 @@
+student_ref,apaar_id,student_name,date_of_birth,programme,academic_year,admission_date,start_date,end_date,status,seat_type,supernumerary,nri,oci,foreign_national
+STU-001,900000000001,Demo Student 001,2005-01-01,Computer Science,2026-27,2026-07-01,2026-07-15,,ENROLLED,Updated demo category,N,N,N,N
+STU-002,900000000002,Demo Student 002,2005-01-01,Computer Science,2026-27,2026-07-01,2026-07-15,,ENROLLED,General,N,N,N,N

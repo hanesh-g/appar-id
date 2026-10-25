@@ -1,0 +1,28 @@
+# Review account settings and plan limitations before deploying this blueprint.
+services:
+  - type: web
+    name: apaar-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install uv==0.12.23 && uv sync --frozen --no-dev
+    startCommand: uv run --no-sync uvicorn app.main:app --host 0.0.0.0 --port $PORT --no-access-log
+    healthCheckPath: /api/v1/health
+    autoDeploy: false
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.14
+      - key: APP_ENV
+        value: demo
+      - key: REGISTRY_MODE
+        value: mock
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: PII_KEY
+        sync: false
+      - key: HMAC_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false

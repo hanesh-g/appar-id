@@ -4,7 +4,7 @@ title: Problem and scope
 description: Define users, product value, demo boundaries, and honest admission counts.
 tags: [apaar, scope, product, demo]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T17:11:45Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
 sources:
   - resource: "User-uploaded APAAR ID Student Data Platform (SIH26263) Phase-by-Phase Build Guide.pdf, 18 pages"
   - resource: "User requirements in this conversation: Python backend, two-day demo, Vercel and Render"

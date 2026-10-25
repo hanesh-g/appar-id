@@ -1,0 +1,79 @@
+name: Application checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: apaar_app
+          POSTGRES_PASSWORD: ci-disposable-only
+          POSTGRES_DB: apaar_smoke
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U apaar_app -d apaar_smoke"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      DATABASE_URL: postgresql+psycopg://apaar_app:ci-disposable-only@localhost:5432/apaar_smoke
+      TEST_DATABASE_URL: postgresql+psycopg://apaar_app:ci-disposable-only@localhost:5432/apaar_test
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: "0.12.23"
+          python-version: "3.12"
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frozen backend dependencies and generate ephemeral configuration
+        run: |
+          uv sync --project backend --frozen
+          uv run --project backend python scripts/configure_local.py --non-interactive
+          uv run --project backend python -c "import os, psycopg; c = psycopg.connect(os.environ['DATABASE_URL'].replace('postgresql+psycopg://', 'postgresql://', 1), autocommit=True); c.execute('CREATE DATABASE apaar_test'); c.close()"
+      - name: Backend lint and format
+        working-directory: backend
+        run: |
+          uv run --frozen ruff check app migrations tests
+          uv run --frozen ruff format --check app migrations tests
+      - name: PostgreSQL integration tests
+        working-directory: backend
+        run: uv run --frozen pytest -q
+      - name: Frontend checks
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run lint
+          npm run format:check
+          npm run test -- --run
+          npm run build
+      - name: Prepare application database and smoke accounts
+        working-directory: backend
+        run: |
+          uv run --frozen alembic upgrade head
+          uv run --frozen python -m app.seed --demo
+      - name: Install browser
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+      - name: Browser journey
+        run: |
+          cd backend
+          uv run --frozen uvicorn app.main:app --host 127.0.0.1 --port 8000 --no-access-log > /tmp/apaar-api.log 2>&1 &
+          cd ../frontend
+          npm run dev > /tmp/apaar-web.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:8000/api/v1/health > /dev/null && curl --fail --silent http://localhost:5173 > /dev/null; then break; fi
+            sleep 1
+          done
+          npm run smoke

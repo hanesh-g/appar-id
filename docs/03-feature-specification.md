@@ -4,7 +4,7 @@ title: Feature specification
 description: Specify each core and optional feature with rules, failures, and acceptance criteria.
 tags: [apaar, features, acceptance, permissions]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T17:11:45Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
 sources:
   - resource: 01-problem-and-scope.md
   - resource: 02-technical-design.md
@@ -12,7 +12,7 @@ sources:
 
 # 03 — Feature specification
 
-Every feature below is **planned, not implemented**. CORE is the release gate for this demo. NEXT is optional and must not delay the core. LATER requires a separate scope. Permission checks apply on the backend, including exports and guessed object IDs.
+F01–F10 now have local implementations and checks. F11 has local seed, health, fixtures, and startup support; its hosted release gate remains incomplete. The sections below define the intended behaviour, not blanket completion: consult the [progress checklist](05-progress-checklist.md) for executed evidence and limitations. NEXT and LATER are not implemented. Permission checks apply on the backend, including exports and guessed object IDs.
 
 ## F01 — Sign-in and institution isolation · CORE
 

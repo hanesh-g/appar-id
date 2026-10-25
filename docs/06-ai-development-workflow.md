@@ -4,13 +4,15 @@ title: AI development workflow
 description: Give coding assistants bounded tasks, reliable context, and concrete checks.
 tags: [apaar, ai-assisted, playbook, context]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T17:11:45Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
 sources:
   - resource: 04-implementation-phases.md
   - resource: 07-okf-assessment.md
 ---
 
 # 06 — AI development workflow
+
+Current implementation note: core code now exists. Inspect it and the checklist before selecting a task. The initial Phase 1 prompt below is historical guidance for a new skeleton, not an instruction to overwrite this implementation. Native Windows instructions are in [the setup guide](08-windows-setup.md); follow `AGENTS.md` for commit identity and backend standards.
 
 ## 1. Aim
 

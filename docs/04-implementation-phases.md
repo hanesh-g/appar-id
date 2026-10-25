@@ -4,13 +4,15 @@ title: Implementation phases
 description: Build in dependency order with AI, human, and shared task ownership.
 tags: [apaar, implementation, phases, ai-assisted]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T17:11:45Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
 sources:
   - resource: 02-technical-design.md
   - resource: 03-feature-specification.md
 ---
 
 # 04 — Implementation phases
+
+Current implementation note: the local core through Phase 5 now exists, and the local portion of Phase 6 has passing evidence. Start by inspecting the checklist; do not regenerate the application from Phase 1. Hosted deployment, native Windows execution, human review, and optional features remain pending.
 
 ## 1. How to use this plan
 
