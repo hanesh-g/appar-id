@@ -2,6 +2,11 @@
 
 ## 2026-10-26
 
+- Added Document 11 from the supplied feature notes: phased execution for resolution/diff, rule provenance/categories, overlap review, audit integrity, and consent/QR. Defined a short-deadline Release A and a later complete Release B, human tasks, proposed contracts, fixture checks, and a bounded first implementation prompt.
+- Adjusted unsafe/incomplete task-card assumptions: explicit role scoping before new users, staged-row correction targets, exact encrypted proposals and stale-batch checks, overlapping category dimensions, concurrency-safe overlap reconciliation, dedicated audit-head/key, and private consent request addressing with token-safe QR delivery.
+- Added an entirely unchecked extension checklist and cross-links. The user-supplied official/adoption assertions have no exact source links/dates and remain unverified. This update changes documentation only; no new application feature or test result is claimed.
+- Planning-document validation passed: 11 concept documents have valid draft metadata, 52 local documentation links resolve, E0–E8 are present, and all extension implementation checkboxes remain unchecked. No application tests were run for this planning-only change.
+
 - Added an APAAR ecosystem, adoption, UI-research, and differentiation document. Inspected three public peer projects at pinned revisions; substantial overlap means imports, dashboards, QR/consent, AI help, and even transactional/idempotent ingestion are not established exclusive features.
 - Recommended a focused correction workflow and measurable staff outcomes. Clearly separated current local core, proposed extensions, publisher claims, and research hypotheses. No application features or policy rules changed.
 - Official government, search, and news sites were blocked by the environment network policy. No current official UI, national adoption figure, or publicity-failure claim was verified. Saved required research-domain additions as an environment draft; access still needs an actual settings change and successful retry.

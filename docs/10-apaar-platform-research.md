@@ -4,7 +4,7 @@ title: APAAR ecosystem, adoption questions, and product differentiation
 description: Compare accessible peer evidence, identify official research gaps, and define a measurable product direction.
 tags: [apaar, research, adoption, ux, differentiation, sih2026]
 status: draft
-generated: {by: codex/research-v1, at: "2026-10-26T09:28:48Z"}
+generated: {by: codex/research-v1, at: "2026-10-26T09:49:19Z"}
 sources:
   - resource: "https://github.com/hanu1021/ApaarReady/tree/c949a80a9c6b4627eb95c78572c896161656e119"
   - resource: "https://github.com/DD1370/APAAR-SETU/tree/d78bf26cc908a3f545a59a51edf9f98d447b150c"
@@ -22,6 +22,8 @@ Research date: **26 October 2026 (India)**. Project baseline: `3fec502`. Audienc
 **Research status: partial.** Three public peer repositories were read at pinned revisions. Our code and its recorded local test evidence were reviewed. This environment blocked the official government sites and search/news sites. The current official APAAR screens, authenticated journeys, national adoption figures, and reasons for non-adoption were **not verified**. A research-domain configuration draft was saved; it does not establish that access has been enabled.
 
 This document must not be cited as proof that APAAR failed, that its UI is poor, or that it lacks a feature. It provides a useful product decision now, and an explicit route to complete the official research.
+
+Follow-up: the user supplied additional architectural/policy claims and five feature task cards. [Document 11](11-feature-execution-plan.md) turns those proposals into a phased execution plan. No dated primary-source citations were included in that input, so the official research gaps here remain open rather than being marked verified.
 
 ## 1. Name and purpose
 

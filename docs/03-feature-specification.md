@@ -4,7 +4,7 @@ title: Feature specification
 description: Specify each core and optional feature with rules, failures, and acceptance criteria.
 tags: [apaar, features, acceptance, permissions]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T09:49:19Z"}
 sources:
   - resource: 01-problem-and-scope.md
   - resource: 02-technical-design.md
@@ -13,6 +13,8 @@ sources:
 # 03 — Feature specification
 
 F01–F10 now have local implementations and checks. F11 has local seed, health, fixtures, and startup support; its hosted release gate remains incomplete. The sections below define the intended behaviour, not blanket completion: consult the [progress checklist](05-progress-checklist.md) for executed evidence and limitations. NEXT and LATER are not implemented. Permission checks apply on the backend, including exports and guessed object IDs.
+
+The [extension execution plan](11-feature-execution-plan.md) proposes additions to F09/F06 (resolution and correction preview), F14/F08 (provenance/help and illustrative categories), F13 (overlap review), F10 (audit integrity), and F12 (consent/QR). Those additions are planned, not delivered. Promote each contract here when its implementation starts; preserve the core acceptance rules below.
 
 ## F01 — Sign-in and institution isolation · CORE
 

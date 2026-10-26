@@ -4,7 +4,7 @@ title: Technical design
 description: Define the Python stack, data, API, deployment, and security contracts.
 tags: [apaar, python, fastapi, architecture, deployment]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T09:49:19Z"}
 sources:
   - resource: "User-uploaded APAAR ID Student Data Platform (SIH26263) Phase-by-Phase Build Guide.pdf, 18 pages"
   - resource: 01-problem-and-scope.md
@@ -13,6 +13,8 @@ sources:
 # 02 — Technical design
 
 Implementation update: core code now exists. Native Windows with PowerShell and PostgreSQL is the local default; Docker Compose is optional. Node 22.12+ or Node 24 is supported. The first frontend uses custom CSS/native controls rather than Tailwind/shadcn. Tests use the current Starlette-compatible HTTPX2 client. See [Windows setup](08-windows-setup.md), [engineering controls](09-backend-engineering.md), and [execution evidence](05-progress-checklist.md). The tables below retain the original design where noted; actual dependency versions are pinned in lockfiles.
+
+Proposed extension migrations, APIs, role permissions, locking, and additional audit/grant keys are in [Document 11](11-feature-execution-plan.md). They are not current schema or runtime configuration. Promote each accepted contract here as implementation begins; do not assume the pasted task cards already match the existing code.
 
 ## 1. Architecture baseline
 

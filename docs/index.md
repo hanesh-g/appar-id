@@ -14,6 +14,7 @@ This is the entry point for people and AI coding assistants. Core application co
 
 ## Delivery
 
+- [Feature extension execution plan](11-feature-execution-plan.md) - Plan the five new feature groups on top of the existing core, with proposed contracts, human tasks, negative tests, and two release cuts.
 - [Implementation phases](04-implementation-phases.md) - Build in dependency order with AI, human, and shared task ownership.
 - [Progress checklist](05-progress-checklist.md) - Track implementation gates and executed evidence without invented completion.
 - [AI development workflow](06-ai-development-workflow.md) - Give coding assistants bounded tasks, reliable context, and concrete checks.

@@ -4,7 +4,7 @@ title: Progress checklist
 description: Track implementation gates and executed evidence without invented completion.
 tags: [apaar, progress, testing, release]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T09:49:19Z"}
 sources:
   - resource: 03-feature-specification.md
   - resource: 04-implementation-phases.md
@@ -129,6 +129,26 @@ Use `[x]` only with current evidence. Use an evidence path, commit, test result,
 - [ ] F14: Approved sources/citations, no personal data, no write access, prompt-injection checks, timeouts, and model-off fallback pass.
 
 No unchecked NEXT feature blocks a CORE-only release. Do not present an incomplete extension as delivered.
+
+## Planned extension iteration — E0–E8
+
+The [new execution plan](11-feature-execution-plan.md) maps the supplied five task-card groups to dependency phases. These tasks are **not implemented or newly tested**. Existing local core evidence above is unchanged. The supplied policy/adoption claims still require dated primary sources.
+
+- [ ] E0 / AI: Replace implicit no-institution global scope with explicit role permissions; exercise current routes and unknown-role denial.
+- [ ] E0 / SHARED: Confirm synthetic scope, Release A cut, and human hosting/source-review queue.
+- [ ] E1 / AI: Immutable rule packs, actual-code coverage, historical batch references, deterministic help API/UI, and executable-version checks.
+- [ ] E1 / AI: Scoped base/supernumerary counts and independent NRI/OCI/foreign dimensions with overlapping-flag tests.
+- [ ] E2 / AI: Staged-row/enrolment resolution cases, unique open episodes, guarded transitions, safe event history, scoped API/UI.
+- [ ] E3 / AI: Encrypted exact correction proposals, masked field differences, versions, expiry, and intake preview.
+- [ ] E3 / AI: Atomic apply, idempotency, stale-batch protection, case closure checks, and rollback/concurrency tests.
+- [ ] E4 / SHARED: Release A regression/browser/migration/hosted checks, restart persistence, and rehearsal recorded.
+- [ ] E5 / AI: Verified-person interval reconciliation, concurrent detection, review lifecycle, limited officer writes, and privacy-safe institution notices.
+- [ ] E6 / AI: Separate audit key, dedicated chain head, honest legacy baseline, snapshot verifier, and tamper/concurrency/rollback tests.
+- [ ] E7a / AI: Student/verifier profiles and explicit route scope, adult synthetic accounts, private expiring request handles, and repeatable seed.
+- [ ] E7b / AI: Requests, field-limited grants, purpose/expiry/record binding, separate token key, denial/revoke/reissue, and access audit.
+- [ ] E7c / AI: Student/verifier browser flow, token-safe QR delivery, no-store responses, and full wrong-user/expired/revoked/stale-record tests.
+- [ ] E8 / SHARED: Release B upgrade/deployment/restart and full hosted demonstration pass; preserved keys and known limits documented.
+- [ ] HUMAN: Review applicable policy sources, correction ownership, student linking/verifier approval, and real-data requirements before any official claim or real-data pilot.
 
 ## Test fixtures and expected results
 
