@@ -24,6 +24,10 @@ def test_migration_upgrade_and_downgrade(client):
         constraints = inspect(connection).get_check_constraints("enrolments", schema=schema)
         assert "enrolment_identity_link" in {c["name"] for c in constraints}
         assert "enrolment_status_end_date" in {c["name"] for c in constraints}
+        genesis = connection.execute(
+            text("SELECT sequence_no,last_hash FROM audit_chain_head WHERE id=1")
+        ).one()
+        assert genesis.sequence_no == 0 and genesis.last_hash == "0" * 64
         command.downgrade(config, "base")
         assert "enrolments" not in inspect(connection).get_table_names(schema=schema)
         connection.execute(text('SET search_path TO "public"'))

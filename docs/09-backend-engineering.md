@@ -24,7 +24,7 @@ sources:
 | Data integrity | Alembic revisions; unique enrolment/person keys; checked identity links, version, lifecycle dates; programme/batch locks; rollback on failure. |
 | Repeatability | Request idempotency; canonical upsert; unchanged rows are no-ops; repeat commit returns original outcome; seed preserves existing data. |
 | Authentication | Argon2 passwords; fixed-algorithm JWT verification with issuer/audience/expiry; active-account check; bounded single-process login throttling. |
-| Authorisation | Institution object scope checked server-side on reads, edits, exports, batches, and counts; officer is read-only. |
+| Authorisation | Explicit role capabilities and institution scope on reads/edits/exports/batches/counts. Officers cannot edit core records; separately permitted interval decisions and audit checks are bounded. |
 | Personal data | AES-GCM encrypted identity/staging payloads; separate HMAC lookup key; masked IDs; no general platform-wide institution search. |
 | Configuration | Pydantic settings, secret types, generated local keys, hidden inputs in configuration errors, ignored `.env`, no wildcard CORS. |
 | Observability | Structured safe logs, request IDs, timings, route templates, and audit request correlation; raw access/query-string logs disabled by start commands. |
@@ -72,3 +72,9 @@ The blueprint does not create a database, enter secrets, execute migrations, or 
 This code uses production-oriented practices. It is still a synthetic prototype. A real-data release needs a separate security/policy/operations gate: approved registry access and matching rules; applicable intake policy; legal basis and consent where required; retention/deletion; managed secret storage and key rotation; backups and restore drills; distributed throttling; operational alerts; dependency/security review; capacity testing; and incident ownership. Optional consent verification is not yet implemented.
 
 Do not label the app government-approved, compliant, tamper-proof, fraud-proof, or production-certified based on its stack or local tests.
+
+## Optional local audit integrity
+
+After migrating, enable the separate audit key from `backend` with `uv run --frozen python ../scripts/configure_extensions.py --enable-audit`, then restart the API. The helper only changes ignored local/demo configuration, preserves existing secrets, and generates a new audit key only when absent. Enter the equivalent `AUDIT_CHAIN_ENABLED`, `AUDIT_HMAC_KEY`, and `AUDIT_KEY_ID` values securely on hosting; do not put them in frontend variables.
+
+The migration creates genesis without needing a seed script. Schema-only test setups also bootstrap on first write. Once signing starts, retain the key and enabled setting; losing/changing them blocks new signed mutations. Key rotation is a separately planned migration, not regenerating a file. An officer can verify the chain under Activity history. The consistent snapshot reports its checked watermark and explicitly limits legacy/rollback claims. No external anchor, KMS, production audit certification, or hosted pass is implied.

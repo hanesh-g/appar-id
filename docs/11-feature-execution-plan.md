@@ -16,7 +16,7 @@ sources:
 
 # 11 — Feature extension execution plan
 
-Prepared on **26 October 2026**. This plan extends the existing application. It does not rebuild it. **E0–E3 and E5 are implemented and locally tested. E4 hosting and E6–E8 remain pending.** See the checklist for current execution evidence. The requirements below remain the implementation baseline, not a claim that every phase is complete.
+Prepared on **26 October 2026**. This plan extends the existing application. It does not rebuild it. **E0–E3 and E5/E6 are implemented and locally tested. E4 hosting and E7/E8 remain pending.** See the checklist for current execution evidence. Requirements below are the baseline, not blanket completion.
 
 Recommended sequence: **explicit access rules → rule explanations and category counts → resolution desk → correction preview/apply → first release gate → overlap review → audit integrity → consent/QR → extended release gate**.
 

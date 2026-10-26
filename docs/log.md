@@ -2,6 +2,9 @@
 
 ## 2026-10-26
 
+- Implemented E6 keyed audit integrity with queued transaction-local events, a last-acquired singleton head, explicit migration genesis/schema bootstrap, activation-time legacy snapshot attestation, and repeatable-read verification. Wrong keys, missing heads, disabled signing on an activated database, tampering, and link/tail removal fail safely. No external anchoring or original legacy authenticity is claimed.
+- Added a Windows-compatible ignored-config upgrade helper that retains all existing keys, independent test settings, an officer UI, and CI key setup. Local checks: **90 backend passed** in 52.57 s; 24 focused checks passed; frontend lint/types/build passed; officer browser verification passed in 4.0 s after restarting the stopped smoke frontend.
+
 - Implemented E5: verified-person interval intersections, unique pair review/history, date-change reconciliation, narrow officer decisions, and institution-safe generic notices. Existing core edit permissions remain unchanged; no overlap automatically rejects admission or establishes fraud.
 - Added an explicit, idempotent demo backfill for up to 500 people. Eight focused overlap/backfill tests passed in 7.52 s; the actual officer/institution browser journey passed in 4.6 s. Frontend lint/types/build passed. Official dual-study policy approval and hosted operation are not claimed.
 - E5 full backend regression also passed: **76 tests**, 48.40 s.

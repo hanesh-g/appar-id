@@ -2,7 +2,7 @@ import base64
 from functools import cached_property
 from pathlib import Path
 
-from pydantic import Field, SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     registry_mode: str = "mock"
     mock_registry_outage: bool = False
     demo_password: SecretStr | None = None
+    audit_chain_enabled: bool = False
+    audit_hmac_key: SecretStr | None = None
+    audit_key_id: str = Field(default="audit-v1", pattern=r"^[A-Za-z0-9_.-]{1,40}$")
 
     @field_validator("registry_mode")
     @classmethod
@@ -32,15 +35,23 @@ class Settings(BaseSettings):
             raise ValueError("Only simulated registry mode is implemented")
         return value
 
-    @field_validator("pii_key", "hmac_key")
+    @field_validator("pii_key", "hmac_key", "audit_hmac_key")
     @classmethod
-    def valid_key(cls, value: SecretStr) -> SecretStr:
+    def valid_key(cls, value: SecretStr | None) -> SecretStr | None:
+        if value is None:
+            return value
         try:
             if len(base64.b64decode(value.get_secret_value(), validate=True)) != 32:
                 raise ValueError()
         except (ValueError, TypeError):
             raise ValueError("Expected a base64-encoded 32-byte key") from None
         return value
+
+    @model_validator(mode="after")
+    def audit_key_required(self):
+        if self.audit_chain_enabled and self.audit_hmac_key is None:
+            raise ValueError("Enabled audit integrity requires AUDIT_HMAC_KEY")
+        return self
 
     @cached_property
     def origins(self) -> list[str]:

@@ -41,6 +41,7 @@ jobs:
         run: |
           uv sync --project backend --frozen
           uv run --project backend python scripts/configure_local.py --non-interactive
+          uv run --project backend python scripts/configure_extensions.py --enable-audit
           uv run --project backend python -c "import os, psycopg; c = psycopg.connect(os.environ['DATABASE_URL'].replace('postgresql+psycopg://', 'postgresql://', 1), autocommit=True); c.execute('CREATE DATABASE apaar_test'); c.close()"
       - name: Backend lint and format
         working-directory: backend

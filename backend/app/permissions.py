@@ -12,13 +12,16 @@ class Permission(StrEnum):
     INSTITUTION_WRITE = "institution_write"
     CASE_MANAGE = "case_manage"
     OVERLAP_REVIEW = "overlap_review"
+    AUDIT_VERIFY = "audit_verify"
 
 
 ROLE_PERMISSIONS = {
     "institution_admin": frozenset(
         {Permission.SESSION, Permission.CORE_READ, Permission.INSTITUTION_WRITE, Permission.CASE_MANAGE}
     ),
-    "officer": frozenset({Permission.SESSION, Permission.CORE_READ, Permission.OVERLAP_REVIEW}),
+    "officer": frozenset(
+        {Permission.SESSION, Permission.CORE_READ, Permission.OVERLAP_REVIEW, Permission.AUDIT_VERIFY}
+    ),
 }
 
 

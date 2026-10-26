@@ -7,12 +7,12 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from .audit_integrity import enqueue
 from .config import Settings
-from .context import request_id
 from .db import uid, utcnow
 from .errors import DomainError
 from .locking import lock_identity_keys
-from .models import Audit, Batch, BatchRow, Enrolment, History, Person, Programme, User
+from .models import Batch, BatchRow, Enrolment, History, Person, Programme, User
 from .permissions import Permission, require_permission
 from .registry import validate_identity
 from .repositories import owned as owned
@@ -28,16 +28,7 @@ def business_date() -> date:
 
 
 def audit(db: Session, user: User, action: str, entity_id: str, details: dict | None = None) -> None:
-    db.add(
-        Audit(
-            actor_id=user.id,
-            institution_id=user.institution_id,
-            action=action,
-            entity_id=str(entity_id),
-            details=details or {},
-            request_id=request_id.get(),
-        )
-    )
+    enqueue(db, user, action, entity_id, details)
 
 
 def snapshot(enrolment: Enrolment) -> dict:

@@ -6,6 +6,7 @@ from uuid import UUID
 import jwt
 from fastapi import APIRouter, Depends, File, Form, Header, Query, Request, UploadFile
 from fastapi.responses import Response
+from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -37,6 +38,7 @@ router = APIRouter(prefix="/api/v1")
 
 def session(request: Request):
     with Session(request.app.state.engine, expire_on_commit=False) as db:
+        db.info["audit_settings"] = request.app.state.settings
         yield db
 
 
@@ -95,7 +97,12 @@ def health(request: Request):
             status_code=503,
             media_type="application/json",
         )
-    return {"status": "ok", "database": "ok", "registry": "simulated"}
+    return {
+        "status": "ok",
+        "database": "ok",
+        "registry": "simulated",
+        "audit_chain_enabled": request.app.state.settings.audit_chain_enabled,
+    }
 
 
 @router.post("/auth/login")
@@ -389,6 +396,28 @@ def audit_events(db: DB, user: Actor, page: int = Query(1, ge=1)):
             for e in items
         ],
     }
+
+
+class AuditVerificationOut(BaseModel):
+    verified: bool
+    checked_events: int
+    through_sequence: int
+    last_event_hash: str
+    legacy_events: int
+    first_broken_sequence: int | None
+    reason: str
+    scope: str
+
+
+@router.get("/audit-events/verify", response_model=AuditVerificationOut)
+def verify_audit(request: Request, user: Actor):
+    from .audit_integrity import verify
+
+    require_permission(user, Permission.AUDIT_VERIFY)
+    # Authentication has its own session. Start this snapshot before its first SQL.
+    with Session(request.app.state.engine) as verification_db:
+        verification_db.connection(execution_options={"isolation_level": "REPEATABLE READ"})
+        return verify(verification_db, request.app.state.settings)
 
 
 @router.get("/rules")

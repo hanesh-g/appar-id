@@ -26,6 +26,7 @@ import RuleHelp from './RuleHelp'
 import CategoryBreakdown from './CategoryBreakdown'
 import ResolutionDesk from './ResolutionDesk'
 import OverlapWorkbench from './OverlapWorkbench'
+import AuditIntegrity from './AuditIntegrity'
 import {
   api,
   download,
@@ -1176,7 +1177,7 @@ function RecordsPage({ user }: { user: User }) {
   )
 }
 
-function HistoryPage() {
+function HistoryPage({ user, auditEnabled }: { user: User; auditEnabled: boolean }) {
   const [page, setPage] = useState(1)
   const query = useQuery({
     queryKey: ['audit', page],
@@ -1189,6 +1190,7 @@ function HistoryPage() {
         title="Activity history"
         description="A record of who changed what, without exposing sensitive identity details."
       />
+      {user.role === 'officer' && auditEnabled && <AuditIntegrity />}
       <Notice error={query.error} />
       <section className="panel">
         {query.isPending ? (
@@ -1252,7 +1254,7 @@ export default function App() {
   const navigate = useNavigate()
   const health = useQuery({
     queryKey: ['health'],
-    queryFn: () => api<{ database: string }>('/health'),
+    queryFn: () => api<{ database: string; audit_chain_enabled?: boolean }>('/health'),
     refetchInterval: 60000,
     retry: false,
   })
@@ -1381,7 +1383,12 @@ export default function App() {
               element={user.institution_id ? <ResolutionDesk /> : <Navigate to="/" />}
             />
             <Route path="/programmes" element={<ProgrammesPage user={user} />} />
-            <Route path="/history" element={<HistoryPage />} />
+            <Route
+              path="/history"
+              element={
+                <HistoryPage user={user} auditEnabled={Boolean(health.data?.audit_chain_enabled)} />
+              }
+            />
             <Route
               path="/overlaps"
               element={user.role === 'officer' ? <OverlapWorkbench /> : <Navigate to="/" />}

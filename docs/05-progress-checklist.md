@@ -14,7 +14,7 @@ sources:
 
 ## Current state
 
-Core code, E0–E3's correction workspace, and E5 interval review are locally verified. Latest backend regression: **76 passed**, 48.40 s. Frontend checks/build passed; prior six unit tests and two correction journeys passed. E5's separate officer/institution browser journey passed in 4.6 s. A populated upgrade retained 65 enrolments and its existing case. Windows execution, hosted deployment, and remote CI remain unverified. E6/E7 are not delivered yet.
+Core code, the correction workspace, interval review, and optional audit integrity are locally verified. Latest backend regression: **90 passed**, 52.57 s. Frontend checks/build passed. Separate correction, overlap, and audit browser journeys have passing evidence below. Windows execution, hosted deployment, and remote CI remain unverified. E7 student consent/QR is not delivered yet.
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 
@@ -143,7 +143,7 @@ The [execution plan](11-feature-execution-plan.md) maps the supplied five task-c
 - [x] E3 / AI: Atomic apply, idempotency, stale-batch protection, case closure checks, and rollback/concurrency tests. Evidence: 13 correction tests; repaired rows leave held work without changing historical reports; concurrent promotions share one person.
 - [ ] E4 / SHARED: Release A local regression/browser/migration checks passed; hosted validation, hosted restart, and human rehearsal remain pending.
 - [x] E5 / AI: Verified-person interval reconciliation, concurrent detection, review lifecycle, limited officer writes, and privacy-safe institution notices. Evidence: eight overlap/backfill tests passed; officer/institution browser flow passed in 4.6 s. Official policy review is not claimed.
-- [ ] E6 / AI: Separate audit key, dedicated chain head, honest legacy baseline, snapshot verifier, and tamper/concurrency/rollback tests.
+- [x] E6 / AI: Separate audit key, dedicated genesis/bootstrap head, honest activation-time legacy attestation, repeatable-read verifier, and tamper/concurrency/rollback tests. Evidence: 24 focused checks passed; full suite 90 passed; officer browser verification passed in 4.0 s. Feature keys remain optional until enabled and must persist afterward.
 - [ ] E7a / AI: Student/verifier profiles and explicit route scope, adult synthetic accounts, private expiring request handles, and repeatable seed.
 - [ ] E7b / AI: Requests, field-limited grants, purpose/expiry/record binding, separate token key, denial/revoke/reissue, and access audit.
 - [ ] E7c / AI: Student/verifier browser flow, token-safe QR delivery, no-store responses, and full wrong-user/expired/revoked/stale-record tests.
@@ -170,6 +170,7 @@ Implement test-only fault injection outside public API routes. Create fresh data
 
 | Check / feature | Command or scenario | Result + count / timing | Revision | Evidence location |
 |---|---|---|---|---|
+| E6 audit integrity | Tamper/genesis/key/snapshot checks; full backend; officer browser | **24 focused passed**, 14.81 s; **90 full passed**, 52.57 s; **1 browser passed**, 4.0 s; frontend lint/types/build passed | E6 implementation | `test_audit_integrity.py`, key-helper tests, migration checks, `frontend/tests/audit.spec.ts`. Browser initially could not reach the stopped frontend process; restart and rerun passed. |
 | E5 interval review | Focused checks, full backend regression, and officer/institution browser flow | **8 focused passed**, 7.52 s; **76 full backend passed**, 48.40 s; **1 browser passed**, 4.6 s; frontend lint/types/build passed | E5 implementation | `test_overlap_reviews.py`, `frontend/tests/overlap.spec.ts`; historical/boundary/concurrent/privacy/backfill scenarios |
 | E2/E3 local Release A | Full backend; frontend checks/build; real-browser routing/repair; populated upgrade | **68 backend passed**, 34.55 s; **6 frontend passed**; **2 browser passed**, 7.6 s; retained **65 enrolments / 1 case** on upgrade | Correction workspace implementation | `test_resolution_cases.py`, `test_corrections.py`, shared regression; fresh isolated release database. Initial tests exposed snapshot overwrite and implicit selector-label ambiguity, both fixed before passing. |
 | E1 rules/categories | Backend regression; frontend checks/build; expanded browser journey | **50 backend passed**, 27.62 s; **6 frontend passed**; **1 browser passed**, 4.3 s | E1 implementation | Rule/catalog/category tests; populated migration; `frontend/tests/core.spec.ts`. First browser attempt found an ambiguous assertion matching new helper text; exact-label assertion corrected and rerun passed. |

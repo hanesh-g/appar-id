@@ -2,6 +2,7 @@ from datetime import date, datetime
 
 from sqlalchemy import (
     JSON,
+    BigInteger,
     Boolean,
     CheckConstraint,
     Date,
@@ -149,6 +150,13 @@ class History(Base):
 
 class Audit(Base):
     __tablename__ = "audit_events"
+    __table_args__ = (
+        UniqueConstraint("sequence_no", name="audit_chain_sequence"),
+        CheckConstraint(
+            "(sequence_no IS NULL AND chain_version IS NULL AND key_id IS NULL AND prev_hash IS NULL AND event_hash IS NULL) OR (sequence_no IS NOT NULL AND sequence_no > 0 AND chain_version IS NOT NULL AND key_id IS NOT NULL AND prev_hash IS NOT NULL AND event_hash IS NOT NULL)",
+            name="audit_chain_fields",
+        ),
+    )
     id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
     institution_id: Mapped[str | None] = mapped_column(ForeignKey("institutions.id"), index=True)
     actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
@@ -157,6 +165,24 @@ class Audit(Base):
     details: Mapped[dict] = mapped_column(JSON, default=dict)
     request_id: Mapped[str | None] = mapped_column(String(36))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    chain_version: Mapped[str | None] = mapped_column(String(20))
+    key_id: Mapped[str | None] = mapped_column(String(40))
+    sequence_no: Mapped[int | None] = mapped_column(BigInteger)
+    prev_hash: Mapped[str | None] = mapped_column(String(64))
+    event_hash: Mapped[str | None] = mapped_column(String(64))
+
+
+class AuditChainHead(Base):
+    __tablename__ = "audit_chain_head"
+    __table_args__ = (CheckConstraint("id = 1 AND sequence_no >= 0 AND baseline_count >= 0"),)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=False)
+    epoch: Mapped[str] = mapped_column(String(36))
+    sequence_no: Mapped[int] = mapped_column(BigInteger)
+    last_hash: Mapped[str] = mapped_column(String(64))
+    baseline_count: Mapped[int] = mapped_column(BigInteger)
+    baseline_hash: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    baseline_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class ResolutionCase(Base):

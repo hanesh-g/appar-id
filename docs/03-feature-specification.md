@@ -12,7 +12,7 @@ sources:
 
 # 03 — Feature specification
 
-F01–F10 now have local implementations and checks. F11's hosted release gate remains incomplete. E0–E3 add the correction workspace; E5 adds synthetic F13 interval review. F12, audit-chain hardening, an LLM assistant, and LATER features are not implemented. The sections below define intended behaviour, not blanket completion: consult the [progress checklist](05-progress-checklist.md). Permission checks apply on the backend, including exports and guessed object IDs.
+F01–F10 now have local implementations and checks. F11's hosted release gate remains incomplete. E0–E3 add the correction workspace, E5 adds synthetic interval review, and E6 adds optional audit integrity. F12, an LLM assistant, and LATER features are not implemented. Consult the [progress checklist](05-progress-checklist.md) for actual evidence. Permission checks apply on the backend, including exports and guessed object IDs.
 
 The [extension execution plan](11-feature-execution-plan.md) proposes additions to F09/F06 (resolution and correction preview), F14/F08 (provenance/help and illustrative categories), F13 (overlap review), F10 (audit integrity), and F12 (consent/QR). Those additions are planned, not delivered. Promote each contract here when its implementation starts; preserve the core acceptance rules below.
 
@@ -144,13 +144,15 @@ Correction exports containing student data are available only to the owning inst
 
 ## F10 — Change history and safe audit · CORE
 
+E6 hardening: optional keyed HMAC chaining, a transactional singleton head, explicit genesis/legacy baseline, and officer-only snapshot verification are implemented. Separate audit keys persist across restarts. Tests detect modified events/metadata, missing middle/tail rows, legacy snapshot edits, missing heads, and wrong keys; concurrent first writers and verification during commits pass. This remains tamper-evident under the documented threat model, not tamper-proof or externally anchored. Without enabling the feature, history remains ordinary transactional audit; an already activated database cannot silently resume unsigned application writes.
+
 **User value:** Users can explain when and why a record changed.
 
 **Flow:** Open batch or enrolment → inspect chronological changes with actor, action, time, record ID, and non-sensitive differences.
 
 **Rules:** Write a safe audit event in the same transaction as every state-changing operation. Record accepted uploads, commit, programme changes, lifecycle updates, and identity rechecks. Use batch-level upload/commit counts and per-record history where needed. Avoid unnecessary per-row event volume. Store no full APAAR, name, DOB, password, token, or raw CSV in audit metadata.
 
-**Failures:** If audit persistence fails, the associated mutation fails. Core history is not described as immutable or tamper-proof. Reading history must enforce object scope.
+**Failures:** If audit persistence/signing fails, the associated mutation fails. History is not immutable or tamper-proof. Reading history must enforce object scope; global integrity checks are officer-only.
 
 **Acceptance:** A failed mutation leaves no misleading success event. A committed update has the actor and expected version history. Automated scans/tests verify representative audit/log output excludes known synthetic personal values and tokens.
 
