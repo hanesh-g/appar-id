@@ -4,7 +4,7 @@ title: Feature extension execution plan
 description: Build the five proposed feature groups in dependency order with explicit contracts, human work, and release gates.
 tags: [apaar, implementation, resolution, provenance, overlap, audit, consent]
 status: draft
-generated: {by: codex/extension-plan-v1, at: "2026-10-26T09:49:19Z"}
+generated: {by: codex/extension-plan-v1, at: "2026-10-26T14:35:17Z"}
 sources:
   - resource: "User-supplied Pasted text.txt; 16045 bytes; SHA256 b693d5562888313b1ac27512d9b292f25a47f77d1b5c746ec6ff272a509ce06d"
   - resource: 02-technical-design.md
@@ -16,7 +16,7 @@ sources:
 
 # 11 — Feature extension execution plan
 
-Prepared on **26 October 2026**. This plan extends the existing application. It does not rebuild it. **E0 permissions and E1 deterministic rule help/category counts are implemented and tested; later features remain planned.** See the checklist for current execution evidence.
+Prepared on **26 October 2026**. This plan extends the existing application. It does not rebuild it. **E0–E3 are implemented and locally tested. E4 hosting and E5–E8 remain pending.** See the checklist for current execution evidence. The requirements below remain the implementation baseline, not a claim that every phase is complete.
 
 Recommended sequence: **explicit access rules → rule explanations and category counts → resolution desk → correction preview/apply → first release gate → overlap review → audit integrity → consent/QR → extended release gate**.
 

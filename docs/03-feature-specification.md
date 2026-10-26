@@ -4,7 +4,7 @@ title: Feature specification
 description: Specify each core and optional feature with rules, failures, and acceptance criteria.
 tags: [apaar, features, acceptance, permissions]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T09:49:19Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T14:35:17Z"}
 sources:
   - resource: 01-problem-and-scope.md
   - resource: 02-technical-design.md
@@ -12,7 +12,7 @@ sources:
 
 # 03 — Feature specification
 
-F01–F10 now have local implementations and checks. F11 has local seed, health, fixtures, and startup support; its hosted release gate remains incomplete. E0 permissions and E1 deterministic rule help/category counts also have local evidence. F12/F13, an LLM assistant, and LATER features are not implemented. The sections below define intended behaviour, not blanket completion: consult the [progress checklist](05-progress-checklist.md). Permission checks apply on the backend, including exports and guessed object IDs.
+F01–F10 now have local implementations and checks. F11's hosted release gate remains incomplete. E0–E3 add explicit permissions, rule help/categories, resolution cases, and reviewed inline correction with local evidence. F12/F13, an LLM assistant, and LATER features are not implemented. The sections below define intended behaviour, not blanket completion: consult the [progress checklist](05-progress-checklist.md). Permission checks apply on the backend, including exports and guessed object IDs.
 
 The [extension execution plan](11-feature-execution-plan.md) proposes additions to F09/F06 (resolution and correction preview), F14/F08 (provenance/help and illustrative categories), F13 (overlap review), F10 (audit integrity), and F12 (consent/QR). Those additions are planned, not delivered. Promote each contract here when its implementation starts; preserve the core acceptance rules below.
 
@@ -127,6 +127,8 @@ Unchanged correction rows are no-ops; changed rows increment version. A second c
 **Acceptance:** The 65-admission fixture shows 65 active records, 5 missing identities, and 5 above an intake of 60. A re-upload does not change the total. The officer and institution see counts appropriate to their scope.
 
 ## F09 — Correction centre and retry · CORE
+
+E2/E3 status: staff can open a case from a reported row, route its owner/state, and review its history. Held rows do not require an existing enrolment. A dedicated editor creates an exact encrypted preview before apply. Apply checks current case/record/intake/identity inputs and cannot overwrite newer changes. Successful repair supersedes source rows, preserves original input/issues/summary, and immediately removes current held work. Identity cases stay open until the remaining identity gap is resolved. Pending legacy previews must be uploaded again. Foreign cases/proposals, stale or expired proposals, altered payloads, false closure, and rollback/concurrent attempts are tested.
 
 **User value:** Staff can turn error reports into a clear correction queue.
 

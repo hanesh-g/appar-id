@@ -4,7 +4,7 @@ title: Technical design
 description: Define the Python stack, data, API, deployment, and security contracts.
 tags: [apaar, python, fastapi, architecture, deployment]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T09:49:19Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T14:35:17Z"}
 sources:
   - resource: "User-uploaded APAAR ID Student Data Platform (SIH26263) Phase-by-Phase Build Guide.pdf, 18 pages"
   - resource: 01-problem-and-scope.md
@@ -14,11 +14,19 @@ sources:
 
 Implementation update: core code now exists. Native Windows with PowerShell and PostgreSQL is the local default; Docker Compose is optional. Node 22.12+ or Node 24 is supported. The first frontend uses custom CSS/native controls rather than Tailwind/shadcn. Tests use the current Starlette-compatible HTTPX2 client. See [Windows setup](08-windows-setup.md), [engineering controls](09-backend-engineering.md), and [execution evidence](05-progress-checklist.md). The tables below retain the original design where noted; actual dependency versions are pinned in lockfiles.
 
-Proposed extension migrations, APIs, role permissions, locking, and additional audit/grant keys are in [Document 11](11-feature-execution-plan.md). They are not current schema or runtime configuration. Promote each accepted contract here as implementation begins; do not assume the pasted task cards already match the existing code.
+Remaining extension contracts are in [Document 11](11-feature-execution-plan.md). The implemented additions are summarised below. Audit/grant keys and later roles are not current runtime requirements; do not assume all proposed task cards already exist.
 
 E0 implemented contract: `permissions.py` explicitly grants session/core-read/institution-write capabilities to supported roles. Institution scope is mandatory for an institution administrator; an officer has no institution binding and only core-read/session rights. Unknown/future roles and invalid role/scope combinations fail closed in both HTTP dependencies and shared repositories. An absent institution ID never grants cross-institution access. Student/verifier roles are not yet enabled.
 
 E1 implemented contract: `rule_packs` retains hashed JSON content, a validator version, and a stable pack ID. `upload_batches.rule_set_id` pins each batch; legacy batches receive `legacy-core-3fec502` without changing their reports. Authenticated core roles can read `/api/v1/rules` and `/api/v1/rules/{issue_code}` with an optional `rule_set_id`. Content/metadata mismatch fails safely; unsupported validator versions cannot commit. Hash checks detect inconsistent stored content, not official authority or an immutable database. The dashboard adds base/supernumerary and independent nationality-flag counts; none change basic intake rules.
+
+E2 implemented contract: institution-only `/api/v1/resolution-cases` supports list/create and versioned detail/PATCH operations. Cases target exactly one staged row or enrolment; canonical work keys deduplicate repeated origins. `resolution_case_events` retains bounded changes and `resolution_case_origins` retains source rows. Foreign cases return 404; officers cannot manage cases. Assignees, when supplied by API, must be active staff in the same institution. No personal free-text notes are accepted.
+
+E3 implemented contract: a case-scoped `correction-context` response supplies the owning editor's supported fields under no-store headers. `correction-previews` stores an encrypted, author-bound ten-minute proposal; `/api/v1/correction-proposals/{id}/apply` accepts its ID and expected case version, not replacement fields. Scope, target/case versions, rule execution, identity result, and programme/intake inputs are checked again under locks. Record/history/case/audit/lineage/result commit atomically. Replays return the original result. `correction_origins` links repaired source rows; their operational status becomes `SUPERSEDED_BY_CORRECTION`, excluding them from current held/unassignable work. The case then targets the canonical enrolment while retaining origin links.
+
+New batches retain their original `summary`; a distinct `commit_summary` records commit-time recalculation. Existing older summaries remain as stored; this release cannot reconstruct a historical snapshot already overwritten by older code. `batch_rows.expected_enrolment_version` protects ordinary uploads from replaying stale corrections; legacy pending previews use -1 and require a new upload. Committed results remain repeatable.
+
+Identity locks: operations lock programmes, then sorted private digest advisory locks (which cover absent/new people), then existing person/enrolment rows. Verified people are resolved before enrolment locks during commit, inline apply, and outage retry. Lifecycle edits use the same person-before-enrolment protocol. All locks live inside the mutation transaction.
 
 ## 1. Architecture baseline
 

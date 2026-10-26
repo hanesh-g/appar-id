@@ -82,6 +82,7 @@ class Batch(Base):
     rule_set_id: Mapped[str] = mapped_column(ForeignKey("rule_packs.id"))
     status: Mapped[str] = mapped_column(String(30), default="DRY_RUN_READY")
     summary: Mapped[dict] = mapped_column(JSON, default=dict)
+    commit_summary: Mapped[dict | None] = mapped_column(JSON)
     result: Mapped[dict | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
@@ -99,6 +100,7 @@ class BatchRow(Base):
     identity_reason: Mapped[str] = mapped_column(String(50))
     status: Mapped[str] = mapped_column(String(30))
     issues: Mapped[list] = mapped_column(JSON, default=list)
+    expected_enrolment_version: Mapped[int] = mapped_column(Integer, default=-1)
 
 
 class Enrolment(Base):
@@ -155,3 +157,85 @@ class Audit(Base):
     details: Mapped[dict] = mapped_column(JSON, default=dict)
     request_id: Mapped[str | None] = mapped_column(String(36))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class ResolutionCase(Base):
+    __tablename__ = "resolution_cases"
+    __table_args__ = (
+        UniqueConstraint("institution_id", "case_key"),
+        CheckConstraint("(batch_row_id IS NOT NULL) != (enrolment_id IS NOT NULL)", name="case_one_subject"),
+        CheckConstraint("owner_type IN ('COLLEGE_STAFF','STUDENT_ACTION','UPSTREAM_AUTHORITY')"),
+        CheckConstraint(
+            "status IN ('OPEN','WAITING_ON_USER','WAITING_ON_AUTHORITY','READY_TO_RECHECK','RESOLVED')"
+        ),
+        CheckConstraint("version >= 1 AND episode >= 1"),
+    )
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    institution_id: Mapped[str] = mapped_column(ForeignKey("institutions.id"), index=True)
+    case_key: Mapped[str] = mapped_column(String(64))
+    batch_row_id: Mapped[str | None] = mapped_column(ForeignKey("batch_rows.id"))
+    enrolment_id: Mapped[str | None] = mapped_column(ForeignKey("enrolments.id"))
+    issue_code: Mapped[str] = mapped_column(String(60))
+    rule_set_id: Mapped[str] = mapped_column(ForeignKey("rule_packs.id"))
+    owner_type: Mapped[str] = mapped_column(String(30), default="COLLEGE_STAFF")
+    assignee_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    status: Mapped[str] = mapped_column(String(30), default="OPEN")
+    resolution_reason: Mapped[str | None] = mapped_column(String(40))
+    evidence_kind: Mapped[str | None] = mapped_column(String(30))
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    episode: Mapped[int] = mapped_column(Integer, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CaseOrigin(Base):
+    __tablename__ = "resolution_case_origins"
+    __table_args__ = (UniqueConstraint("case_id", "batch_row_id"),)
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    case_id: Mapped[str] = mapped_column(ForeignKey("resolution_cases.id"), index=True)
+    batch_row_id: Mapped[str] = mapped_column(ForeignKey("batch_rows.id"))
+
+
+class CaseEvent(Base):
+    __tablename__ = "resolution_case_events"
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    case_id: Mapped[str] = mapped_column(ForeignKey("resolution_cases.id"), index=True)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    old_status: Mapped[str | None] = mapped_column(String(30))
+    new_status: Mapped[str] = mapped_column(String(30))
+    owner_type: Mapped[str] = mapped_column(String(30))
+    reason: Mapped[str] = mapped_column(String(40))
+    version: Mapped[int] = mapped_column(Integer)
+    operation_id: Mapped[str | None] = mapped_column(
+        ForeignKey("correction_proposals.id", name="case_event_operation")
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class CorrectionProposal(Base):
+    __tablename__ = "correction_proposals"
+    __table_args__ = (CheckConstraint("case_version >= 1 AND target_version >= 0"),)
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    institution_id: Mapped[str] = mapped_column(ForeignKey("institutions.id"), index=True)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    case_id: Mapped[str] = mapped_column(ForeignKey("resolution_cases.id"))
+    case_version: Mapped[int] = mapped_column(Integer)
+    target_enrolment_id: Mapped[str | None] = mapped_column(ForeignKey("enrolments.id"))
+    target_version: Mapped[int] = mapped_column(Integer)
+    rule_set_id: Mapped[str] = mapped_column(ForeignKey("rule_packs.id"))
+    payload_enc: Mapped[bytes] = mapped_column(LargeBinary)
+    payload_hash: Mapped[str] = mapped_column(String(64))
+    intake_snapshot: Mapped[list] = mapped_column(JSON)
+    preview: Mapped[dict] = mapped_column(JSON)
+    result: Mapped[dict | None] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    applied_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CorrectionOrigin(Base):
+    __tablename__ = "correction_origins"
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    proposal_id: Mapped[str] = mapped_column(ForeignKey("correction_proposals.id"), index=True)
+    batch_row_id: Mapped[str] = mapped_column(ForeignKey("batch_rows.id"), unique=True)

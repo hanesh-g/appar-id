@@ -4,7 +4,7 @@ title: Progress checklist
 description: Track implementation gates and executed evidence without invented completion.
 tags: [apaar, progress, testing, release]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T09:49:19Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T14:35:17Z"}
 sources:
   - resource: 03-feature-specification.md
   - resource: 04-implementation-phases.md
@@ -14,7 +14,7 @@ sources:
 
 ## Current state
 
-Core code, E0 permissions, and E1 rule help/category counts are locally verified. The latest backend regression run passed **50 tests**. Frontend lint/types/build and **6 tests** passed; the expanded real-browser core/rule-help/category journey passed (**1 test**, 4.3 s). Windows scripts are supplied but not executed on Windows here. Hosted deployment and remote CI execution remain unverified.
+Core code and E0–E3's correction workspace are locally verified. Latest backend regression: **68 passed**, 34.55 s. Frontend lint/format/types/build and **6 tests** passed; **2 browser journeys passed**, 7.6 s, including a held-row repair with immediate counter updates. A populated upgrade retained 65 enrolments and its existing case. Windows execution, hosted deployment, and remote CI remain unverified. E5–E7 are not delivered yet.
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 
@@ -29,7 +29,7 @@ Use `[x]` only with current evidence. Use an evidence path, commit, test result,
 | P4 — Safe commit and correction | Local checks passed | Upsert, repeat/concurrent commit, rollback, stale conflict, recovery retry. |
 | P5 — Reports and history | Local checks passed | 65/5/5 intake scenario, status/history, deduplicated candidates. |
 | P6 — Deployed release gate | Local portion passed; hosting pending | Browser passed; no hosted account access/validation yet. |
-| P7 — Optional extensions | Not selected | — |
+| P7 — Selected extension iteration | E0–E3 local passed; later work pending | Rule help/categories, resolution cases, exact correction apply; see E0–E8 checklist. |
 
 ## P0 — Inputs and human decisions
 
@@ -132,16 +132,16 @@ No unchecked NEXT feature blocks a CORE-only release. Do not present an incomple
 
 ## Planned extension iteration — E0–E8
 
-The [execution plan](11-feature-execution-plan.md) maps the supplied five task-card groups to dependency phases. E0/E1 are implemented and checked. Later phases remain incomplete unless checked below. The supplied policy/adoption claims still require dated primary sources.
+The [execution plan](11-feature-execution-plan.md) maps the supplied five task-card groups to dependency phases. E0–E3 are implemented and checked locally. Later phases remain incomplete unless checked below. The supplied policy/adoption claims still require dated primary sources.
 
 - [x] E0 / AI: Replace implicit no-institution global scope with explicit role permissions; exercise current routes and unknown-role denial. Evidence: eight route/scope tests passed; full backend suite **45 passed** in 23.87 s.
 - [ ] E0 / SHARED: Confirm synthetic scope, Release A cut, and human hosting/source-review queue.
 - [x] E1 / AI: Retained rule packs, actual-code coverage, historical batch references, deterministic help API/UI, and executable-version checks. Evidence: source coverage, snapshot retention/tamper checks, and populated Alembic upgrade tests.
 - [x] E1 / AI: Scoped base/supernumerary counts and independent NRI/OCI/foreign dimensions with overlapping-flag tests. Evidence: mixed-category PostgreSQL test and browser expand/collapse view.
-- [ ] E2 / AI: Staged-row/enrolment resolution cases, unique open episodes, guarded transitions, safe event history, scoped API/UI.
-- [ ] E3 / AI: Encrypted exact correction proposals, masked field differences, versions, expiry, and intake preview.
-- [ ] E3 / AI: Atomic apply, idempotency, stale-batch protection, case closure checks, and rollback/concurrency tests.
-- [ ] E4 / SHARED: Release A regression/browser/migration/hosted checks, restart persistence, and rehearsal recorded.
+- [x] E2 / AI: Staged-row/enrolment resolution cases, deduplicated origins, guarded transitions, safe event history, scoped API/UI. Evidence: five case tests plus browser routing.
+- [x] E3 / AI: Encrypted exact correction proposals, masked field differences, versions, expiry, and intake preview. Evidence: proposal/field/scope/integrity/expiry tests and browser comparison.
+- [x] E3 / AI: Atomic apply, idempotency, stale-batch protection, case closure checks, and rollback/concurrency tests. Evidence: 13 correction tests; repaired rows leave held work without changing historical reports; concurrent promotions share one person.
+- [ ] E4 / SHARED: Release A local regression/browser/migration checks passed; hosted validation, hosted restart, and human rehearsal remain pending.
 - [ ] E5 / AI: Verified-person interval reconciliation, concurrent detection, review lifecycle, limited officer writes, and privacy-safe institution notices.
 - [ ] E6 / AI: Separate audit key, dedicated chain head, honest legacy baseline, snapshot verifier, and tamper/concurrency/rollback tests.
 - [ ] E7a / AI: Student/verifier profiles and explicit route scope, adult synthetic accounts, private expiring request handles, and repeatable seed.
@@ -170,6 +170,7 @@ Implement test-only fault injection outside public API routes. Create fresh data
 
 | Check / feature | Command or scenario | Result + count / timing | Revision | Evidence location |
 |---|---|---|---|---|
+| E2/E3 local Release A | Full backend; frontend checks/build; real-browser routing/repair; populated upgrade | **68 backend passed**, 34.55 s; **6 frontend passed**; **2 browser passed**, 7.6 s; retained **65 enrolments / 1 case** on upgrade | Correction workspace implementation | `test_resolution_cases.py`, `test_corrections.py`, shared regression; fresh isolated release database. Initial tests exposed snapshot overwrite and implicit selector-label ambiguity, both fixed before passing. |
 | E1 rules/categories | Backend regression; frontend checks/build; expanded browser journey | **50 backend passed**, 27.62 s; **6 frontend passed**; **1 browser passed**, 4.3 s | E1 implementation | Rule/catalog/category tests; populated migration; `frontend/tests/core.spec.ts`. First browser attempt found an ambiguous assertion matching new helper text; exact-label assertion corrected and rerun passed. |
 | E0 explicit permissions | Focused permission matrix, then `uv run --frozen pytest -q` | **8 focused passed**; **45 full-suite passed**, 23.87 s | E0 implementation | `backend/tests/test_extension_permissions.py`; future/unknown and invalid-scope principals denied on 18 protected route/method combinations, officer read-only preserved |
 | Backend | `uv run --frozen pytest -q` | **32 passed**, final run 17.25 s | Working tree before release commit | `backend/tests/` |

@@ -165,3 +165,32 @@ export interface Page<T> {
   total: number
   items: T[]
 }
+
+export interface ResolutionCase {
+  id: string
+  subject_kind: 'STAGED_ROW' | 'ENROLMENT'
+  batch_row_id: string | null
+  enrolment_id: string | null
+  origin_batch_id: string | null
+  student_ref: string
+  issue_code: string
+  rule_set_id: string
+  owner_type: string
+  assignee_id: string | null
+  status: string
+  resolution_reason: string | null
+  evidence_kind: string | null
+  version: number
+  episode: number
+  created_at: string
+  updated_at: string
+  resolved_at: string | null
+  events?: {
+    old_status: string | null
+    new_status: string
+    owner_type: string
+    reason: string
+    version: number
+    created_at: string
+  }[]
+}

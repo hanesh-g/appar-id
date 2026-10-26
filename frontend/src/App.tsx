@@ -24,6 +24,7 @@ import {
 import Modal from './Dialog'
 import RuleHelp from './RuleHelp'
 import CategoryBreakdown from './CategoryBreakdown'
+import ResolutionDesk from './ResolutionDesk'
 import {
   api,
   download,
@@ -35,6 +36,7 @@ import {
   type Enrolment,
   type Page,
   type Programme,
+  type ResolutionCase,
   type User,
 } from './api'
 
@@ -549,6 +551,7 @@ function UploadPage() {
 function BatchPage({ user }: { user: User }) {
   const { id } = useParams()
   const client = useQueryClient()
+  const navigate = useNavigate()
   const [code, setCode] = useState('')
   const [mode, setMode] = useState('commit_valid')
   const [localError, setLocalError] = useState<unknown>(null)
@@ -569,6 +572,14 @@ function BatchPage({ user }: { user: User }) {
     onSuccess: () => client.invalidateQueries(),
   })
   const b = query.data
+  const openCase = useMutation({
+    mutationFn: (data: { batch_row_id: string; issue_code: string }) =>
+      api<ResolutionCase>('/resolution-cases', { method: 'POST', body: JSON.stringify(data) }),
+    onSuccess: (item) => {
+      client.invalidateQueries({ queryKey: ['cases'] })
+      navigate(`/resolution/${item.id}`)
+    },
+  })
   return (
     <>
       <Heading
@@ -581,7 +592,7 @@ function BatchPage({ user }: { user: User }) {
           </Link>
         }
       />
-      <Notice error={query.error || rows.error || mutation.error || localError} />
+      <Notice error={query.error || rows.error || mutation.error || openCase.error || localError} />
       {query.isPending && <Loading />}
       {b && (
         <>
@@ -622,6 +633,8 @@ function BatchPage({ user }: { user: User }) {
                 <h2>Review issues</h2>
                 <p>
                   Choose an issue to filter rows. Counts below refer to issues, not unique students.
+                  Original issues remain in this report; superseded rows have been corrected and no
+                  longer count as held work.
                 </p>
               </div>
               {user.institution_id && (
@@ -680,6 +693,18 @@ function BatchPage({ user }: { user: User }) {
                             <div className="row-issue" key={index}>
                               <RuleHelp code={issue.code} ruleSetId={b.rule_set_id} />{' '}
                               <b>{issue.field}</b> · {issue.message}
+                              {user.institution_id && r.status !== 'SUPERSEDED_BY_CORRECTION' && (
+                                <button
+                                  className="rule-link"
+                                  disabled={openCase.isPending}
+                                  aria-label={`Open ${issue.code} case for ${r.student_ref || `row ${r.row_no}`}`}
+                                  onClick={() =>
+                                    openCase.mutate({ batch_row_id: r.id, issue_code: issue.code })
+                                  }
+                                >
+                                  Open case
+                                </button>
+                              )}
                             </div>
                           ))
                         ) : (
@@ -1276,6 +1301,11 @@ export default function App() {
           <NavLink to="/records">
             <Users size={18} /> Enrolments
           </NavLink>
+          {user.institution_id && (
+            <NavLink to="/resolution">
+              <FileCheck2 size={18} /> Resolution Desk
+            </NavLink>
+          )}
           <NavLink to="/programmes">
             <BookOpen size={18} /> Programmes
           </NavLink>
@@ -1328,6 +1358,14 @@ export default function App() {
             />
             <Route path="/batches/:id" element={<BatchPage user={user} />} />
             <Route path="/records" element={<RecordsPage user={user} />} />
+            <Route
+              path="/resolution"
+              element={user.institution_id ? <ResolutionDesk /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/resolution/:id"
+              element={user.institution_id ? <ResolutionDesk /> : <Navigate to="/" />}
+            />
             <Route path="/programmes" element={<ProgrammesPage user={user} />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="*" element={<Navigate to="/" />} />

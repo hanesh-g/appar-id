@@ -2,6 +2,11 @@
 
 ## 2026-10-26
 
+- Implemented E2/E3's local correction workspace: institution-owned cases with source lineage/state/history and exact expiring encrypted proposals, protected field comparison, transactional apply, optimistic version checks, original-batch stale protection, and explicit held-row supersession.
+- Fixed the old commit path's summary overwrite by retaining the upload snapshot and storing a separate commit summary. Upgraded a populated E2 smoke database without losing its 65 enrolments or existing case, then tested on a fresh separate release dataset. No development database was reset.
+- Added private digest/person-before-enrolment locking for commits, correction promotions, retry, and lifecycle changes. Concurrent cross-institution promotions share one person and complete under a finite lock timeout. Added independent synthetic audit/grant keys to pytest settings; production keys/defaults are unchanged.
+- Release A local checks: **68 backend passed** in 34.55 s; **six frontend tests**, style/types/build passed; **two browser journeys passed** in 7.6 s, including held-counter decrease after repair. Hosting, E5 overlap, E6 chain, and E7 consent remain pending.
+
 - Implemented E1: retained rule snapshots with pinned batch versions, legacy backfill, authenticated deterministic help, unknown/unsupported/inconsistent snapshot refusals, and a scoped illustrative category breakdown. No official policy review or LLM is claimed.
 - E1 validation: 50 backend tests passed in 27.62 s, including a populated upgrade preserving old reports. Frontend lint/types/tests/build passed (six tests); expanded browser journey passed in 4.3 s after replacing an ambiguous count selector introduced by category helper text. Used a separate synthetic smoke database; no development database reset.
 

@@ -121,6 +121,7 @@ class BatchOut(BaseModel):
     rule_set_id: str
     status: str
     summary: dict
+    commit_summary: dict | None = None
     result: dict[str, int] | None
     created_at: datetime
 

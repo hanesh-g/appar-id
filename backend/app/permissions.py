@@ -10,10 +10,13 @@ class Permission(StrEnum):
     SESSION = "session"
     CORE_READ = "core_read"
     INSTITUTION_WRITE = "institution_write"
+    CASE_MANAGE = "case_manage"
 
 
 ROLE_PERMISSIONS = {
-    "institution_admin": frozenset({Permission.SESSION, Permission.CORE_READ, Permission.INSTITUTION_WRITE}),
+    "institution_admin": frozenset(
+        {Permission.SESSION, Permission.CORE_READ, Permission.INSTITUTION_WRITE, Permission.CASE_MANAGE}
+    ),
     "officer": frozenset({Permission.SESSION, Permission.CORE_READ}),
 }
 

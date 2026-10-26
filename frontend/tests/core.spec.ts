@@ -71,3 +71,43 @@ test('institution uploads, reviews, commits, corrects, and reads history', async
   await page.getByRole('button', { name: 'Sign out' }).click()
   await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()
 })
+
+test('staff routes and repairs a held row with a reviewed correction', async ({ page }) => {
+  await page.goto('/')
+  await page.getByLabel('Email address').fill('collegea@example.test')
+  await page.getByLabel('Password', { exact: true }).fill(demoPassword())
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click()
+  await page.getByRole('navigation').getByRole('link', { name: 'Upload admissions' }).click()
+  await page
+    .getByLabel('Student CSV')
+    .setInputFiles(resolve('..', 'fixtures', 'structural-errors.csv'))
+  await page.getByRole('button', { name: 'Validate and preview' }).click()
+  await expect(page.getByRole('heading', { name: 'structural-errors.csv' })).toBeVisible()
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: 'Commit batch', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('3 held')
+  await page
+    .getByRole('button', { name: 'Open DATE_INVALID case for STU-080', exact: true })
+    .click()
+  await expect(page.getByRole('heading', { name: 'Resolution Desk', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Case for STU-080', exact: true })).toBeVisible()
+  await page.getByLabel('Next action owner', { exact: true }).selectOption('STUDENT_ACTION')
+  await page.getByLabel('Case status', { exact: true }).selectOption('WAITING_ON_USER')
+  await page.getByRole('button', { name: 'Update case', exact: true }).click()
+  await expect(page.getByLabel('Case status', { exact: true })).toHaveValue('WAITING_ON_USER')
+  await expect(page.getByText('staged row · Episode 1 · Version 2', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Review a correction', exact: true }).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.getByLabel('Start date', { exact: true }).fill('2026-07-15')
+  await page.getByRole('button', { name: 'Preview correction', exact: true }).click()
+  await expect(
+    page.getByText('1 new admissions; 0 records updated; 0 unchanged. Active count change: +1.', {
+      exact: true,
+    }),
+  ).toBeVisible()
+  await page.getByRole('button', { name: 'Apply correction', exact: true }).click()
+  await expect(page.getByRole('dialog')).not.toBeVisible()
+  await expect(page.getByLabel('Case status', { exact: true })).toHaveValue('RESOLVED')
+  await page.getByRole('navigation').getByRole('link', { name: 'Overview', exact: true }).click()
+  await expect(page.locator('.held-box strong')).toHaveText('1 held admission candidates')
+})

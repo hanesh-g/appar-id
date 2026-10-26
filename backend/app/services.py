@@ -11,6 +11,7 @@ from .config import Settings
 from .context import request_id
 from .db import uid, utcnow
 from .errors import DomainError
+from .locking import lock_identity_keys
 from .models import Audit, Batch, BatchRow, Enrolment, History, Person, Programme, User
 from .permissions import Permission, require_permission
 from .registry import validate_identity
@@ -181,6 +182,9 @@ def upload(
     key: str,
     crypto: Crypto,
     settings: Settings,
+    *,
+    finish: bool = True,
+    rule_set_id: str | None = None,
 ) -> Batch:
     require_permission(user, Permission.INSTITUTION_WRITE)
     fingerprint = hashlib.sha256(year.encode() + b"\0" + content).hexdigest()
@@ -203,7 +207,9 @@ def upload(
     rows = validate_rows(
         parse_csv(content), {p.name: p for p in programmes}, year, settings.mock_registry_outage
     )
-    content_checks(db, rows, user.institution_id, crypto)
+    existing = content_checks(db, rows, user.institution_id, crypto)
+    selected_rules = rule_set_id or ensure_current(db)
+    require_executable(db, selected_rules)
     batch = Batch(
         id=uid(),
         institution_id=user.institution_id,
@@ -211,7 +217,7 @@ def upload(
         filename=filename[:200],
         file_hash=fingerprint,
         idempotency_key=key,
-        rule_set_id=ensure_current(db),
+        rule_set_id=selected_rules,
         summary=summarize(db, rows, programmes, user.institution_id),
     )
     db.add(batch)
@@ -227,11 +233,20 @@ def upload(
                 identity_status=row["identity_status"],
                 identity_reason=row["identity_reason"],
                 issues=row["issues"],
+                expected_enrolment_version=(
+                    existing[
+                        canonical(row["programme_id"], row["raw"].get("academic_year"), row["student_ref"])
+                    ].version
+                    if canonical(row["programme_id"], row["raw"].get("academic_year"), row["student_ref"])
+                    in existing
+                    else 0
+                ),
                 status="ERROR" if has_error(row) else ("WARNING" if row["issues"] else "OK"),
             )
         )
     audit(db, user, "BATCH_UPLOADED", batch.id, {"rows": len(rows)})
-    db.commit()
+    if finish:
+        db.commit()
     return batch
 
 
@@ -254,7 +269,16 @@ def link_person(db: Session, raw: dict, crypto: Crypto) -> str:
     return db.scalar(select(Person.id).where(Person.apaar_digest == digest))
 
 
-def commit_batch(db: Session, user: User, batch_id: str, mode: str, crypto: Crypto) -> Batch:
+def commit_batch(
+    db: Session,
+    user: User,
+    batch_id: str,
+    mode: str,
+    crypto: Crypto,
+    *,
+    finish: bool = True,
+    before_write=None,
+) -> Batch:
     require_permission(user, Permission.INSTITUTION_WRITE)
     batch = db.scalar(
         select(Batch)
@@ -268,7 +292,6 @@ def commit_batch(db: Session, user: User, batch_id: str, mode: str, crypto: Cryp
     if batch.status != "DRY_RUN_READY":
         raise DomainError("BATCH_STATE", "Only a reviewed dry run can be committed", 409)
     require_executable(db, batch.rule_set_id)
-    stored = db.scalars(select(BatchRow).where(BatchRow.batch_id == batch.id).order_by(BatchRow.row_no)).all()
     programmes = db.scalars(
         select(Programme)
         .where(
@@ -276,7 +299,16 @@ def commit_batch(db: Session, user: User, batch_id: str, mode: str, crypto: Cryp
         )
         .order_by(Programme.id)
         .with_for_update()
+        .execution_options(populate_existing=True)
     ).all()
+    stored = db.scalars(
+        select(BatchRow)
+        .where(BatchRow.batch_id == batch.id)
+        .order_by(BatchRow.row_no)
+        .execution_options(populate_existing=True)
+    ).all()
+    if any(r.status == "SUPERSEDED_BY_CORRECTION" for r in stored):
+        raise DomainError("STALE_PREVIEW", "A row was repaired after this preview. Upload again", 409)
     rows = [
         {
             "raw": crypto.decrypt(r.raw_enc),
@@ -288,8 +320,38 @@ def commit_batch(db: Session, user: User, batch_id: str, mode: str, crypto: Cryp
         }
         for r in stored
     ]
+    verified = [r["raw"] for r in rows if not has_error(r) and r["identity_status"] == "VERIFIED"]
+    old_ids = db.scalars(
+        select(Enrolment.person_id).where(
+            Enrolment.institution_id == user.institution_id,
+            Enrolment.programme_id.in_([p.id for p in programmes]),
+            Enrolment.person_id.is_not(None),
+        )
+    ).all()
+    lock_identity_keys(db, crypto, verified, old_ids)
+    person_map = {
+        crypto.digest(raw["apaar_id"]): link_person(db, raw, crypto)
+        for raw in sorted(verified, key=lambda raw: crypto.digest(raw["apaar_id"]))
+    }
+    db.scalars(
+        select(Enrolment)
+        .where(
+            Enrolment.institution_id == user.institution_id,
+            Enrolment.programme_id.in_([p.id for p in programmes]),
+        )
+        .order_by(Enrolment.id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    ).all()
     originally_valid = [not has_error(r) for r in rows]
     existing = content_checks(db, rows, user.institution_id, crypto)
+    for row, staged in zip(rows, stored, strict=True):
+        if not has_error(row):
+            record = existing.get(
+                canonical(row["programme_id"], row["raw"]["academic_year"], row["student_ref"])
+            )
+            if staged.expected_enrolment_version != (record.version if record else 0):
+                raise DomainError("STALE_PREVIEW", "Records changed after this preview. Upload again", 409)
     if any(was_valid and has_error(row) for was_valid, row in zip(originally_valid, rows, strict=True)):
         raise DomainError(
             "STALE_PREVIEW",
@@ -300,7 +362,9 @@ def commit_batch(db: Session, user: User, batch_id: str, mode: str, crypto: Cryp
         raise DomainError(
             "BLOCKING_ERRORS", "Correct structural errors before using all-or-nothing commit", 409
         )
-    batch.summary = summarize(db, rows, programmes, user.institution_id)
+    if before_write is not None:
+        before_write(db, batch, rows, programmes)
+    batch.commit_summary = summarize(db, rows, programmes, user.institution_id)
     created = updated = unchanged = held = 0
     for row, staged in zip(rows, stored, strict=True):
         if has_error(row):
@@ -310,7 +374,9 @@ def commit_batch(db: Session, user: User, batch_id: str, mode: str, crypto: Cryp
         raw = row["raw"]
         key = canonical(row["programme_id"], raw["academic_year"], raw["student_ref"])
         enrolment = existing.get(key)
-        person_id = link_person(db, raw, crypto) if row["identity_status"] == "VERIFIED" else None
+        person_id = (
+            person_map[crypto.digest(raw["apaar_id"])] if row["identity_status"] == "VERIFIED" else None
+        )
         values = {
             "identity_status": row["identity_status"],
             "identity_reason": row["identity_reason"],
@@ -354,7 +420,8 @@ def commit_batch(db: Session, user: User, batch_id: str, mode: str, crypto: Cryp
     batch.status = "COMMITTED"
     batch.result = {"created": created, "updated": updated, "unchanged": unchanged, "held": held}
     audit(db, user, "BATCH_COMMITTED", batch.id, batch.result)
-    db.commit()
+    if finish:
+        db.commit()
     return batch
 
 
@@ -442,6 +509,10 @@ def edit_enrolment(db: Session, user: User, object_id: str, data: EnrolmentPatch
     if programme_id is None:
         raise DomainError("NOT_FOUND", "Record not found", 404)
     db.scalar(select(Programme.id).where(Programme.id == programme_id).with_for_update())
+    person_id = db.scalar(select(Enrolment.person_id).where(Enrolment.id == object_id))
+    # Lifecycle writers join the same person-before-enrolment lock protocol.
+    if person_id:
+        lock_identity_keys(db, None, old_person_ids=[person_id])
     record = db.scalar(
         select(Enrolment)
         .where(Enrolment.id == object_id, Enrolment.institution_id == user.institution_id)
@@ -482,15 +553,33 @@ def recheck(db: Session, user: User, crypto: Crypto, settings: Settings) -> dict
         )
         .order_by(Enrolment.id)
         .limit(500)
-        .with_for_update()
     ).all()
-    resolved = 0
+    prepared = {}
     for record in records:
         raw = crypto.decrypt(record.identity_enc)
         state, reason = validate_identity(raw, settings.mock_registry_outage)
+        prepared[record.id] = (record.version, raw, state, reason)
+    verified = [raw for _, raw, state, _ in prepared.values() if state == "VERIFIED"]
+    lock_identity_keys(db, crypto, verified, [r.person_id for r in records if r.person_id])
+    person_map = {
+        crypto.digest(raw["apaar_id"]): link_person(db, raw, crypto)
+        for raw in sorted(verified, key=lambda raw: crypto.digest(raw["apaar_id"]))
+    }
+    records = db.scalars(
+        select(Enrolment)
+        .where(Enrolment.id.in_(list(prepared)))
+        .order_by(Enrolment.id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    ).all()
+    resolved = 0
+    for record in records:
+        version, raw, state, reason = prepared[record.id]
+        if version != record.version:
+            raise DomainError("STALE_VERSION", "Records changed during retry. Refresh and retry", 409)
         person_id = None
         if state == "VERIFIED":
-            person_id = link_person(db, raw, crypto)
+            person_id = person_map[crypto.digest(raw["apaar_id"])]
             conflict = db.scalar(
                 select(Enrolment.id).where(
                     Enrolment.person_id == person_id,

@@ -185,6 +185,7 @@ def batch_out(batch):
         "rule_set_id": batch.rule_set_id,
         "status": batch.status,
         "summary": batch.summary,
+        "commit_summary": batch.commit_summary,
         "result": batch.result,
         "created_at": batch.created_at,
     }
