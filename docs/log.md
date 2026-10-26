@@ -2,6 +2,11 @@
 
 ## 2026-10-26
 
+- Added an APAAR ecosystem, adoption, UI-research, and differentiation document. Inspected three public peer projects at pinned revisions; substantial overlap means imports, dashboards, QR/consent, AI help, and even transactional/idempotent ingestion are not established exclusive features.
+- Recommended a focused correction workflow and measurable staff outcomes. Clearly separated current local core, proposed extensions, publisher claims, and research hypotheses. No application features or policy rules changed.
+- Official government, search, and news sites were blocked by the environment network policy. No current official UI, national adoption figure, or publicity-failure claim was verified. Saved required research-domain additions as an environment draft; access still needs an actual settings change and successful retry.
+- Documentation checks passed: ten concept files have valid draft metadata, 42 local documentation links resolve, and 11 pinned peer file references exist in the inspected Git objects. No application tests were rerun for this documentation-only update.
+
 - Fixed the reported local browser/API origin mismatch. Local mode now recognises the exact localhost/127.0.0.1 pair on port 5173 even for existing `.env` files; new configuration lists both. Hosted origin lists remain exact. All five focused preflight/rejection tests passed; style checks passed. User confirmed a healthy local API/database response and that using localhost resolved the browser issue.
 
 - Fixed the reported native Windows setup failure: npm's PowerShell wrapper accessed a missing `$MyInvocation.Statement` property under the helpers' strict mode. Initialization and frontend startup now explicitly call `npm.cmd`; the prerequisite check and Windows manual commands use the command shims too.

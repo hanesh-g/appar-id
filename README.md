@@ -25,6 +25,7 @@ Implemented core: institution-scoped login, programmes, CSV validation, mock ide
 | [OKF assessment](docs/07-okf-assessment.md) | What is Open Knowledge Format, and how do we use it without adding deployment work? |
 | [Native Windows setup](docs/08-windows-setup.md) | How do I run this on Windows without Ubuntu? |
 | [Backend engineering and deployment](docs/09-backend-engineering.md) | Which engineering controls exist, and what remains before hosting or real-data use? |
+| [APAAR ecosystem and differentiation research](docs/10-apaar-platform-research.md) | What do public peer projects already offer, what should distinguish our workflow, and which official UI/adoption questions remain unverified? |
 
 The `docs/` directory is an [OKF v0.2 knowledge bundle](docs/index.md). Its concept files contain YAML metadata and links for people and AI assistants. It needs no running OKF service.
 

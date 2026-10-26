@@ -22,5 +22,6 @@ This is the entry point for people and AI coding assistants. Core application co
 
 ## References and history
 
+- [APAAR ecosystem and differentiation research](10-apaar-platform-research.md) - Compare pinned public peer sources, define a focused product direction, and track the official UI/adoption research blocked by network access.
 - [OKF assessment](07-okf-assessment.md) - Explain the verified canonical project and its limited role in this prototype.
 - [Documentation update log](log.md) - Record material changes and their reasons.

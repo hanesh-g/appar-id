@@ -33,6 +33,7 @@ Use `[x]` only with current evidence. Use an evidence path, commit, test result,
 
 ## P0 — Inputs and human decisions
 
+- [ ] SHARED: Complete the official APAAR UI/adoption review; [research coverage and follow-up](10-apaar-platform-research.md) distinguish inspected peer sources from blocked official sources and untested hypotheses.
 - [ ] HUMAN: Confirm official SIH statement and submission constraints.
 - [ ] SHARED: Adopt core scope F01–F11; rank optional features.
 - [ ] HUMAN: Confirm synthetic-only data and demo labels.
