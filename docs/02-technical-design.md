@@ -16,6 +16,8 @@ Implementation update: core code now exists. Native Windows with PowerShell and 
 
 Proposed extension migrations, APIs, role permissions, locking, and additional audit/grant keys are in [Document 11](11-feature-execution-plan.md). They are not current schema or runtime configuration. Promote each accepted contract here as implementation begins; do not assume the pasted task cards already match the existing code.
 
+E0 implemented contract: `permissions.py` explicitly grants session/core-read/institution-write capabilities to supported roles. Institution scope is mandatory for an institution administrator; an officer has no institution binding and only core-read/session rights. Unknown/future roles and invalid role/scope combinations fail closed in both HTTP dependencies and shared repositories. An absent institution ID never grants cross-institution access. Student/verifier roles are not yet enabled.
+
 ## 1. Architecture baseline
 
 ```mermaid

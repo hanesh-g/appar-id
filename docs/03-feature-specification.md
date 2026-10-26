@@ -24,6 +24,8 @@ The [extension execution plan](11-feature-execution-plan.md) proposes additions 
 
 **Rules:** Use password hashes and short-lived signed tokens. Keep tokens in browser memory; a reload requires login. Institution scope comes from the authenticated account, never a trusted request parameter. Officers have explicit cross-institution read access. Officer write powers are not implied.
 
+E0 enforcement: core-read and institution-write capabilities are explicit. Future/unknown roles, inactive accounts, an institution administrator without an institution, and an officer with an invalid institution binding receive no core access. Scope helpers enforce the same rule even when called outside an HTTP route. New roles must gain only their separately tested feature permissions.
+
 **Failures:** Generic bad-credentials message; inactive account denial; expired token returns `401`; foreign institution resources return `404`; login throttling returns `429`.
 
 **Acceptance:** Each role can sign in. Institution A cannot list, read, export, modify, commit, or discard B's data. Tests exercise real API requests rather than just hidden menu items.

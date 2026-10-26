@@ -12,6 +12,7 @@ from .context import request_id
 from .db import uid, utcnow
 from .errors import DomainError
 from .models import Audit, Batch, BatchRow, Enrolment, History, Person, Programme, User
+from .permissions import Permission, require_permission
 from .registry import validate_identity
 from .repositories import owned as owned
 from .repositories import query_scope as query_scope
@@ -180,6 +181,7 @@ def upload(
     crypto: Crypto,
     settings: Settings,
 ) -> Batch:
+    require_permission(user, Permission.INSTITUTION_WRITE)
     fingerprint = hashlib.sha256(year.encode() + b"\0" + content).hexdigest()
     previous = db.scalar(
         select(Batch).where(Batch.institution_id == user.institution_id, Batch.idempotency_key == key)
@@ -251,6 +253,7 @@ def link_person(db: Session, raw: dict, crypto: Crypto) -> str:
 
 
 def commit_batch(db: Session, user: User, batch_id: str, mode: str, crypto: Crypto) -> Batch:
+    require_permission(user, Permission.INSTITUTION_WRITE)
     batch = db.scalar(
         select(Batch)
         .where(Batch.id == batch_id, Batch.institution_id == user.institution_id)
@@ -418,6 +421,7 @@ def dashboard(db: Session, user: User, institution_id: str | None = None, year: 
 
 
 def edit_enrolment(db: Session, user: User, object_id: str, data: EnrolmentPatch) -> Enrolment:
+    require_permission(user, Permission.INSTITUTION_WRITE)
     # Use the same programme-before-enrolment lock order as commit/recheck.
     programme_id = db.scalar(
         select(Enrolment.programme_id).where(
@@ -451,6 +455,7 @@ def edit_enrolment(db: Session, user: User, object_id: str, data: EnrolmentPatch
 
 
 def recheck(db: Session, user: User, crypto: Crypto, settings: Settings) -> dict:
+    require_permission(user, Permission.INSTITUTION_WRITE)
     # Programme locks use the same order as commit and prevent identity-link races.
     db.scalars(
         select(Programme)

@@ -5,10 +5,12 @@ from sqlalchemy.orm import Session
 
 from .errors import DomainError
 from .models import User
+from .permissions import Permission, require_permission
 
 
 def query_scope(statement, model, user: User):
-    if user.institution_id:
+    require_permission(user, Permission.CORE_READ)
+    if user.role == "institution_admin":
         statement = statement.where(model.institution_id == user.institution_id)
     return statement
 

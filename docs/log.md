@@ -2,6 +2,10 @@
 
 ## 2026-10-26
 
+- Began execution with E0. Added explicit capability checks to core HTTP dependencies, sign-in, scoped repositories, and mutation services. Unsupported/future roles can no longer inherit cross-institution access from a null institution ID. Existing institution isolation and officer read-only behaviour remain covered.
+- Baseline: 37 backend tests passed. E0: eight focused permission tests passed, then all 45 backend tests passed in 23.87 s. No frontend/runtime dependency or database schema changed in E0.
+- Incorporated the user's constraints into E3/E5/E6: corrected staged rows leave current held-work counts without changing historical reports; identity promotions resolve person/digest locks before enrolment locks; audit genesis works without an external seed step and new features supply separate test keys. E5/E6 can be scheduled as isolated tested slices if E3 is delayed.
+
 - Added Document 11 from the supplied feature notes: phased execution for resolution/diff, rule provenance/categories, overlap review, audit integrity, and consent/QR. Defined a short-deadline Release A and a later complete Release B, human tasks, proposed contracts, fixture checks, and a bounded first implementation prompt.
 - Adjusted unsafe/incomplete task-card assumptions: explicit role scoping before new users, staged-row correction targets, exact encrypted proposals and stale-batch checks, overlapping category dimensions, concurrency-safe overlap reconciliation, dedicated audit-head/key, and private consent request addressing with token-safe QR delivery.
 - Added an entirely unchecked extension checklist and cross-links. The user-supplied official/adoption assertions have no exact source links/dates and remain unverified. This update changes documentation only; no new application feature or test result is claimed.

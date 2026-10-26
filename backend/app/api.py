@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from . import services
 from .errors import DomainError
 from .models import Audit, Batch, BatchRow, Enrolment, History, Institution, Programme, User
+from .permissions import Permission, permitted, require_permission
 from .rules import MAX_BYTES, safe_csv
 from .schemas import (
     HEADERS,
@@ -64,12 +65,19 @@ def authenticated(request: Request, db: DB, authorization: Annotated[str | None,
     return user
 
 
-Actor = Annotated[User, Depends(authenticated)]
+SignedIn = Annotated[User, Depends(authenticated)]
+
+
+def core_user(user: SignedIn):
+    require_permission(user, Permission.CORE_READ)
+    return user
+
+
+Actor = Annotated[User, Depends(core_user)]
 
 
 def institution_user(user: Actor):
-    if user.role != "institution_admin":
-        raise DomainError("READ_ONLY", "This action requires an institution account", 403)
+    require_permission(user, Permission.INSTITUTION_WRITE)
     return user
 
 
@@ -109,7 +117,7 @@ def login(data: Login, request: Request, db: DB):
     recent.append(now)
     user = db.scalar(select(User).where(User.email == data.email.casefold()))
     valid = password_hash.verify(data.password.get_secret_value(), user.password_hash if user else DUMMY_HASH)
-    if not user or not valid or not user.active:
+    if not user or not valid or not permitted(user, Permission.SESSION):
         raise DomainError("LOGIN_FAILED", "Email or password is incorrect", 401)
     return {"token": issue_token(user.id, request.app.state.settings), "user": UserOut.model_validate(user)}
 
@@ -122,7 +130,7 @@ def me(user: Actor):
 @router.get("/institutions")
 def institutions(db: DB, user: Actor):
     statement = select(Institution)
-    if user.institution_id:
+    if user.role == "institution_admin":
         statement = statement.where(Institution.id == user.institution_id)
     return [{"id": i.id, "name": i.name, "reference": i.reference} for i in db.scalars(statement).all()]
 

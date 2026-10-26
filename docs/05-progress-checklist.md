@@ -14,7 +14,7 @@ sources:
 
 ## Current state
 
-Core application code is implemented and locally verified. Final results: **32 PostgreSQL backend tests, 6 frontend tests, and 1 real-browser journey passed**. Backend lint/format and frontend lint/format/typecheck/build passed. Windows scripts are supplied but not executed on Windows here. Hosted deployment and remote CI execution remain unverified.
+Core application code and the E0 explicit permission boundary are locally verified. The latest backend regression run passed **45 tests**, including eight new permission tests (the pre-E0 baseline passed 37). The earlier frontend evidence remains **6 tests and 1 real-browser journey passed**. Windows scripts are supplied but not executed on Windows here. Hosted deployment and remote CI execution remain unverified.
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 
@@ -132,9 +132,9 @@ No unchecked NEXT feature blocks a CORE-only release. Do not present an incomple
 
 ## Planned extension iteration — E0–E8
 
-The [new execution plan](11-feature-execution-plan.md) maps the supplied five task-card groups to dependency phases. These tasks are **not implemented or newly tested**. Existing local core evidence above is unchanged. The supplied policy/adoption claims still require dated primary sources.
+The [execution plan](11-feature-execution-plan.md) maps the supplied five task-card groups to dependency phases. E0's explicit permission boundary is implemented and checked. Later phases remain incomplete unless checked below. The supplied policy/adoption claims still require dated primary sources.
 
-- [ ] E0 / AI: Replace implicit no-institution global scope with explicit role permissions; exercise current routes and unknown-role denial.
+- [x] E0 / AI: Replace implicit no-institution global scope with explicit role permissions; exercise current routes and unknown-role denial. Evidence: eight route/scope tests passed; full backend suite **45 passed** in 23.87 s.
 - [ ] E0 / SHARED: Confirm synthetic scope, Release A cut, and human hosting/source-review queue.
 - [ ] E1 / AI: Immutable rule packs, actual-code coverage, historical batch references, deterministic help API/UI, and executable-version checks.
 - [ ] E1 / AI: Scoped base/supernumerary counts and independent NRI/OCI/foreign dimensions with overlapping-flag tests.
@@ -170,6 +170,7 @@ Implement test-only fault injection outside public API routes. Create fresh data
 
 | Check / feature | Command or scenario | Result + count / timing | Revision | Evidence location |
 |---|---|---|---|---|
+| E0 explicit permissions | Focused permission matrix, then `uv run --frozen pytest -q` | **8 focused passed**; **45 full-suite passed**, 23.87 s | E0 implementation | `backend/tests/test_extension_permissions.py`; future/unknown and invalid-scope principals denied on 18 protected route/method combinations, officer read-only preserved |
 | Backend | `uv run --frozen pytest -q` | **32 passed**, final run 17.25 s | Working tree before release commit | `backend/tests/` |
 | Backend style | `ruff check` and `ruff format --check` | Passed | Same | `backend/pyproject.toml` |
 | Frontend | lint, format, Vitest, TypeScript + Vite build | **6 tests passed**; all checks/build passed | Same | `frontend/src/*.test.*` |
