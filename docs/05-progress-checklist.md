@@ -14,7 +14,7 @@ sources:
 
 ## Current state
 
-Core application code and the E0 explicit permission boundary are locally verified. The latest backend regression run passed **45 tests**, including eight new permission tests (the pre-E0 baseline passed 37). The earlier frontend evidence remains **6 tests and 1 real-browser journey passed**. Windows scripts are supplied but not executed on Windows here. Hosted deployment and remote CI execution remain unverified.
+Core code, E0 permissions, and E1 rule help/category counts are locally verified. The latest backend regression run passed **50 tests**. Frontend lint/types/build and **6 tests** passed; the expanded real-browser core/rule-help/category journey passed (**1 test**, 4.3 s). Windows scripts are supplied but not executed on Windows here. Hosted deployment and remote CI execution remain unverified.
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 
@@ -132,12 +132,12 @@ No unchecked NEXT feature blocks a CORE-only release. Do not present an incomple
 
 ## Planned extension iteration — E0–E8
 
-The [execution plan](11-feature-execution-plan.md) maps the supplied five task-card groups to dependency phases. E0's explicit permission boundary is implemented and checked. Later phases remain incomplete unless checked below. The supplied policy/adoption claims still require dated primary sources.
+The [execution plan](11-feature-execution-plan.md) maps the supplied five task-card groups to dependency phases. E0/E1 are implemented and checked. Later phases remain incomplete unless checked below. The supplied policy/adoption claims still require dated primary sources.
 
 - [x] E0 / AI: Replace implicit no-institution global scope with explicit role permissions; exercise current routes and unknown-role denial. Evidence: eight route/scope tests passed; full backend suite **45 passed** in 23.87 s.
 - [ ] E0 / SHARED: Confirm synthetic scope, Release A cut, and human hosting/source-review queue.
-- [ ] E1 / AI: Immutable rule packs, actual-code coverage, historical batch references, deterministic help API/UI, and executable-version checks.
-- [ ] E1 / AI: Scoped base/supernumerary counts and independent NRI/OCI/foreign dimensions with overlapping-flag tests.
+- [x] E1 / AI: Retained rule packs, actual-code coverage, historical batch references, deterministic help API/UI, and executable-version checks. Evidence: source coverage, snapshot retention/tamper checks, and populated Alembic upgrade tests.
+- [x] E1 / AI: Scoped base/supernumerary counts and independent NRI/OCI/foreign dimensions with overlapping-flag tests. Evidence: mixed-category PostgreSQL test and browser expand/collapse view.
 - [ ] E2 / AI: Staged-row/enrolment resolution cases, unique open episodes, guarded transitions, safe event history, scoped API/UI.
 - [ ] E3 / AI: Encrypted exact correction proposals, masked field differences, versions, expiry, and intake preview.
 - [ ] E3 / AI: Atomic apply, idempotency, stale-batch protection, case closure checks, and rollback/concurrency tests.
@@ -170,6 +170,7 @@ Implement test-only fault injection outside public API routes. Create fresh data
 
 | Check / feature | Command or scenario | Result + count / timing | Revision | Evidence location |
 |---|---|---|---|---|
+| E1 rules/categories | Backend regression; frontend checks/build; expanded browser journey | **50 backend passed**, 27.62 s; **6 frontend passed**; **1 browser passed**, 4.3 s | E1 implementation | Rule/catalog/category tests; populated migration; `frontend/tests/core.spec.ts`. First browser attempt found an ambiguous assertion matching new helper text; exact-label assertion corrected and rerun passed. |
 | E0 explicit permissions | Focused permission matrix, then `uv run --frozen pytest -q` | **8 focused passed**; **45 full-suite passed**, 23.87 s | E0 implementation | `backend/tests/test_extension_permissions.py`; future/unknown and invalid-scope principals denied on 18 protected route/method combinations, officer read-only preserved |
 | Backend | `uv run --frozen pytest -q` | **32 passed**, final run 17.25 s | Working tree before release commit | `backend/tests/` |
 | Backend style | `ruff check` and `ruff format --check` | Passed | Same | `backend/pyproject.toml` |

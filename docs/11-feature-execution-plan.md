@@ -16,7 +16,7 @@ sources:
 
 # 11 — Feature extension execution plan
 
-Prepared on **26 October 2026**. This plan extends the existing application. It does not rebuild it. **E0's explicit permission boundary is now implemented and tested; the feature extensions remain planned.** See the checklist for current execution evidence.
+Prepared on **26 October 2026**. This plan extends the existing application. It does not rebuild it. **E0 permissions and E1 deterministic rule help/category counts are implemented and tested; later features remain planned.** See the checklist for current execution evidence.
 
 Recommended sequence: **explicit access rules → rule explanations and category counts → resolution desk → correction preview/apply → first release gate → overlap review → audit integrity → consent/QR → extended release gate**.
 

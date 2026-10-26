@@ -18,6 +18,8 @@ Proposed extension migrations, APIs, role permissions, locking, and additional a
 
 E0 implemented contract: `permissions.py` explicitly grants session/core-read/institution-write capabilities to supported roles. Institution scope is mandatory for an institution administrator; an officer has no institution binding and only core-read/session rights. Unknown/future roles and invalid role/scope combinations fail closed in both HTTP dependencies and shared repositories. An absent institution ID never grants cross-institution access. Student/verifier roles are not yet enabled.
 
+E1 implemented contract: `rule_packs` retains hashed JSON content, a validator version, and a stable pack ID. `upload_batches.rule_set_id` pins each batch; legacy batches receive `legacy-core-3fec502` without changing their reports. Authenticated core roles can read `/api/v1/rules` and `/api/v1/rules/{issue_code}` with an optional `rule_set_id`. Content/metadata mismatch fails safely; unsupported validator versions cannot commit. Hash checks detect inconsistent stored content, not official authority or an immutable database. The dashboard adds base/supernumerary and independent nationality-flag counts; none change basic intake rules.
+
 ## 1. Architecture baseline
 
 ```mermaid

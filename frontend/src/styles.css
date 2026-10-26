@@ -777,6 +777,26 @@ footer {
   margin-left: 6px;
   font-size: 9px;
 }
+.rule-link {
+  border: 0;
+  background: transparent;
+  color: #246d63;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font: inherit;
+  cursor: pointer;
+}
+.category-breakdown {
+  margin-bottom: 24px;
+}
+.category-breakdown summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.category-breakdown .stats {
+  margin: 18px 0;
+}
 .row-issue {
   font-size: 10px;
   line-height: 1.8;

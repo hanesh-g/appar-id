@@ -10,7 +10,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from . import services
+from . import rule_catalog, services
 from .errors import DomainError
 from .models import Audit, Batch, BatchRow, Enrolment, History, Institution, Programme, User
 from .permissions import Permission, permitted, require_permission
@@ -182,6 +182,7 @@ def batch_out(batch):
         "id": batch.id,
         "filename": batch.filename,
         "academic_year": batch.academic_year,
+        "rule_set_id": batch.rule_set_id,
         "status": batch.status,
         "summary": batch.summary,
         "result": batch.result,
@@ -384,3 +385,17 @@ def audit_events(db: DB, user: Actor, page: int = Query(1, ge=1)):
             for e in items
         ],
     }
+
+
+@router.get("/rules")
+def rules(db: DB, user: Actor, rule_set_id: str | None = Query(None, max_length=80)):
+    return rule_catalog.read_pack(db, rule_set_id)
+
+
+@router.get("/rules/{issue_code}")
+def rule(issue_code: str, db: DB, user: Actor, rule_set_id: str | None = Query(None, max_length=80)):
+    pack = rule_catalog.read_pack(db, rule_set_id)
+    entry = pack["rules"].get(issue_code)
+    if entry is None:
+        raise DomainError("RULE_NOT_FOUND", "Rule explanation not found", 404)
+    return {"rule_set_id": pack["rule_set_id"], **entry}

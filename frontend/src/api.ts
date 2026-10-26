@@ -90,6 +90,14 @@ export interface RecentBatch {
 }
 export interface Dashboard {
   active: number
+  categories: {
+    base_count: number
+    supernumerary_count: number
+    unclassified_count: number
+    nri_count: number
+    oci_count: number
+    foreign_national_count: number
+  }
   identity_counts: Record<string, number>
   excess: number
   programmes: Intake[]
@@ -117,6 +125,7 @@ export interface Batch {
   id: string
   filename: string
   academic_year: string
+  rule_set_id: string
   status: string
   result: Record<string, number> | null
   summary: {

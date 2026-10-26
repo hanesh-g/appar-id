@@ -118,6 +118,7 @@ class BatchOut(BaseModel):
     id: str
     filename: str
     academic_year: str
+    rule_set_id: str
     status: str
     summary: dict
     result: dict[str, int] | None

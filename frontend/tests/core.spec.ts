@@ -31,16 +31,26 @@ test('institution uploads, reviews, commits, corrects, and reads history', async
       })
       .first(),
   ).toBeVisible()
+  await page.getByRole('button', { name: 'Explain APAAR_MISSING', exact: true }).first().click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await expect(page.getByText('demo-core-v1', { exact: true })).toBeVisible()
+  await expect(page.getByText('Not reviewed as official policy', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Close dialog', exact: true }).click()
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Commit batch', exact: true }).click()
   await expect(page.getByRole('status')).toContainText('held')
   await page.getByRole('link', { name: 'Back to overview' }).click()
   await expect(
-    page.locator('.stat').filter({ hasText: 'Active admissions' }).locator('strong'),
+    page
+      .locator('.stat')
+      .filter({ has: page.getByText('Active admissions', { exact: true }) })
+      .locator('strong'),
   ).toHaveText('65')
   await expect(
     page.locator('.stat').filter({ hasText: 'Identity gaps' }).locator('strong'),
   ).toHaveText('5')
+  await page.getByText('Show category / supernumerary breakdown', { exact: true }).click()
+  await expect(page.getByText('Independent category flag', { exact: true }).first()).toBeVisible()
   await page.getByRole('navigation').getByRole('link', { name: 'Upload admissions' }).click()
   await page.getByLabel('Student CSV').setInputFiles(resolve('..', 'fixtures', 'corrections.csv'))
   await page.getByRole('button', { name: 'Validate and preview' }).click()

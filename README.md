@@ -12,6 +12,8 @@ Your required repository-local author and committer are `hanesh-g <haneshgourish
 
 Implemented core: institution-scoped login, programmes, CSV validation, mock identity checks, dry-run intake preview, transactional/idempotent commit, correction upload, enrolment status/history, dashboard, and safe audit history. Student-consent verification and an LLM assistant remain optional future features.
 
+Extension progress: explicit role capabilities, versioned deterministic rule explanations, and illustrative category counts are locally checked. Click an issue explanation in a batch to inspect its pinned rule version. After pulling schema changes, run `uv run --frozen alembic upgrade head` from `backend` before restarting the API; migrations preserve existing data. See the extension checklist for what remains.
+
 ## Read in this order
 
 | Document | Use it to answer |

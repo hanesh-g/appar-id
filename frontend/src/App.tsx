@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { lazy, Suspense, useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -20,8 +20,10 @@ import {
   RefreshCw,
   ShieldCheck,
   Users,
-  X,
 } from 'lucide-react'
+import Modal from './Dialog'
+import RuleHelp from './RuleHelp'
+import CategoryBreakdown from './CategoryBreakdown'
 import {
   api,
   download,
@@ -110,34 +112,6 @@ function Stat({
     </div>
   )
 }
-function Modal({
-  title,
-  close,
-  children,
-}: {
-  title: string
-  close: () => void
-  children: ReactNode
-}) {
-  const ref = useRef<HTMLDialogElement>(null)
-  useEffect(() => {
-    const el = ref.current
-    el?.showModal()
-    return () => el?.close()
-  }, [])
-  return (
-    <dialog ref={ref} onCancel={close}>
-      <div className="section-title">
-        <h2>{title}</h2>
-        <button className="icon-button" aria-label="Close dialog" onClick={close}>
-          <X size={20} />
-        </button>
-      </div>
-      {children}
-    </dialog>
-  )
-}
-
 function Login({ signedIn }: { signedIn: (u: User) => void }) {
   const [email, setEmail] = useState('collegea@example.test')
   const [password, setPassword] = useState('')
@@ -314,6 +288,7 @@ function DashboardPage({ user }: { user: User }) {
               tone={data.excess ? 'rose' : ''}
             />
           </div>
+          {data.categories && <CategoryBreakdown categories={data.categories} />}
           <div className="dashboard-grid">
             <section className="panel">
               <div className="section-title">
@@ -703,6 +678,7 @@ function BatchPage({ user }: { user: User }) {
                         {r.issues.length ? (
                           r.issues.map((issue, index) => (
                             <div className="row-issue" key={index}>
+                              <RuleHelp code={issue.code} ruleSetId={b.rule_set_id} />{' '}
                               <b>{issue.field}</b> · {issue.message}
                             </div>
                           ))

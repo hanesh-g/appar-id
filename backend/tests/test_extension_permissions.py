@@ -27,6 +27,8 @@ def route_requests(batch_id, programme_id, enrolment_id, content):
         ("GET", "/enrolments", {}),
         ("GET", f"/enrolments/{enrolment_id}", {}),
         ("GET", "/audit-events", {}),
+        ("GET", "/rules", {}),
+        ("GET", "/rules/DATE_INVALID", {}),
         (
             "POST",
             "/programmes",

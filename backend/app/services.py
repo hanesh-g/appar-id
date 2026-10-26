@@ -16,6 +16,7 @@ from .permissions import Permission, require_permission
 from .registry import validate_identity
 from .repositories import owned as owned
 from .repositories import query_scope as query_scope
+from .rule_catalog import ensure_current, require_executable
 from .rules import issue, parse_csv, validate_rows
 from .schemas import EnrolmentPatch
 from .security import Crypto
@@ -210,6 +211,7 @@ def upload(
         filename=filename[:200],
         file_hash=fingerprint,
         idempotency_key=key,
+        rule_set_id=ensure_current(db),
         summary=summarize(db, rows, programmes, user.institution_id),
     )
     db.add(batch)
@@ -265,6 +267,7 @@ def commit_batch(db: Session, user: User, batch_id: str, mode: str, crypto: Cryp
         return batch
     if batch.status != "DRY_RUN_READY":
         raise DomainError("BATCH_STATE", "Only a reviewed dry run can be committed", 409)
+    require_executable(db, batch.rule_set_id)
     stored = db.scalars(select(BatchRow).where(BatchRow.batch_id == batch.id).order_by(BatchRow.row_no)).all()
     programmes = db.scalars(
         select(Programme)
@@ -400,6 +403,14 @@ def dashboard(db: Session, user: User, institution_id: str | None = None, year: 
     ]
     return {
         "active": len(active_records),
+        "categories": {
+            "base_count": sum(e.flags.get("supernumerary") == "N" for e in active_records),
+            "supernumerary_count": sum(e.flags.get("supernumerary") == "Y" for e in active_records),
+            "unclassified_count": sum(e.flags.get("supernumerary") not in {"Y", "N"} for e in active_records),
+            "nri_count": sum(e.flags.get("nri") == "Y" for e in active_records),
+            "oci_count": sum(e.flags.get("oci") == "Y" for e in active_records),
+            "foreign_national_count": sum(e.flags.get("foreign_national") == "Y" for e in active_records),
+        },
         "identity_counts": dict(Counter(e.identity_status for e in active_records)),
         "excess": sum(i["excess"] for i in intake),
         "programmes": intake,

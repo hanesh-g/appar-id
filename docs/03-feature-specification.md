@@ -12,7 +12,7 @@ sources:
 
 # 03 — Feature specification
 
-F01–F10 now have local implementations and checks. F11 has local seed, health, fixtures, and startup support; its hosted release gate remains incomplete. The sections below define the intended behaviour, not blanket completion: consult the [progress checklist](05-progress-checklist.md) for executed evidence and limitations. NEXT and LATER are not implemented. Permission checks apply on the backend, including exports and guessed object IDs.
+F01–F10 now have local implementations and checks. F11 has local seed, health, fixtures, and startup support; its hosted release gate remains incomplete. E0 permissions and E1 deterministic rule help/category counts also have local evidence. F12/F13, an LLM assistant, and LATER features are not implemented. The sections below define intended behaviour, not blanket completion: consult the [progress checklist](05-progress-checklist.md). Permission checks apply on the backend, including exports and guessed object IDs.
 
 The [extension execution plan](11-feature-execution-plan.md) proposes additions to F09/F06 (resolution and correction preview), F14/F08 (provenance/help and illustrative categories), F13 (overlap review), F10 (audit integrity), and F12 (consent/QR). Those additions are planned, not delivered. Promote each contract here when its implementation starts; preserve the core acceptance rules below.
 
@@ -189,6 +189,8 @@ Correction exports containing student data are available only to the owning inst
 **Acceptance:** Non-overlapping transfer dates do not trigger an overlap. Overlapping dates trigger a review item, not automatic rejection. Repeated checks do not create repeated open items. Review resolution is audited.
 
 ## F14 — Source-linked rules/help assistant · NEXT
+
+E1 status: deterministic demo-rule help is implemented, with pinned batch versions, source-code citations, applicability, and explicit missing official/human review dates. Historical snapshots and unsupported-version refusal are tested. No external LLM or reviewed official policy corpus is enabled.
 
 **User value:** Staff can understand validation messages and find the right correction instructions.
 

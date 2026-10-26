@@ -61,6 +61,15 @@ class Person(Base):
     suffix: Mapped[str] = mapped_column(String(4))
 
 
+class RulePack(Base):
+    __tablename__ = "rule_packs"
+    id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    validator_version: Mapped[str] = mapped_column(String(40))
+    content: Mapped[dict] = mapped_column(JSON)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
 class Batch(Base):
     __tablename__ = "upload_batches"
     __table_args__ = (UniqueConstraint("institution_id", "idempotency_key"),)
@@ -70,6 +79,7 @@ class Batch(Base):
     filename: Mapped[str] = mapped_column(String(200))
     file_hash: Mapped[str] = mapped_column(String(64))
     idempotency_key: Mapped[str] = mapped_column(String(100))
+    rule_set_id: Mapped[str] = mapped_column(ForeignKey("rule_packs.id"))
     status: Mapped[str] = mapped_column(String(30), default="DRY_RUN_READY")
     summary: Mapped[dict] = mapped_column(JSON, default=dict)
     result: Mapped[dict | None] = mapped_column(JSON)

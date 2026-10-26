@@ -2,6 +2,9 @@
 
 ## 2026-10-26
 
+- Implemented E1: retained rule snapshots with pinned batch versions, legacy backfill, authenticated deterministic help, unknown/unsupported/inconsistent snapshot refusals, and a scoped illustrative category breakdown. No official policy review or LLM is claimed.
+- E1 validation: 50 backend tests passed in 27.62 s, including a populated upgrade preserving old reports. Frontend lint/types/tests/build passed (six tests); expanded browser journey passed in 4.3 s after replacing an ambiguous count selector introduced by category helper text. Used a separate synthetic smoke database; no development database reset.
+
 - Began execution with E0. Added explicit capability checks to core HTTP dependencies, sign-in, scoped repositories, and mutation services. Unsupported/future roles can no longer inherit cross-institution access from a null institution ID. Existing institution isolation and officer read-only behaviour remain covered.
 - Baseline: 37 backend tests passed. E0: eight focused permission tests passed, then all 45 backend tests passed in 23.87 s. No frontend/runtime dependency or database schema changed in E0.
 - Incorporated the user's constraints into E3/E5/E6: corrected staged rows leave current held-work counts without changing historical reports; identity promotions resolve person/digest locks before enrolment locks; audit genesis works without an external seed step and new features supply separate test keys. E5/E6 can be scheduled as isolated tested slices if E3 is delayed.
