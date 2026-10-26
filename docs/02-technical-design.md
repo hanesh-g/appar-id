@@ -4,7 +4,7 @@ title: Technical design
 description: Define the Python stack, data, API, deployment, and security contracts.
 tags: [apaar, python, fastapi, architecture, deployment]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T14:35:17Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T16:12:00Z"}
 sources:
   - resource: "User-uploaded APAAR ID Student Data Platform (SIH26263) Phase-by-Phase Build Guide.pdf, 18 pages"
   - resource: 01-problem-and-scope.md
@@ -14,9 +14,9 @@ sources:
 
 Implementation update: core code now exists. Native Windows with PowerShell and PostgreSQL is the local default; Docker Compose is optional. Node 22.12+ or Node 24 is supported. The first frontend uses custom CSS/native controls rather than Tailwind/shadcn. Tests use the current Starlette-compatible HTTPX2 client. See [Windows setup](08-windows-setup.md), [engineering controls](09-backend-engineering.md), and [execution evidence](05-progress-checklist.md). The tables below retain the original design where noted; actual dependency versions are pinned in lockfiles.
 
-Remaining extension contracts are in [Document 11](11-feature-execution-plan.md). The implemented additions are summarised below. Audit/grant keys and later roles are not current runtime requirements; do not assume all proposed task cards already exist.
+Remaining extension contracts are in [Document 11](11-feature-execution-plan.md). The implemented additions are summarised below. Audit/grant keys are required only when their optional features are enabled. Hosting gates remain open.
 
-E0 implemented contract: `permissions.py` explicitly grants capabilities to supported roles. Institution scope is mandatory for an institution administrator; an officer has no institution binding and cannot edit core records. E5/E6 add separate interval-review/integrity-check capabilities without institution-write rights. Unknown/future roles and invalid role/scope combinations fail closed in HTTP dependencies and repositories. An absent institution ID never grants cross-institution access. Student/verifier roles are not yet enabled.
+E0 implemented contract: `permissions.py` explicitly grants capabilities to supported roles. Institution scope is mandatory for an institution administrator; an officer has no institution binding and cannot edit core records. E5/E6 add separate interval-review/integrity-check capabilities without institution-write rights. Unknown/future roles and invalid role/scope combinations fail closed in HTTP dependencies and repositories. An absent institution ID never grants cross-institution access. E7 adds separately scoped student/verifier roles behind `CONSENT_ENABLED`; they never inherit core read access.
 
 E1 implemented contract: `rule_packs` retains hashed JSON content, a validator version, and a stable pack ID. `upload_batches.rule_set_id` pins each batch; legacy batches receive `legacy-core-3fec502` without changing their reports. Authenticated core roles can read `/api/v1/rules` and `/api/v1/rules/{issue_code}` with an optional `rule_set_id`. Content/metadata mismatch fails safely; unsupported validator versions cannot commit. Hash checks detect inconsistent stored content, not official authority or an immutable database. The dashboard adds base/supernumerary and independent nationality-flag counts; none change basic intake rules.
 
@@ -31,6 +31,10 @@ Identity locks: operations lock programmes, then sorted private digest advisory 
 E5 implemented contract: `overlap_reviews` uniquely identifies an ordered verified-enrolment pair. Inclusive recorded dates include historical and scheduled intersections; a sequential transfer has no overlap when the first end precedes the second start. Mutations reconcile affected people under their shared identity locks. Versioned `overlap_review_events` retain evidence/decisions; changed dates close or reopen a review. Officer-only `/api/v1/overlap-reviews` supports paginated read/detail and bounded decision PATCH. Only demo policy/reason codes are accepted. Institution responses expose a boolean own-record notice, never foreign institution/pair/person details; their audit output also omits the review ID. The explicit bounded `app.reconcile_intervals --demo` command backfills existing records without resetting data.
 
 E6 implemented contract: optional `AUDIT_CHAIN_ENABLED=true` requires a separate retained base64 32-byte `AUDIT_HMAC_KEY` and `AUDIT_KEY_ID`. Audit events queue within the current transaction; a before-commit hook flushes business writes before locking the singleton `audit_chain_head`. The migration inserts genesis; metadata-only schemas bootstrap idempotently. A missing/reset head cannot restart an existing chain. Committed sequence numbers are allocated under the head lock, not a serial sequence. A signed legacy snapshot is captured at first activation; it does not prove original legacy authenticity. Officer-only `GET /api/v1/audit-events/verify` uses an independent repeatable-read snapshot, checks every HMAC/link/sequence and the head, and detects legacy edits or retained-head tail deletion. Once activated, mutations cannot silently downgrade to unsigned audit writing. Whole-database rollback and application/key compromise remain outside this protection.
+
+E7 implemented contract: `CONSENT_ENABLED=true` requires an independent retained `GRANT_TOKEN_KEY` and `GRANT_KEY_ID`. The demo seed adds two adult students and two approved verifiers while preserving existing passwords/bindings. Random 256-bit request handles expire after 15 minutes and are consumed once. Bounded, idempotent requests expire after 24 hours; invalid handles receive an indistinguishable acknowledgement/submission shape without a student inbox entry. A per-verifier database advisory lock serialises a 10-request/minute bound.
+
+Students explicitly approve a requested whitelist subset and 1–60 minute expiry, checking both the request and displayed record version. Grants bind person, enrolment/version, individual verifier/organisation, purpose, fields, expiry, key ID, and revocation. Only digests are stored; approval/reissue reveals the token once. Reissue invalidates the prior grant and requires the latest unchanged grant/request. Resolve locks programme/person/enrolment before request/grant rows, validates live state, and commits access/audit before disclosure. Failure records no successful access. Student/verifier screens use no browser storage; QR fragments are captured once, cleared before routing, and POSTed after login. `qrcode.react` is pinned to 4.2.0. Sensitive API responses are no-store/no-referrer; Vercel header configuration and a frontend referrer meta tag are supplied, with hosted behaviour still unverified.
 
 ## 1. Architecture baseline
 
@@ -133,7 +137,7 @@ Unresolved identities remain attached to enrolments. Do not populate `persons` m
 
 An identity correction must not silently merge two existing people. Hold an identity-reassignment conflict for review and preserve the current record. Encrypt staged rows; use the keyed digest only for exact lookup. Names or dates of birth alone are not identity proof.
 
-NEXT adds `verification_requests`, `consent_grants`, `verification_tokens`, and review records. Define their constraints when starting that extension.
+E5 adds interval review/event tables. E7 adds `verifier_organisations`, `record_request_handles`, `verification_requests`, `consent_grants`, and `verification_accesses`. Nullable `users.person_id` and `users.verifier_org_id`, named foreign keys, a unique student/person binding, and an explicit role/scope check provide the student/verifier profile bindings without redundant one-to-one profile tables. No raw token table exists.
 
 ## 5. API contract
 
@@ -159,7 +163,7 @@ Errors use `{ "code": "...", "message": "...", "details": [] }`. Include a reque
 | `GET /dashboard` | Role-scoped aggregates and definitions. |
 | `GET /audit-events` | Institution-safe own activity or officer access. |
 
-NEXT consent routes: `POST /verification-requests`, `GET /me/verification-requests`, approve/revoke grant operations, and `GET /verification/{opaque_token}`. Add them only with own-record student scoping, verifier scope, expiry, revocation, and negative tests.
+E7 consent routes use `POST /verification-requests`, own `/me/enrolments`, request inbox/submitted lists, approve/deny, grant list/revoke/reissue, and access history. Resolve is **`POST /verification/resolve`**, with the opaque token in a secret-typed body; no token-bearing GET route exists. Own-person scoping and bound-verifier live checks are enforced server-side. See Document 11 for the full contract.
 
 ## 6. CSV and validation contract
 
@@ -201,7 +205,7 @@ Use expected-version checks for direct edits. A stale edit returns `409`; the UI
 
 ## 8. Security baseline
 
-- Two core roles: `institution_admin` and `officer`. Add student/verifier only with F12.
+- Core roles: `institution_admin` and `officer`. Optional E7 roles: person-bound `student` and approved-organisation-bound `verifier`, with separate capabilities and core-route denial.
 - Issue short-lived access tokens. Keep tokens in browser memory for core; page refresh requires login. Do not store persistent tokens in local storage. Use authenticated API requests, including CSV downloads.
 - Validate signature, expiry, fixed algorithm, issuer, and audience. Recheck user active status. Use generic login errors and rate limits. Per-process limits are a single-instance demo control, not a distributed defence.
 - Apply ownership checks to detail, list, edit, export, and batch actions. Return `404` for foreign institution objects.
@@ -209,7 +213,7 @@ Use expected-version checks for direct edits. A stale edit returns `409`; the UI
 - Encrypt identity fields and staged raw rows. Generate encryption, HMAC, and signing secrets outside source control; preserve keys across redeploys. Changed encryption keys without a migration make old data unreadable.
 - Log codes and internal IDs, not names, DOB, tokens, uploaded rows, or unmasked APAAR IDs.
 - Use HTTPS and exact CORS origins. CORS is not authorization.
-- The core audit log is accountable history, not a tamper-proof ledger. Hash chaining and external anchoring are later hardening.
+- Core audit history has optional E6 HMAC integrity checks. It is not tamper-proof; external anchoring is unimplemented.
 - Publish only synthetic demo data. Production retention, deletion, legal, and threat reviews remain separate work.
 
 ## 9. Runtime configuration

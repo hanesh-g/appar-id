@@ -27,6 +27,7 @@ def extension_test_keys(monkeypatch):
     for name in ("AUDIT_HMAC_KEY", "GRANT_TOKEN_KEY"):
         monkeypatch.setenv(name, base64.b64encode(secrets.token_bytes(32)).decode())
     monkeypatch.setenv("AUDIT_CHAIN_ENABLED", "true")
+    monkeypatch.setenv("CONSENT_ENABLED", "false")
 
 
 @pytest.fixture()

@@ -13,7 +13,17 @@ from sqlalchemy.orm import Session
 
 from . import rule_catalog, services
 from .errors import DomainError
-from .models import Audit, Batch, BatchRow, Enrolment, History, Institution, Programme, User
+from .models import (
+    Audit,
+    Batch,
+    BatchRow,
+    Enrolment,
+    History,
+    Institution,
+    Programme,
+    User,
+    VerifierOrganisation,
+)
 from .permissions import Permission, permitted, require_permission
 from .rules import MAX_BYTES, safe_csv
 from .schemas import (
@@ -45,6 +55,17 @@ def session(request: Request):
 DB = Annotated[Session, Depends(session)]
 
 
+def principal_available(db, user, settings):
+    if not permitted(user, Permission.SESSION):
+        return False
+    if user.role in {"student", "verifier"} and not settings.consent_enabled:
+        return False
+    if user.role == "verifier":
+        org = db.get(VerifierOrganisation, user.verifier_org_id)
+        return bool(org and org.active and org.approved)
+    return True
+
+
 def authenticated(request: Request, db: DB, authorization: Annotated[str | None, Header()] = None):
     if not authorization or not authorization.startswith("Bearer "):
         raise DomainError("UNAUTHENTICATED", "Sign in to continue", 401)
@@ -62,7 +83,7 @@ def authenticated(request: Request, db: DB, authorization: Annotated[str | None,
     except (jwt.PyJWTError, ValueError, KeyError, TypeError):
         raise DomainError("UNAUTHENTICATED", "Your session expired. Sign in again", 401) from None
     user = db.get(User, user_id)
-    if not user or not user.active:
+    if not user or not principal_available(db, user, settings):
         raise DomainError("UNAUTHENTICATED", "Sign in to continue", 401)
     return user
 
@@ -102,6 +123,7 @@ def health(request: Request):
         "database": "ok",
         "registry": "simulated",
         "audit_chain_enabled": request.app.state.settings.audit_chain_enabled,
+        "consent_enabled": request.app.state.settings.consent_enabled,
     }
 
 
@@ -124,13 +146,14 @@ def login(data: Login, request: Request, db: DB):
     recent.append(now)
     user = db.scalar(select(User).where(User.email == data.email.casefold()))
     valid = password_hash.verify(data.password.get_secret_value(), user.password_hash if user else DUMMY_HASH)
-    if not user or not valid or not permitted(user, Permission.SESSION):
+    if not user or not valid or not principal_available(db, user, request.app.state.settings):
         raise DomainError("LOGIN_FAILED", "Email or password is incorrect", 401)
     return {"token": issue_token(user.id, request.app.state.settings), "user": UserOut.model_validate(user)}
 
 
 @router.get("/auth/me", response_model=UserOut)
-def me(user: Actor):
+def me(user: SignedIn):
+    require_permission(user, Permission.SESSION)
     return user
 
 

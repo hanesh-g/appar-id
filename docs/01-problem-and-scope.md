@@ -4,7 +4,7 @@ title: Problem and scope
 description: Define users, product value, demo boundaries, and honest admission counts.
 tags: [apaar, scope, product, demo]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T16:12:00Z"}
 sources:
   - resource: "User-uploaded APAAR ID Student Data Platform (SIH26263) Phase-by-Phase Build Guide.pdf, 18 pages"
   - resource: "User requirements in this conversation: Python backend, two-day demo, Vercel and Render"
@@ -50,8 +50,8 @@ One person can have more than one enrolment over time. An overlapping enrolment 
 |---|---|---|
 | Institution administrator | Submit admissions, fix errors, inspect own records. | CORE; seed two institutions to test isolation. |
 | AICTE-style officer | Compare intake and data quality; inspect permitted issues. | CORE; clearly a demo officer role. |
-| Student | Understand and control record verification. | NEXT; own-record view and consent requests together. |
-| Authorised verifier | Receive a narrowly permitted statement about a record. | NEXT; requires consent/grant enforcement. |
+| Student | Understand and control record verification. | Optional E7 delivered locally; person-bound own records and consent. |
+| Authorised verifier | Receive a narrowly permitted statement about a record. | Optional E7 delivered locally; approved recipient and live grants only. |
 | Policy analyst | Use aggregate trends without unnecessary personal details. | LATER separate role; core officer charts use limited aggregates. |
 | System administrator/auditor | Manage access and examine changes. | Seeded accounts and scoped officer history in CORE; separate consoles LATER. |
 
@@ -97,7 +97,7 @@ Actual AICTE rules may treat quotas, supernumerary seats, and admission categori
 
 CORE: F01–F11 in the feature specification.
 
-NEXT: F12 consent-based verification, F13 overlap review, F14 a rules-help assistant.
+Optional local extensions now include F12 consent-based verification, F13 synthetic overlap review, and deterministic rule help/category views. An LLM rules-help runtime remains unimplemented. Official policy review and hosted release remain separate gates.
 
 LATER: F15 real registry/large-scale ingestion and F16 production governance. No real registry connection, public certificate claims, full college ERP, payment system, trained fraud model, blockchain, or automated regulatory decisions in the core.
 

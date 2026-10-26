@@ -177,6 +177,9 @@ def create_app(settings: Settings | None = None):
     app.include_router(resolution_router)
     app.include_router(correction_router)
     app.include_router(overlap_router)
+    from .verification_api import router as verification_router
+
+    app.include_router(verification_router)
     return app
 
 

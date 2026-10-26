@@ -4,7 +4,7 @@ title: Feature specification
 description: Specify each core and optional feature with rules, failures, and acceptance criteria.
 tags: [apaar, features, acceptance, permissions]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T14:35:17Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T16:12:00Z"}
 sources:
   - resource: 01-problem-and-scope.md
   - resource: 02-technical-design.md
@@ -12,9 +12,9 @@ sources:
 
 # 03 — Feature specification
 
-F01–F10 now have local implementations and checks. F11's hosted release gate remains incomplete. E0–E3 add the correction workspace, E5 adds synthetic interval review, and E6 adds optional audit integrity. F12, an LLM assistant, and LATER features are not implemented. Consult the [progress checklist](05-progress-checklist.md) for actual evidence. Permission checks apply on the backend, including exports and guessed object IDs.
+F01–F10 now have local implementations and checks. F11's hosted release gate remains incomplete. E0–E3 add the correction workspace, E5 adds synthetic interval review, and E6 adds optional audit integrity. F12/E7 is implemented behind explicit enablement; an LLM assistant and LATER features are not implemented. Consult the [progress checklist](05-progress-checklist.md) for actual evidence. Permission checks apply on the backend, including exports and guessed object IDs.
 
-The [extension execution plan](11-feature-execution-plan.md) proposes additions to F09/F06 (resolution and correction preview), F14/F08 (provenance/help and illustrative categories), F13 (overlap review), F10 (audit integrity), and F12 (consent/QR). Those additions are planned, not delivered. Promote each contract here when its implementation starts; preserve the core acceptance rules below.
+The [extension execution plan](11-feature-execution-plan.md) proposes additions to F09/F06 (resolution and correction preview), F14/F08 (provenance/help and illustrative categories), F13 (overlap review), F10 (audit integrity), and F12 (consent/QR). E0–E3 and E5–E7 are delivered locally; hosted E4/E8 gates remain open. Preserve the core acceptance rules below.
 
 ## F01 — Sign-in and institution isolation · CORE
 
@@ -172,15 +172,15 @@ E6 hardening: optional keyed HMAC chaining, a transactional singleton head, expl
 
 **User value:** A student can permit a verifier to check one record without sharing the full admission database.
 
-**Flow:** Verifier signs in and requests a specified record for a stated purpose → the linked student sees the request → approves a field whitelist and expiry → verifier opens the permitted response or QR link → student can revoke access.
+**Flow:** Student creates a 15-minute single-use request code → an approved verifier signs in and submits the code with a bounded purpose/field list → the linked student reviews recipient and own record → explicitly selects fields and expiry → saves the once-revealed QR/link → the named verifier signs in and resolves only approved fields → the student can revoke access and inspect access history.
 
-**Rules:** Add student and verifier roles with separately tested scope. Grant binds the student, record, verifier organisation, purpose, fields, and expiry. Use high-entropy opaque tokens stored as digests. Check current grant, signed-in verifier, expiry, revocation, and record scope on every request. QR encodes a link, not student data. Do not put the token or personal data in analytics or third-party scripts. Redact token-bearing paths in logs. Do not claim an official certificate.
+**Rules:** E7 implements student and verifier roles with separately tested scope. Grant binds the student, record, verifier organisation, purpose, fields, and expiry. Use high-entropy opaque tokens stored as digests. Check current grant, signed-in verifier, expiry, revocation, and record scope on every request. QR encodes a link, not student data. Do not put the token or personal data in analytics or third-party scripts. Use a fragment-only frontend link and POST the token in the resolve body; no token-bearing GET path/query exists. Do not claim an official certificate.
 
 **Failures:** Guessed token, wrong verifier, denied request, expired/revoked consent, inaccessible record, changed enrolment. Deny access with a generic response that does not reveal student existence.
 
 **Acceptance:** Only the approved fields appear. Revocation and expiry deny the very next request. Another verifier cannot reuse the link. Student A cannot approve access to B's record. Browser/shared caches cannot retain the verification response.
 
-**Cut line:** No student/verifier screens or public verification endpoint until the full permission path and negative tests pass.
+**Implemented limits:** Adult synthetic profiles only; no self-linking, guardian flow, official credential, or public unauthenticated disclosure. Requests expire after 24 hours; grants after 1–60 minutes and no later than the request. Approval checks the record version the student saw. Lost-link replacement revokes the old grant, keeps the fields/purpose, and lasts at most 15 minutes; changed records require renewed consent. Revocation cannot retract previously delivered information. The feature defaults off until the additive configuration/migration/seed steps are run. See the [operator walkthrough](12-demo-walkthrough.md).
 
 ## F13 — Possible overlapping-enrolment review · NEXT
 

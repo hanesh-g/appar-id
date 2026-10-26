@@ -1206,3 +1206,52 @@ dialog::backdrop {
     animation: none;
   }
 }
+.consent-workspace {
+  min-height: 100vh;
+  background: var(--page-bg, #f4f6f3);
+}
+.consent-workspace main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+.consent-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 32px;
+  background: #153b3c;
+  color: white;
+}
+.consent-bar span {
+  margin-left: auto;
+}
+.consent-card {
+  padding: 24px;
+  margin: 18px 0;
+}
+.consent-card h2,
+.consent-card h3 {
+  margin-top: 0;
+}
+.consent-card fieldset {
+  border: 1px solid #d5ded9;
+  border-radius: 8px;
+  padding: 16px;
+}
+.consent-card label {
+  display: block;
+  margin: 12px 0;
+}
+.consent-card label.consent-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.consent-option input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+}
+.consent-card dd {
+  margin: 0 0 12px;
+}

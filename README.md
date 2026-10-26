@@ -10,15 +10,15 @@ Follow the [native Windows setup](docs/08-windows-setup.md). It covers tools, yo
 
 Your required repository-local author and committer are `hanesh-g <haneshgourishetti@gmail.com>`. The initializer and [Git identity helper](scripts/Set-GitIdentity.ps1) set both identity fields. GitHub account attribution also requires the email to be verified on GitHub.
 
-Implemented core: institution-scoped login, programmes, CSV validation, mock identity checks, dry-run intake preview, transactional/idempotent commit, correction upload, enrolment status/history, dashboard, and safe audit history. Student-consent verification and an LLM assistant remain optional future features.
+Implemented core: institution-scoped login, programmes, CSV validation, mock identity checks, dry-run intake preview, transactional/idempotent commit, correction upload, enrolment status/history, dashboard, and safe audit history. Optional student-consent verification is implemented. An LLM assistant remains future work.
 
-Extension progress: E0–E3, E5, and E6 are locally checked: explicit permissions, rule explanations, categories, reviewed inline correction, officer interval review, and optional audit integrity. From a batch issue, choose **Open case → Review a correction → Preview correction → Apply correction**. Repaired rows leave held work while the original report remains available. Officers can review date intersections; institutions see only a generic own-record notice. Student consent/QR is not delivered yet.
+Extension progress: E0–E3 and E5–E7 are locally checked: explicit permissions, rule explanations, categories, reviewed inline correction, officer interval review, optional audit integrity, and student-approved verification/QR. From a batch issue, choose **Open case → Review a correction → Preview correction → Apply correction**. Repaired rows leave held work while the original report remains available. Officers can review date intersections; institutions see only a generic own-record notice. Students can approve selected fields for a named verifier, share an expiring QR/link, replace a lost link, revoke access, and inspect access history. The [full demo walkthrough](docs/12-demo-walkthrough.md) covers all roles and the Windows upgrade commands.
 
 After pulling schema changes, run `uv run --frozen alembic upgrade head` from `backend` before restarting the API; migrations preserve existing data. Older uncommitted previews need a new upload. See the extension checklist for what remains.
 
 For existing synthetic records, initialise the interval queue once with `uv run --frozen python -m app.reconcile_intervals --demo` from `backend`. This explicit backfill supports up to 500 people, retains review history, and does not run automatically on startup.
 
-To enable audit integrity locally, run `uv run --frozen python ../scripts/configure_extensions.py --enable-audit` from `backend`, migrate, and restart. Keep the generated audit key. The officer's **Activity history → Verify audit chain** checks retained events and the legacy snapshot captured at activation. It does not establish original legacy authenticity or protect against restoring the entire database to an older snapshot.
+To enable audit integrity and consent locally, run `uv run --frozen python ../scripts/configure_extensions.py --enable-audit --enable-consent` from `backend`, migrate, seed the demo accounts, and restart. Keep both generated extension keys. The officer's **Activity history → Verify audit chain** checks retained events and the legacy snapshot captured at activation. It does not establish original legacy authenticity or protect against restoring the entire database to an older snapshot.
 
 ## Read in this order
 
@@ -34,6 +34,7 @@ To enable audit integrity locally, run `uv run --frozen python ../scripts/config
 | [Native Windows setup](docs/08-windows-setup.md) | How do I run this on Windows without Ubuntu? |
 | [Backend engineering and deployment](docs/09-backend-engineering.md) | Which engineering controls exist, and what remains before hosting or real-data use? |
 | [APAAR ecosystem and differentiation research](docs/10-apaar-platform-research.md) | What do public peer projects already offer, what should distinguish our workflow, and which official UI/adoption questions remain unverified? |
+| [Full demo walkthrough](docs/12-demo-walkthrough.md) | How do I update Windows and demonstrate the correction, officer, student, and verifier workflows? |
 | [Feature extension execution plan](docs/11-feature-execution-plan.md) | In which order should we build resolution/diff, rule help, categories, overlap review, audit integrity, and consent/QR, with which release gates? |
 
 The `docs/` directory is an [OKF v0.2 knowledge bundle](docs/index.md). Its concept files contain YAML metadata and links for people and AI assistants. It needs no running OKF service.

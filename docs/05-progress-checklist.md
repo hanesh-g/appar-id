@@ -4,7 +4,7 @@ title: Progress checklist
 description: Track implementation gates and executed evidence without invented completion.
 tags: [apaar, progress, testing, release]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T14:35:17Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T16:12:00Z"}
 sources:
   - resource: 03-feature-specification.md
   - resource: 04-implementation-phases.md
@@ -14,7 +14,7 @@ sources:
 
 ## Current state
 
-Core code, the correction workspace, interval review, and optional audit integrity are locally verified. Latest backend regression: **90 passed**, 52.57 s. Frontend checks/build passed. Separate correction, overlap, and audit browser journeys have passing evidence below. Windows execution, hosted deployment, and remote CI remain unverified. E7 student consent/QR is not delivered yet.
+Core, the correction workspace, interval review, audit integrity, and student-approved verification/QR are locally verified. Latest backend regression: **112 passed**, 93.54 s. Frontend: **eight tests passed**, lint/format/types/build passed. **Five browser journeys** passed across the recorded runs. Populated migration and retained-key restart passed. Windows execution of the new commands, hosted deployment, and remote CI remain unverified. Follow the [complete demo walkthrough](12-demo-walkthrough.md).
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 
@@ -29,7 +29,7 @@ Use `[x]` only with current evidence. Use an evidence path, commit, test result,
 | P4 — Safe commit and correction | Local checks passed | Upsert, repeat/concurrent commit, rollback, stale conflict, recovery retry. |
 | P5 — Reports and history | Local checks passed | 65/5/5 intake scenario, status/history, deduplicated candidates. |
 | P6 — Deployed release gate | Local portion passed; hosting pending | Browser passed; no hosted account access/validation yet. |
-| P7 — Selected extension iteration | E0–E3 local passed; later work pending | Rule help/categories, resolution cases, exact correction apply; see E0–E8 checklist. |
+| P7 — Selected extension iteration | E0–E3 and E5–E7 local passed; hosting/human gates pending | Rule help/categories, resolution/correction, overlap review, audit integrity, consent/QR; see E0–E8 checklist. |
 
 ## P0 — Inputs and human decisions
 
@@ -124,7 +124,7 @@ Use `[x]` only with current evidence. Use an evidence path, commit, test result,
 
 ## NEXT gates — select explicitly
 
-- [ ] F12: Student/verifier scopes, approved fields, purpose, expiry, revocation, token redaction, and wrong-user denial all pass before a QR endpoint is exposed.
+- [x] F12 / AI local: Student/verifier scopes, approved fields, purpose, expiry, revoke/reissue, record-version checks, token-safe logs/QR, and wrong-user denial passed. Evidence: 20 consent integration tests, eight frontend tests, real-browser approve/resolve/revoke. Real-data identity linking and guardian/policy review remain separate human gates.
 - [ ] F13: Overlap rules have human-confirmed assumptions; historical intervals and valid transfers are tested; review is not automatic fraud classification.
 - [ ] F14: Approved sources/citations, no personal data, no write access, prompt-injection checks, timeouts, and model-off fallback pass.
 
@@ -132,7 +132,7 @@ No unchecked NEXT feature blocks a CORE-only release. Do not present an incomple
 
 ## Planned extension iteration — E0–E8
 
-The [execution plan](11-feature-execution-plan.md) maps the supplied five task-card groups to dependency phases. E0–E3 are implemented and checked locally. Later phases remain incomplete unless checked below. The supplied policy/adoption claims still require dated primary sources.
+The [execution plan](11-feature-execution-plan.md) maps the supplied five task-card groups to dependency phases. E0–E3 and E5–E7 are implemented and checked locally. Hosted/shared gates remain incomplete unless checked below. The supplied policy/adoption claims still require dated primary sources.
 
 - [x] E0 / AI: Replace implicit no-institution global scope with explicit role permissions; exercise current routes and unknown-role denial. Evidence: eight route/scope tests passed; full backend suite **45 passed** in 23.87 s.
 - [ ] E0 / SHARED: Confirm synthetic scope, Release A cut, and human hosting/source-review queue.
@@ -144,10 +144,11 @@ The [execution plan](11-feature-execution-plan.md) maps the supplied five task-c
 - [ ] E4 / SHARED: Release A local regression/browser/migration checks passed; hosted validation, hosted restart, and human rehearsal remain pending.
 - [x] E5 / AI: Verified-person interval reconciliation, concurrent detection, review lifecycle, limited officer writes, and privacy-safe institution notices. Evidence: eight overlap/backfill tests passed; officer/institution browser flow passed in 4.6 s. Official policy review is not claimed.
 - [x] E6 / AI: Separate audit key, dedicated genesis/bootstrap head, honest activation-time legacy attestation, repeatable-read verifier, and tamper/concurrency/rollback tests. Evidence: 24 focused checks passed; full suite 90 passed; officer browser verification passed in 4.0 s. Feature keys remain optional until enabled and must persist afterward.
-- [ ] E7a / AI: Student/verifier profiles and explicit route scope, adult synthetic accounts, private expiring request handles, and repeatable seed.
-- [ ] E7b / AI: Requests, field-limited grants, purpose/expiry/record binding, separate token key, denial/revoke/reissue, and access audit.
-- [ ] E7c / AI: Student/verifier browser flow, token-safe QR delivery, no-store responses, and full wrong-user/expired/revoked/stale-record tests.
-- [ ] E8 / SHARED: Release B upgrade/deployment/restart and full hosted demonstration pass; preserved keys and known limits documented.
+- [x] E7a / AI: Explicit person/verifier-organisation user bindings, core-route denial, two adult synthetic students/two verifiers, private one-use handles, and repeatable password-preserving seed. Evidence: actual-role route matrix, ownership/organisation checks, schema constraints, populated upgrade.
+- [x] E7b / AI: Idempotent/rate-bounded requests; field/purpose/expiry/recipient/record binding; distinct token key; deny/revoke/reissue; atomic access audit. Evidence: 20 consent tests, including stale displayed-version refusal, concurrency, expired handles, rate limits, wrong recipient, and audit-failure denial.
+- [x] E7c / AI: Student/verifier screens and pinned QR renderer; fragment capture/clear; no browser storage; no-store responses; own access history. Evidence: browser approval of Programme only, fragment removal before sign-in, recipient-only result, immediate revoke denial; token-free captured API URLs/logs. Hosted/proxy logs remain to be inspected on deployment.
+- [x] E8 / AI local preparation: Populated upgrade retained 66 enrolments; fresh separate release dataset; retained-key restart kept 72 enrolments, seven users, one grant, encrypted identities, and audit sequence/hash 23. Deployment headers/config and Windows/demo/recovery instructions prepared.
+- [ ] E8 / SHARED: Hosted upgrade, exact-origin/role/log checks, restart, and full demonstration pass; human hosting/rehearsal decisions.
 - [ ] HUMAN: Review applicable policy sources, correction ownership, student linking/verifier approval, and real-data requirements before any official claim or real-data pilot.
 
 ## Test fixtures and expected results
@@ -170,6 +171,7 @@ Implement test-only fault injection outside public API routes. Create fresh data
 
 | Check / feature | Command or scenario | Result + count / timing | Revision | Evidence location |
 |---|---|---|---|---|
+| E7 / final local regression | `uv run --frozen pytest -q`; frontend checks/build; all browser scenarios; populated migration; retained-key restart | **112 backend passed**, 93.54 s; **8 frontend passed**; **4 browser passed** together (12.7 s total including initial consent-selector failure), then corrected consent journey **1 passed**, 4.3 s; retained 72 enrolments / 7 users / 1 grant / audit watermark 23 on restart | E7 implementation | `backend/tests/test_verification.py` (20 scenarios), separate-key helper tests, `frontend/src/consent.test.ts`, `frontend/tests/verification.spec.ts`, Document 12. Initial consent selector matched both legitimate own-college records; selecting the intended college passed. Hosted flags/headers/logs and native Windows execution remain unverified. |
 | E6 audit integrity | Tamper/genesis/key/snapshot checks; full backend; officer browser | **24 focused passed**, 14.81 s; **90 full passed**, 52.57 s; **1 browser passed**, 4.0 s; frontend lint/types/build passed | E6 implementation | `test_audit_integrity.py`, key-helper tests, migration checks, `frontend/tests/audit.spec.ts`. Browser initially could not reach the stopped frontend process; restart and rerun passed. |
 | E5 interval review | Focused checks, full backend regression, and officer/institution browser flow | **8 focused passed**, 7.52 s; **76 full backend passed**, 48.40 s; **1 browser passed**, 4.6 s; frontend lint/types/build passed | E5 implementation | `test_overlap_reviews.py`, `frontend/tests/overlap.spec.ts`; historical/boundary/concurrent/privacy/backfill scenarios |
 | E2/E3 local Release A | Full backend; frontend checks/build; real-browser routing/repair; populated upgrade | **68 backend passed**, 34.55 s; **6 frontend passed**; **2 browser passed**, 7.6 s; retained **65 enrolments / 1 case** on upgrade | Correction workspace implementation | `test_resolution_cases.py`, `test_corrections.py`, shared regression; fresh isolated release database. Initial tests exposed snapshot overwrite and implicit selector-label ambiguity, both fixed before passing. |
@@ -203,8 +205,8 @@ Record passed, failed, skipped, and not-run outcomes separately. Never treat zer
 Do not fill this section until checks exist:
 
 - Delivered core features: F01–F10 locally; local parts of F11.
-- Optional features actually delivered: none.
+- Optional features delivered locally: deterministic rule explanations, illustrative category dimensions, resolution/inline correction, synthetic interval review, audit integrity, and adult student consent/QR. No LLM runtime or official registry integration.
 - Deployed services and verified revision: none; local running services only.
 - Checks passed / failed / not run: see execution evidence; a sandbox-denied attempt was diagnosed and rerun with required permissions.
-- Known limitations: simulated registry; 500-row/2-MiB limit; no consent/LLM integration; single-process login throttle; Windows and hosted runtime unverified.
-- Demo operator and recovery instructions: docs/08-windows-setup.md. No destructive reset helper is provided; use an explicitly disposable fresh database.
+- Known limitations: simulated registry; 500-row/2-MiB limit; no real identity-proofing/guardian flow or LLM integration; single-process login throttle; Windows and hosted runtime unverified.
+- Demo operator and recovery instructions: [Document 12](12-demo-walkthrough.md) and [Windows setup](08-windows-setup.md). No destructive reset helper is provided; use an explicitly disposable fresh database.

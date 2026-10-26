@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     audit_chain_enabled: bool = False
     audit_hmac_key: SecretStr | None = None
     audit_key_id: str = Field(default="audit-v1", pattern=r"^[A-Za-z0-9_.-]{1,40}$")
+    consent_enabled: bool = False
+    grant_token_key: SecretStr | None = None
+    grant_key_id: str = Field(default="grant-v1", pattern=r"^[A-Za-z0-9_.-]{1,40}$")
 
     @field_validator("registry_mode")
     @classmethod
@@ -35,7 +38,7 @@ class Settings(BaseSettings):
             raise ValueError("Only simulated registry mode is implemented")
         return value
 
-    @field_validator("pii_key", "hmac_key", "audit_hmac_key")
+    @field_validator("pii_key", "hmac_key", "audit_hmac_key", "grant_token_key")
     @classmethod
     def valid_key(cls, value: SecretStr | None) -> SecretStr | None:
         if value is None:
@@ -51,6 +54,15 @@ class Settings(BaseSettings):
     def audit_key_required(self):
         if self.audit_chain_enabled and self.audit_hmac_key is None:
             raise ValueError("Enabled audit integrity requires AUDIT_HMAC_KEY")
+        if self.consent_enabled and self.grant_token_key is None:
+            raise ValueError("Enabled consent requires GRANT_TOKEN_KEY")
+        keys = [
+            key.get_secret_value()
+            for key in (self.pii_key, self.hmac_key, self.audit_hmac_key, self.grant_token_key)
+            if key is not None
+        ]
+        if len(keys) != len(set(keys)):
+            raise ValueError("Encryption, identity lookup, audit, and grant keys must be distinct")
         return self
 
     @cached_property

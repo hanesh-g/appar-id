@@ -29,8 +29,11 @@ class Institution(Base):
 class User(Base):
     __tablename__ = "users"
     __table_args__ = (
-        CheckConstraint("role IN ('institution_admin','officer')"),
-        CheckConstraint("(role = 'institution_admin') = (institution_id IS NOT NULL)"),
+        CheckConstraint(
+            "(role = 'institution_admin' AND institution_id IS NOT NULL AND person_id IS NULL AND verifier_org_id IS NULL) OR (role = 'officer' AND institution_id IS NULL AND person_id IS NULL AND verifier_org_id IS NULL) OR (role = 'student' AND institution_id IS NULL AND person_id IS NOT NULL AND verifier_org_id IS NULL) OR (role = 'verifier' AND institution_id IS NULL AND person_id IS NULL AND verifier_org_id IS NOT NULL)",
+            name="user_role_scope",
+        ),
+        UniqueConstraint("person_id", name="user_student_person"),
     )
     id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
     email: Mapped[str] = mapped_column(String(200), unique=True)
@@ -38,6 +41,10 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(300))
     role: Mapped[str] = mapped_column(String(30))
     institution_id: Mapped[str | None] = mapped_column(ForeignKey("institutions.id"))
+    person_id: Mapped[str | None] = mapped_column(ForeignKey("persons.id", name="user_person_binding"))
+    verifier_org_id: Mapped[str | None] = mapped_column(
+        ForeignKey("verifier_organisations.id", name="user_verifier_org_binding")
+    )
     active: Mapped[bool] = mapped_column(Boolean, default=True)
 
 
@@ -304,4 +311,89 @@ class OverlapEvent(Base):
     status: Mapped[str] = mapped_column(String(40))
     reason: Mapped[str] = mapped_column(String(40))
     evidence: Mapped[dict] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class VerifierOrganisation(Base):
+    __tablename__ = "verifier_organisations"
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    name: Mapped[str] = mapped_column(String(150))
+    reference: Mapped[str] = mapped_column(String(40), unique=True)
+    approved: Mapped[bool] = mapped_column(Boolean, default=False)
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class RecordRequestHandle(Base):
+    __tablename__ = "record_request_handles"
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    student_person_id: Mapped[str] = mapped_column(ForeignKey("persons.id"), index=True)
+    enrolment_id: Mapped[str] = mapped_column(ForeignKey("enrolments.id"))
+    token_digest: Mapped[str] = mapped_column(String(64), unique=True)
+    token_key_id: Mapped[str] = mapped_column(String(40))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class VerificationRequest(Base):
+    __tablename__ = "verification_requests"
+    __table_args__ = (
+        UniqueConstraint("verifier_user_id", "idempotency_key"),
+        UniqueConstraint("handle_id"),
+        CheckConstraint(
+            "(student_person_id IS NULL AND enrolment_id IS NULL AND handle_id IS NULL) OR (student_person_id IS NOT NULL AND enrolment_id IS NOT NULL AND handle_id IS NOT NULL)",
+            name="request_subject_binding",
+        ),
+        CheckConstraint("status IN ('PENDING','DENIED','APPROVED')"),
+        CheckConstraint("version >= 1"),
+    )
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    student_person_id: Mapped[str | None] = mapped_column(ForeignKey("persons.id"), index=True)
+    enrolment_id: Mapped[str | None] = mapped_column(ForeignKey("enrolments.id"))
+    handle_id: Mapped[str | None] = mapped_column(ForeignKey("record_request_handles.id"))
+    verifier_user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    verifier_org_id: Mapped[str] = mapped_column(ForeignKey("verifier_organisations.id"))
+    purpose: Mapped[str] = mapped_column(String(40))
+    requested_fields: Mapped[list] = mapped_column(JSON)
+    idempotency_key: Mapped[str] = mapped_column(String(100))
+    payload_hash: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(20), default="PENDING")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class ConsentGrant(Base):
+    __tablename__ = "consent_grants"
+    __table_args__ = (
+        CheckConstraint("record_version >= 1 AND version >= 1"),
+        CheckConstraint(
+            'jsonb_array_length(allowed_fields::jsonb) > 0 AND allowed_fields::jsonb <@ \'["programme","institution_name","academic_year","admission_status","start_date","masked_apaar"]\'::jsonb',
+            name="grant_field_whitelist",
+        ),
+    )
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    request_id: Mapped[str] = mapped_column(ForeignKey("verification_requests.id"), index=True)
+    student_person_id: Mapped[str] = mapped_column(ForeignKey("persons.id"), index=True)
+    enrolment_id: Mapped[str] = mapped_column(ForeignKey("enrolments.id"))
+    record_version: Mapped[int] = mapped_column(Integer)
+    verifier_user_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    verifier_org_id: Mapped[str] = mapped_column(ForeignKey("verifier_organisations.id"))
+    purpose: Mapped[str] = mapped_column(String(40))
+    allowed_fields: Mapped[list] = mapped_column(JSON)
+    token_digest: Mapped[str] = mapped_column(String(64), unique=True)
+    token_key_id: Mapped[str] = mapped_column(String(40))
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class VerificationAccess(Base):
+    __tablename__ = "verification_accesses"
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    grant_id: Mapped[str] = mapped_column(ForeignKey("consent_grants.id"), index=True)
+    student_person_id: Mapped[str] = mapped_column(ForeignKey("persons.id"), index=True)
+    verifier_user_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    disclosed_fields: Mapped[list] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

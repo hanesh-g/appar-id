@@ -4,7 +4,7 @@ title: Native Windows setup
 description: Run the application with PowerShell, uv, Node.js, and native PostgreSQL without Ubuntu or WSL.
 tags: [windows, powershell, setup, git]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T20:03:24Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T16:12:00Z"}
 sources:
   - resource: "User requirement: native Windows, no Ubuntu, author hanesh-g with the supplied email"
   - resource: 02-technical-design.md
@@ -115,6 +115,8 @@ Seed preserves existing accounts, passwords, programmes, and admissions. Account
 
 Use the demo password you chose during initialization. Changing `DEMO_PASSWORD` after accounts have been seeded does not reset an existing password. The seed intentionally preserves existing accounts. No password-reset endpoint is implemented; use a new disposable demo database or an explicitly reviewed administrator operation if a demo password is lost.
 
+For the new correction, audit, student, and verifier features, follow [the safe update and complete demo walkthrough](12-demo-walkthrough.md). It adds extension keys, migrates, and creates four additional synthetic accounts while preserving existing data/passwords.
+
 ## 6. Start both applications
 
 VS Code terminal 1, from the repository root:
@@ -171,7 +173,7 @@ npx.cmd playwright install chromium
 npm.cmd run smoke
 ```
 
-The smoke mutates the synthetic first-institution dataset. It expects the documented demo programme/data and must not be pointed at a real-data deployment.
+The smoke mutates the synthetic first-institution dataset. It expects a fresh synthetic dataset plus both extension flags, their retained keys, all migrations, and seven seeded accounts. It must not be pointed at a real-data deployment. A run changes admission/case/review/consent history, so repeating exact-count tests needs another explicitly disposable database; do not reset shared data.
 
 ## 9. Continue with Codex
 

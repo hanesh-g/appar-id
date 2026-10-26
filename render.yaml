@@ -26,3 +26,15 @@ services:
         sync: false
       - key: ALLOWED_ORIGINS
         sync: false
+      - key: AUDIT_CHAIN_ENABLED
+        value: "true"
+      - key: AUDIT_KEY_ID
+        value: audit-v1
+      - key: AUDIT_HMAC_KEY
+        sync: false
+      - key: CONSENT_ENABLED
+        value: "true"
+      - key: GRANT_KEY_ID
+        value: grant-v1
+      - key: GRANT_TOKEN_KEY
+        sync: false

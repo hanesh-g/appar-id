@@ -4,7 +4,7 @@ title: Feature extension execution plan
 description: Build the five proposed feature groups in dependency order with explicit contracts, human work, and release gates.
 tags: [apaar, implementation, resolution, provenance, overlap, audit, consent]
 status: draft
-generated: {by: codex/extension-plan-v1, at: "2026-10-26T14:35:17Z"}
+generated: {by: codex/extension-plan-v1, at: "2026-10-26T16:12:00Z"}
 sources:
   - resource: "User-supplied Pasted text.txt; 16045 bytes; SHA256 b693d5562888313b1ac27512d9b292f25a47f77d1b5c746ec6ff272a509ce06d"
   - resource: 02-technical-design.md
@@ -16,7 +16,7 @@ sources:
 
 # 11 — Feature extension execution plan
 
-Prepared on **26 October 2026**. This plan extends the existing application. It does not rebuild it. **E0–E3 and E5/E6 are implemented and locally tested. E4 hosting and E7/E8 remain pending.** See the checklist for current execution evidence. Requirements below are the baseline, not blanket completion.
+Prepared on **26 October 2026**. This plan extends the existing application. It does not rebuild it. **E0–E3 and E5–E7 are implemented and locally tested. Hosted E4/E8 and human review remain pending.** See the checklist for current execution evidence. Requirements below are the baseline, not blanket completion.
 
 Recommended sequence: **explicit access rules → rule explanations and category counts → resolution desk → correction preview/apply → first release gate → overlap review → audit integrity → consent/QR → extended release gate**.
 
@@ -261,7 +261,7 @@ Demo scheduling: E5/E6 may proceed as isolated slices if E3 has an unresolved ed
 
 ### E7a — Principals and private request addressing
 
-**AI:** migrate the role/scope constraints, not just the role enum. Add a student profile bound to one person and a verifier profile bound to an approved organisation. A student cannot self-link by entering someone else's APAAR/DOB. Seed an adult synthetic student, a second student for isolation tests, and two verifiers to test wrong-recipient denial. Preserve existing accounts/passwords and run the seed twice.
+**AI:** migrate the role/scope constraints, not just the role enum. Add a student profile bound to one person and a verifier profile bound to an approved organisation. Implemented bindings are nullable named-FK columns on `users` with role/scope checks and a unique student/person link; separate one-to-one profile tables were unnecessary. A student cannot self-link by entering someone else's APAAR/DOB. Seed an adult synthetic student, a second student for isolation tests, and two verifiers to test wrong-recipient denial. Preserve existing accounts/passwords and run the seed twice.
 
 Apply E0's explicit route permissions to the actual new users. Add a narrow own-enrolment view and request inbox. Do not expose generic institution or enrolment search to a verifier.
 
@@ -281,7 +281,7 @@ Field whitelist: `programme`, `institution_name`, `academic_year`, `admission_st
 | `POST /api/v1/verification-requests` | Approved verifier; opaque handle, purpose, requested fields; bounded/idempotent submission. |
 | `GET /api/v1/me/verification-requests` | Student's own inbox only. |
 | `GET /api/v1/me/verification-requests/submitted` | Verifier's own submitted requests/status only; no unapproved record fields. |
-| `POST /api/v1/me/verification-requests/{id}/approve` | Linked student, current request version, allowed field subset, bounded expiry. |
+| `POST /api/v1/me/verification-requests/{id}/approve` | Linked student, current request **and displayed record** versions, allowed field subset, bounded expiry. |
 | `POST /api/v1/me/verification-requests/{id}/deny` | Linked student; versioned and audited. |
 | `POST /api/v1/me/consent-grants/{id}/revoke` | Grant's student; immediate server-side revocation. |
 | `POST /api/v1/verification/resolve` | Authenticated bound verifier; opaque token in request body. |
@@ -360,13 +360,15 @@ npm.cmd run build
 npm.cmd run smoke
 ```
 
-The smoke command needs the documented synthetic API/UI/database setup. These are future implementation checks, not results of this planning update. No Ubuntu/WSL command is required.
+The smoke command needs the documented synthetic API/UI/database setup. These are current verification commands; consult Document 05 for actual local results and unexecuted hosted checks. No Ubuntu/WSL command is required.
 
 ## 15. Progress and AI handoff
 
 Track actual implementation in [Document 05](05-progress-checklist.md). Each completed slice needs: revision, changed files/contracts, executed command/scenario, pass/fail/not-run outcome, limits, and next task. No checkbox is complete because a route or migration is listed in this plan.
 
-Start with this bounded prompt:
+The initial E0 prompt below is retained for the implementation history; E0–E3 and E5–E7 are now complete locally. Continue with the outstanding hosted/human gates, using [Document 12](12-demo-walkthrough.md) for setup and demonstration.
+
+Initial bounded prompt:
 
 ```text
 Read AGENTS.md, docs/index.md, docs/05-progress-checklist.md,

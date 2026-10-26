@@ -1,6 +1,8 @@
 import { lazy, Suspense, useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import ConsentWorkspace from './ConsentWorkspace'
+import { takeInitialGrantToken } from './consent'
 import {
   Activity,
   ArrowDownToLine,
@@ -1248,7 +1250,10 @@ function HistoryPage({ user, auditEnabled }: { user: User; auditEnabled: boolean
   )
 }
 
+const initialGrantToken = takeInitialGrantToken()
+
 export default function App() {
+  const [pendingGrantToken, setPendingGrantToken] = useState(initialGrantToken)
   const [user, setUser] = useState<User | null>(null)
   const client = useQueryClient()
   const navigate = useNavigate()
@@ -1261,6 +1266,7 @@ export default function App() {
   function signOut() {
     setToken('')
     setUser(null)
+    setPendingGrantToken('')
     client.clear()
     navigate('/')
   }
@@ -1280,8 +1286,17 @@ export default function App() {
         signedIn={(u) => {
           client.clear()
           setUser(u)
-          navigate('/')
+          navigate(u.role === 'verifier' && pendingGrantToken ? '/verify' : '/')
         }}
+      />
+    )
+  if (user.role === 'student' || user.role === 'verifier')
+    return (
+      <ConsentWorkspace
+        user={user}
+        signOut={signOut}
+        initialToken={pendingGrantToken}
+        clearToken={() => setPendingGrantToken('')}
       />
     )
   return (

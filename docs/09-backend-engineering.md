@@ -4,7 +4,7 @@ title: Backend engineering and deployment
 description: Explain the implemented backend boundaries, safety controls, verification, and remaining deployment requirements.
 tags: [python, backend, engineering, deployment]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-25T18:31:21Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T16:12:00Z"}
 sources:
   - resource: 02-technical-design.md
   - resource: 05-progress-checklist.md
@@ -24,7 +24,7 @@ sources:
 | Data integrity | Alembic revisions; unique enrolment/person keys; checked identity links, version, lifecycle dates; programme/batch locks; rollback on failure. |
 | Repeatability | Request idempotency; canonical upsert; unchanged rows are no-ops; repeat commit returns original outcome; seed preserves existing data. |
 | Authentication | Argon2 passwords; fixed-algorithm JWT verification with issuer/audience/expiry; active-account check; bounded single-process login throttling. |
-| Authorisation | Explicit role capabilities and institution scope on reads/edits/exports/batches/counts. Officers cannot edit core records; separately permitted interval decisions and audit checks are bounded. |
+| Authorisation | Explicit role capabilities and institution scope on reads/edits/exports/batches/counts. Officers cannot edit core records; separately permitted interval decisions and audit checks are bounded. Optional students/verifiers have person/recipient scopes and cannot read core routes. |
 | Personal data | AES-GCM encrypted identity/staging payloads; separate HMAC lookup key; masked IDs; no general platform-wide institution search. |
 | Configuration | Pydantic settings, secret types, generated local keys, hidden inputs in configuration errors, ignored `.env`, no wildcard CORS. |
 | Observability | Structured safe logs, request IDs, timings, route templates, and audit request correlation; raw access/query-string logs disabled by start commands. |
@@ -50,7 +50,7 @@ The actions workflow is checked in; its remote execution must be verified after 
 
 1. Create/select a managed PostgreSQL database. Preserve its connection credentials and follow its supported TLS/certificate settings.
 2. Connect the repository and use `backend` as the Render root directory.
-3. Set `DATABASE_URL`, `JWT_SECRET`, `PII_KEY`, `HMAC_KEY`, `ALLOWED_ORIGINS`, `APP_ENV=demo`, and `REGISTRY_MODE=mock` in secure backend environment settings. Encryption/HMAC keys are distinct base64 32-byte keys; retain them. `ALLOWED_ORIGINS` is the exact Vercel frontend origin.
+3. Set `DATABASE_URL`, `JWT_SECRET`, `PII_KEY`, `HMAC_KEY`, `ALLOWED_ORIGINS`, `APP_ENV=demo`, and `REGISTRY_MODE=mock` in secure backend environment settings. Encryption/HMAC keys are distinct base64 32-byte keys; retain them. The extended demo blueprint also requires `AUDIT_CHAIN_ENABLED=true`, `AUDIT_HMAC_KEY`, `AUDIT_KEY_ID=audit-v1`, `CONSENT_ENABLED=true`, `GRANT_TOKEN_KEY`, and `GRANT_KEY_ID=grant-v1`. All four encryption/lookup/audit/grant keys must differ and persist across deployments. Enter them through secure host settings; the local helper is restricted to ignored local/demo files. `ALLOWED_ORIGINS` is the exact Vercel frontend origin.
 4. Build: `pip install uv==0.12.23 && uv sync --frozen --no-dev`.
 5. Run `uv run --no-sync alembic upgrade head` against the chosen database **before activating the application**. Use a release hook if the plan supports it; otherwise use an explicitly controlled migration from an authorised machine. Do not run migrations independently in each server worker.
 6. Seed once using `uv run --no-sync python -m app.seed --demo` with a securely supplied `DEMO_PASSWORD`. The blueprint does not seed automatically. Remove the seed-only variable from hosted settings after use if it is no longer required.
@@ -78,3 +78,9 @@ Do not label the app government-approved, compliant, tamper-proof, fraud-proof, 
 After migrating, enable the separate audit key from `backend` with `uv run --frozen python ../scripts/configure_extensions.py --enable-audit`, then restart the API. The helper only changes ignored local/demo configuration, preserves existing secrets, and generates a new audit key only when absent. Enter the equivalent `AUDIT_CHAIN_ENABLED`, `AUDIT_HMAC_KEY`, and `AUDIT_KEY_ID` values securely on hosting; do not put them in frontend variables.
 
 The migration creates genesis without needing a seed script. Schema-only test setups also bootstrap on first write. Once signing starts, retain the key and enabled setting; losing/changing them blocks new signed mutations. Key rotation is a separately planned migration, not regenerating a file. An officer can verify the chain under Activity history. The consistent snapshot reports its checked watermark and explicitly limits legacy/rollback claims. No external anchor, KMS, production audit certification, or hosted pass is implied.
+
+## Optional consent and feature rollback
+
+E7 is enabled only after role/negative/browser gates, with a separate retained grant-token key. The additive migration preserves core users; the seed adds adult synthetic person/verifier bindings without changing passwords. Token inputs use secret types, raw values are revealed once, and neither request nor audit logging contains tokens. Access audit must commit before any verification response. Verification is live and recipient-bound, not a public certificate endpoint. See [the full walkthrough](12-demo-walkthrough.md).
+
+Disable `CONSENT_ENABLED` and restart to withdraw the new roles and endpoints while preserving history. Do not drop populated profile bindings: the E7 downgrade refuses while student/verifier accounts exist. Audit signing cannot be silently switched off for writes after activation. Retain its enabled setting/key or use compatible read-only/recovery operations. A hosted restart, log inspection, exact-origin check, and snapshot/restore procedure still need execution on the chosen hosts.
