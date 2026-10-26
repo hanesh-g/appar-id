@@ -4,7 +4,7 @@ title: Progress checklist
 description: Track implementation gates and executed evidence without invented completion.
 tags: [apaar, progress, testing, release]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T16:12:00Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T18:03:26Z"}
 sources:
   - resource: 03-feature-specification.md
   - resource: 04-implementation-phases.md
@@ -171,6 +171,7 @@ Implement test-only fault injection outside public API routes. Create fresh data
 
 | Check / feature | Command or scenario | Result + count / timing | Revision | Evidence location |
 |---|---|---|---|---|
+| Consent sharing card | Frontend lint/format, eight tests, type/build; focused real consent journey | **8 frontend passed**; **1 browser passed**, 6.1 s total; 390 px layout, card field limits, and hide-on-revoke passed | Sharing-card follow-up | `ConsentShareCard.tsx`, `frontend/tests/verification.spec.ts`; existing dedicated synthetic database, no reset. Backend code unchanged; backend tests not rerun for this UI update. |
 | E7 / final local regression | `uv run --frozen pytest -q`; frontend checks/build; all browser scenarios; populated migration; retained-key restart | **112 backend passed**, 93.54 s; **8 frontend passed**; **4 browser passed** together (12.7 s total including initial consent-selector failure), then corrected consent journey **1 passed**, 4.3 s; retained 72 enrolments / 7 users / 1 grant / audit watermark 23 on restart | E7 implementation | `backend/tests/test_verification.py` (20 scenarios), separate-key helper tests, `frontend/src/consent.test.ts`, `frontend/tests/verification.spec.ts`, Document 12. Initial consent selector matched both legitimate own-college records; selecting the intended college passed. Hosted flags/headers/logs and native Windows execution remain unverified. |
 | E6 audit integrity | Tamper/genesis/key/snapshot checks; full backend; officer browser | **24 focused passed**, 14.81 s; **90 full passed**, 52.57 s; **1 browser passed**, 4.0 s; frontend lint/types/build passed | E6 implementation | `test_audit_integrity.py`, key-helper tests, migration checks, `frontend/tests/audit.spec.ts`. Browser initially could not reach the stopped frontend process; restart and rerun passed. |
 | E5 interval review | Focused checks, full backend regression, and officer/institution browser flow | **8 focused passed**, 7.52 s; **76 full backend passed**, 48.40 s; **1 browser passed**, 4.6 s; frontend lint/types/build passed | E5 implementation | `test_overlap_reviews.py`, `frontend/tests/overlap.spec.ts`; historical/boundary/concurrent/privacy/backfill scenarios |

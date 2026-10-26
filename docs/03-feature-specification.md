@@ -4,7 +4,7 @@ title: Feature specification
 description: Specify each core and optional feature with rules, failures, and acceptance criteria.
 tags: [apaar, features, acceptance, permissions]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T16:12:00Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-26T18:03:26Z"}
 sources:
   - resource: 01-problem-and-scope.md
   - resource: 02-technical-design.md
@@ -181,6 +181,10 @@ E6 hardening: optional keyed HMAC chaining, a transactional singleton head, expl
 **Acceptance:** Only the approved fields appear. Revocation and expiry deny the very next request. Another verifier cannot reuse the link. Student A cannot approve access to B's record. Browser/shared caches cannot retain the verification response.
 
 **Implemented limits:** Adult synthetic profiles only; no self-linking, guardian flow, official credential, or public unauthenticated disclosure. Requests expire after 24 hours; grants after 1–60 minutes and no later than the request. Approval checks the record version the student saw. Lost-link replacement revokes the old grant, keeps the fields/purpose, and lasts at most 15 minutes; changed records require renewed consent. Revocation cannot retract previously delivered information. The feature defaults off until the additive configuration/migration/seed steps are run. See the [operator walkthrough](12-demo-walkthrough.md).
+
+**Sharing card:** The once-revealed QR/link now has a compact card showing the named verifier, purpose, approved field names, and expiry with a timezone. It includes a synthetic-demo label, sign-in requirement, and an explicit statement that it is not an official APAAR ID/certificate. A successful revoke hides the locally displayed card. The QR has a white scanning margin; mobile layout is checked at 390 px.
+
+The ticket reference is used for presentation only. Social-post buttons are skipped because public promotion does not serve private record verification. Permanent ID-style downloads are skipped because a static image cannot reflect later revocation and can be mistaken for a credential. A new ticket system, barcode identifier, public student page, or backend service adds no needed capability to this consent flow.
 
 ## F13 — Possible overlapping-enrolment review · NEXT
 

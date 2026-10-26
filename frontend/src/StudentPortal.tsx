@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { QRCodeSVG } from 'qrcode.react'
+import ConsentShareCard from './ConsentShareCard'
 import { api, type Page } from './api'
 import {
   fieldLabels,
@@ -151,7 +151,15 @@ function RequestCard({
   )
 }
 
-function GrantCard({ grant, issued }: { grant: Grant; issued: (data: IssuedGrant) => void }) {
+function GrantCard({
+  grant,
+  issued,
+  revoked,
+}: {
+  grant: Grant
+  issued: (data: IssuedGrant) => void
+  revoked: (id: string) => void
+}) {
   const client = useQueryClient()
   const action = useMutation({
     mutationFn: (decision: 'revoke' | 'reissue') =>
@@ -159,8 +167,9 @@ function GrantCard({ grant, issued }: { grant: Grant; issued: (data: IssuedGrant
         method: 'POST',
         body: JSON.stringify({ expected_version: grant.version }),
       }),
-    onSuccess: (data) => {
+    onSuccess: (data, decision) => {
       if ('newly_issued' in data) issued(data)
+      if (decision === 'revoke') revoked(grant.id)
       void client.invalidateQueries({ queryKey: ['consent'] })
     },
   })
@@ -202,44 +211,6 @@ function GrantCard({ grant, issued }: { grant: Grant; issued: (data: IssuedGrant
         </p>
       )}
     </article>
-  )
-}
-
-function SharedLink({ value, clear }: { value: IssuedGrant; clear: () => void }) {
-  const [copied, setCopied] = useState(false)
-  const [error, setError] = useState('')
-  if (!value.token) return null
-  const link = `${window.location.origin}/verify#token=${encodeURIComponent(value.token)}`
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(link)
-      setCopied(true)
-    } catch {
-      setError('Copy the link from the field below')
-    }
-  }
-  return (
-    <section className="panel consent-card" aria-label="New consent link">
-      <h2>Your consent link</h2>
-      <p>
-        Only {value.grant.verifier_organisation} can open the approved fields. Share this link or QR
-        with that verifier. Save it now; it is shown once.
-      </p>
-      <QRCodeSVG value={link} size={180} title="Consent verification link" />
-      <label>
-        Shared link
-        <input aria-label="Shared link" type="password" readOnly value={link} autoComplete="off" />
-      </label>
-      <div className="actions">
-        <button className="primary" onClick={() => void copy()}>
-          {copied ? 'Link copied' : 'Copy consent link'}
-        </button>
-        <button className="secondary" onClick={clear}>
-          Hide link
-        </button>
-      </div>
-      {error && <p role="status">{error}</p>}
-    </section>
   )
 }
 
@@ -300,7 +271,9 @@ export default function StudentPortal() {
             </p>
           ),
       )}
-      {issued && <SharedLink key={issued.grant.id} value={issued} clear={() => setIssued(null)} />}
+      {issued && (
+        <ConsentShareCard key={issued.grant.id} value={issued} clear={() => setIssued(null)} />
+      )}
       <h2>Your verified records</h2>
       {records.isPending && <p>Loading records…</p>}
       {records.data?.items.map((record) => (
@@ -321,7 +294,12 @@ export default function StudentPortal() {
       <Pager page={requestPage} total={requests.data?.total || 0} change={setRequestPage} />
       <h2>Your consent grants</h2>
       {grants.data?.items.map((grant) => (
-        <GrantCard key={grant.id} grant={grant} issued={remember} />
+        <GrantCard
+          key={grant.id}
+          grant={grant}
+          issued={remember}
+          revoked={(id) => setIssued((current) => (current?.grant.id === id ? null : current))}
+        />
       ))}
       <Pager page={grantPage} total={grants.data?.total || 0} change={setGrantPage} />
       <h2>Access history</h2>

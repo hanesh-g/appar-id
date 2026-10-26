@@ -62,15 +62,34 @@ test('student limits QR disclosure and can revoke access immediately', async ({ 
   await expect(verifier.getByRole('status')).toContainText('Request submitted')
   await student.getByRole('button', { name: 'Sign out', exact: true }).click()
   await signIn(student, 'student1@example.test')
+  const pending = student
+    .getByRole('article')
+    .filter({ has: student.getByRole('button', { name: 'Approve selected fields' }) })
+    .first()
   await expect(
-    student.getByRole('heading', { name: 'Demo admissions verifier', exact: true }),
+    pending.getByRole('heading', { name: 'Demo admissions verifier', exact: true }),
   ).toBeVisible()
-  await expect(student.getByRole('button', { name: 'Approve selected fields' })).toBeDisabled()
-  await student.getByRole('checkbox', { name: 'Programme', exact: true }).check()
-  await student.getByRole('button', { name: 'Approve selected fields' }).click()
+  await expect(pending.getByRole('button', { name: 'Approve selected fields' })).toBeDisabled()
+  await pending.getByRole('checkbox', { name: 'Programme', exact: true }).check()
+  await pending.getByRole('button', { name: 'Approve selected fields' }).click()
   const issued = student.getByRole('region', { name: 'New consent link' })
   await expect(issued.getByRole('heading', { name: 'Your consent link' })).toBeVisible()
   await expect(issued.locator('svg')).toHaveCount(1)
+  const card = issued.getByRole('article', { name: 'Consent sharing card' })
+  await expect(card).toContainText('Demo admissions verifier')
+  await expect(card).toContainText('Admission confirmation')
+  await expect(card.getByRole('listitem')).toHaveText(['Programme'])
+  await expect(card).toContainText('Not an official APAAR ID or certificate.')
+  await expect(card.locator('time')).toHaveAttribute('datetime', /.+/)
+  await student.setViewportSize({ width: 390, height: 844 })
+  expect(
+    await student.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+  ).toBe(true)
+  const bounds = await card.boundingBox()
+  expect(
+    Boolean(bounds && bounds.width > 0 && bounds.x >= 0 && bounds.x + bounds.width <= 390),
+  ).toBe(true)
+  await student.setViewportSize({ width: 1280, height: 900 })
   const shared = await issued.getByLabel('Shared link', { exact: true }).inputValue()
   const opaque = new URL(shared).hash.slice('#token='.length)
   await verifier.evaluate((url) => window.location.assign(url), shared)
@@ -86,6 +105,7 @@ test('student limits QR disclosure and can revoke access immediately', async ({ 
   expect(requestedUrls.every((url) => !url.includes(opaque))).toBe(true)
   await student.getByRole('button', { name: 'Revoke access', exact: true }).click()
   await expect(student.getByRole('button', { name: 'Revoke access', exact: true })).toHaveCount(0)
+  await expect(issued).toHaveCount(0)
   await secretInput(verifier, 'Student consent link', shared)
   await verifier.getByRole('button', { name: 'Verify approved fields' }).click()
   await expect(verifier.getByRole('alert')).toContainText('Verification is unavailable')
