@@ -151,6 +151,7 @@ export interface Enrolment {
   start_date: string
   end_date: string | null
   version: number
+  overlap_review_pending: boolean
   history?: { version: number; created_at: string; snapshot: Record<string, unknown> }[]
 }
 export interface Audit {

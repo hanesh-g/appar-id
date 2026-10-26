@@ -12,9 +12,11 @@ Your required repository-local author and committer are `hanesh-g <haneshgourish
 
 Implemented core: institution-scoped login, programmes, CSV validation, mock identity checks, dry-run intake preview, transactional/idempotent commit, correction upload, enrolment status/history, dashboard, and safe audit history. Student-consent verification and an LLM assistant remain optional future features.
 
-Extension progress: E0–E3 are locally checked: explicit role capabilities, versioned rule explanations, illustrative categories, and a Resolution Desk with reviewed inline correction. From a batch issue, choose **Open case → Review a correction → Preview correction → Apply correction**. A repaired row leaves current held work while the original report remains available. Overlap review, audit chaining, and student consent/QR are not delivered yet.
+Extension progress: E0–E3 and E5 are locally checked: explicit permissions, rule explanations, categories, reviewed inline correction, and officer interval review. From a batch issue, choose **Open case → Review a correction → Preview correction → Apply correction**. Repaired rows leave held work while the original report remains available. Officers can review date intersections; institutions see only a generic own-record notice. Audit chaining and student consent/QR are not delivered yet.
 
 After pulling schema changes, run `uv run --frozen alembic upgrade head` from `backend` before restarting the API; migrations preserve existing data. Older uncommitted previews need a new upload. See the extension checklist for what remains.
+
+For existing synthetic records, initialise the interval queue once with `uv run --frozen python -m app.reconcile_intervals --demo` from `backend`. This explicit backfill supports up to 500 people, retains review history, and does not run automatically on startup.
 
 ## Read in this order
 

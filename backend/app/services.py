@@ -419,6 +419,10 @@ def commit_batch(
         staged.status = "COMMITTED"
     batch.status = "COMMITTED"
     batch.result = {"created": created, "updated": updated, "unchanged": unchanged, "held": held}
+    from .overlaps import reconcile
+
+    db.flush()
+    reconcile(db, user, set(old_ids) | set(person_map.values()))
     audit(db, user, "BATCH_COMMITTED", batch.id, batch.result)
     if finish:
         db.commit()
@@ -531,6 +535,10 @@ def edit_enrolment(db: Session, user: User, object_id: str, data: EnrolmentPatch
         record.version += 1
         record.updated_at = utcnow()
         history(db, record, user)
+        from .overlaps import reconcile
+
+        db.flush()
+        reconcile(db, user, [person_id] if person_id else [])
         audit(db, user, "ENROLMENT_UPDATED", record.id, snapshot(record))
         db.commit()
     return record
@@ -597,5 +605,9 @@ def recheck(db: Session, user: User, crypto: Crypto, settings: Settings) -> dict
             history(db, record, user)
             audit(db, user, "IDENTITY_RECHECKED", record.id, {"identity_status": state, "reason": reason})
         resolved += reason != "REGISTRY_UNAVAILABLE"
+    from .overlaps import reconcile
+
+    db.flush()
+    reconcile(db, user, set(person_map.values()) | {r.person_id for r in records if r.person_id})
     db.commit()
     return {"checked": len(records), "resolved": resolved, "remaining": len(records) - resolved}

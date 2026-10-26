@@ -820,6 +820,15 @@ footer {
   gap: 12px;
   flex-wrap: wrap;
 }
+.overlap-review {
+  margin-bottom: 20px;
+}
+.overlap-review .actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
 @media (max-width: 600px) {
   .correction-fields {
     grid-template-columns: 1fr;

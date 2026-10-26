@@ -12,7 +12,7 @@ sources:
 
 # 03 — Feature specification
 
-F01–F10 now have local implementations and checks. F11's hosted release gate remains incomplete. E0–E3 add explicit permissions, rule help/categories, resolution cases, and reviewed inline correction with local evidence. F12/F13, an LLM assistant, and LATER features are not implemented. The sections below define intended behaviour, not blanket completion: consult the [progress checklist](05-progress-checklist.md). Permission checks apply on the backend, including exports and guessed object IDs.
+F01–F10 now have local implementations and checks. F11's hosted release gate remains incomplete. E0–E3 add the correction workspace; E5 adds synthetic F13 interval review. F12, audit-chain hardening, an LLM assistant, and LATER features are not implemented. The sections below define intended behaviour, not blanket completion: consult the [progress checklist](05-progress-checklist.md). Permission checks apply on the backend, including exports and guessed object IDs.
 
 The [extension execution plan](11-feature-execution-plan.md) proposes additions to F09/F06 (resolution and correction preview), F14/F08 (provenance/help and illustrative categories), F13 (overlap review), F10 (audit integrity), and F12 (consent/QR). Those additions are planned, not delivered. Promote each contract here when its implementation starts; preserve the core acceptance rules below.
 
@@ -181,6 +181,8 @@ Correction exports containing student data are available only to the owning inst
 **Cut line:** No student/verifier screens or public verification endpoint until the full permission path and negative tests pass.
 
 ## F13 — Possible overlapping-enrolment review · NEXT
+
+E5 status: implemented and locally checked with inclusive demo dates, historical intervals, pair uniqueness, concurrent mutation reconciliation, officer decisions, safe institution notices, and explicit existing-data backfill. Permitted-dual/transfer decisions are synthetic review classifications with a demo policy reference, not official eligibility findings. Officer core enrolment/programme edits remain denied. Native Windows and hosted execution remain separate checks.
 
 **User value:** An officer can investigate conflicting records without falsely accusing a student.
 

@@ -2,6 +2,10 @@
 
 ## 2026-10-26
 
+- Implemented E5: verified-person interval intersections, unique pair review/history, date-change reconciliation, narrow officer decisions, and institution-safe generic notices. Existing core edit permissions remain unchanged; no overlap automatically rejects admission or establishes fraud.
+- Added an explicit, idempotent demo backfill for up to 500 people. Eight focused overlap/backfill tests passed in 7.52 s; the actual officer/institution browser journey passed in 4.6 s. Frontend lint/types/build passed. Official dual-study policy approval and hosted operation are not claimed.
+- E5 full backend regression also passed: **76 tests**, 48.40 s.
+
 - Implemented E2/E3's local correction workspace: institution-owned cases with source lineage/state/history and exact expiring encrypted proposals, protected field comparison, transactional apply, optimistic version checks, original-batch stale protection, and explicit held-row supersession.
 - Fixed the old commit path's summary overwrite by retaining the upload snapshot and storing a separate commit summary. Upgraded a populated E2 smoke database without losing its 65 enrolments or existing case, then tested on a fresh separate release dataset. No development database was reset.
 - Added private digest/person-before-enrolment locking for commits, correction promotions, retry, and lifecycle changes. Concurrent cross-institution promotions share one person and complete under a finite lock timeout. Added independent synthetic audit/grant keys to pytest settings; production keys/defaults are unchanged.

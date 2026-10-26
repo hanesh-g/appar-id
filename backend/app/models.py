@@ -239,3 +239,43 @@ class CorrectionOrigin(Base):
     id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
     proposal_id: Mapped[str] = mapped_column(ForeignKey("correction_proposals.id"), index=True)
     batch_row_id: Mapped[str] = mapped_column(ForeignKey("batch_rows.id"), unique=True)
+
+
+class OverlapReview(Base):
+    __tablename__ = "overlap_reviews"
+    __table_args__ = (
+        UniqueConstraint("enrolment_a_id", "enrolment_b_id"),
+        CheckConstraint("enrolment_a_id < enrolment_b_id", name="overlap_ordered_pair"),
+        CheckConstraint("version >= 1"),
+        CheckConstraint("overlap_end IS NULL OR overlap_end >= overlap_start"),
+        CheckConstraint(
+            "status IN ('OPEN','REVIEWED_PERMITTED_DUAL','REVIEWED_TRANSFER_LAG','ESCALATED','NO_LONGER_OVERLAPPING')"
+        ),
+    )
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    person_id: Mapped[str] = mapped_column(ForeignKey("persons.id"), index=True)
+    enrolment_a_id: Mapped[str] = mapped_column(ForeignKey("enrolments.id"))
+    enrolment_b_id: Mapped[str] = mapped_column(ForeignKey("enrolments.id"))
+    overlap_start: Mapped[date] = mapped_column(Date)
+    overlap_end: Mapped[date | None] = mapped_column(Date)
+    evidence: Mapped[dict] = mapped_column(JSON)
+    evidence_hash: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(40), default="OPEN")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    reviewer_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    review_reason: Mapped[str | None] = mapped_column(String(40))
+    policy_reference: Mapped[str | None] = mapped_column(String(60))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class OverlapEvent(Base):
+    __tablename__ = "overlap_review_events"
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    review_id: Mapped[str] = mapped_column(ForeignKey("overlap_reviews.id"), index=True)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    version: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(40))
+    reason: Mapped[str] = mapped_column(String(40))
+    evidence: Mapped[dict] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

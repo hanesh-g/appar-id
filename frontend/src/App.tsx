@@ -25,6 +25,7 @@ import Modal from './Dialog'
 import RuleHelp from './RuleHelp'
 import CategoryBreakdown from './CategoryBreakdown'
 import ResolutionDesk from './ResolutionDesk'
+import OverlapWorkbench from './OverlapWorkbench'
 import {
   api,
   download,
@@ -978,6 +979,12 @@ function RecordModal({
           {record.programme} · {record.academic_year}
         </p>
       </div>
+      {(query.data?.overlap_review_pending ?? record.overlap_review_pending) && (
+        <p className="notice">
+          A recorded date interval needs officer review. This notice does not establish that an
+          enrolment is disallowed.
+        </p>
+      )}
       {user.institution_id && (
         <form
           onSubmit={(e) => {
@@ -1312,6 +1319,11 @@ export default function App() {
           <NavLink to="/history">
             <Activity size={18} /> Activity history
           </NavLink>
+          {user.role === 'officer' && (
+            <NavLink to="/overlaps">
+              <ShieldCheck size={18} /> Interval reviews
+            </NavLink>
+          )}
         </nav>
         <div className="sidebar-note">
           <ShieldCheck size={20} />
@@ -1327,7 +1339,9 @@ export default function App() {
           <div>
             <strong>{user.name}</strong>
             <small>
-              {user.role === 'officer' ? 'Officer · read access' : 'Institution administrator'}
+              {user.role === 'officer'
+                ? 'Officer · interval reviewer'
+                : 'Institution administrator'}
             </small>
           </div>
           <button aria-label="Sign out" onClick={signOut}>
@@ -1368,6 +1382,10 @@ export default function App() {
             />
             <Route path="/programmes" element={<ProgrammesPage user={user} />} />
             <Route path="/history" element={<HistoryPage />} />
+            <Route
+              path="/overlaps"
+              element={user.role === 'officer' ? <OverlapWorkbench /> : <Navigate to="/" />}
+            />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>

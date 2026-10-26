@@ -155,6 +155,7 @@ class EnrolmentOut(BaseModel):
     start_date: date
     end_date: date | None
     version: int
+    overlap_review_pending: bool = False
     history: list[dict] | None = None
 
 

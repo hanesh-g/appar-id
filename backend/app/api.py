@@ -299,6 +299,8 @@ def dashboard(
 
 
 def enrolment_out(record, db, user, crypto):
+    from .overlaps import pending_notice
+
     raw = crypto.decrypt(record.identity_enc)
     result = {
         "id": record.id,
@@ -313,6 +315,7 @@ def enrolment_out(record, db, user, crypto):
         "start_date": record.start_date,
         "end_date": record.end_date,
         "version": record.version,
+        "overlap_review_pending": pending_notice(db, record.id),
     }
     if user.institution_id == record.institution_id:
         result["student_name"] = raw["student_name"]
