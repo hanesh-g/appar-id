@@ -4,7 +4,7 @@ title: Demo interface and role flows
 description: Show the delivered student, verifier, and officer interfaces and their next actions.
 tags: [apaar, demo, interface, student, officer]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-27T16:50:46Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-27T18:26:07Z"}
 sources:
   - resource: 03-feature-specification.md
   - resource: 05-progress-checklist.md
@@ -57,6 +57,14 @@ The officer overview shows colleges, recorded active admissions, and open overla
 **Overlap reviews** defaults to **Needs review**. Each case compares the two college records side by side on desktop and stacks them on mobile. **Review this overlap → Review outcome → Save review** requires an explicit decision, reports success, and preserves both admissions. Previous decisions are accessible through the status filter. **Activity history → Run integrity check** presents the outcome first; technical details and limits are expandable.
 
 ## Interaction checks and limits
+
+The institution upload page now keeps its fixture-folder hint in normal text flow, provides a readable native file control, and preserves navigation/sign-out at shorter desktop heights. The batch report separates each field/message/help link from its Open case button. Corrected source rows receive a clear Corrected label; the retained-report explanation is expandable.
+
+![Corrected institution upload screen](assets/ux-college-upload.png)
+
+![Readable issue explanations and separate case actions](assets/ux-batch-issues.png)
+
+Use [the timed video script](14-demo-video-script.md) for a short recording that follows the implemented flow.
 
 The interface uses plain status labels, named form controls, visible focus, a skip link, copy feedback, explicit empty/error states, retry actions, and mobile sign-out. Route changes move focus to the main content. The newly revealed QR card receives focus and scrolls into view, respecting reduced-motion settings. Desktop and 390 px mobile checks cover student cards, field selection, shared access, and the officer decision dialog. The [mobile preview](assets/ux-student-mobile.png) shows the student overview.
 

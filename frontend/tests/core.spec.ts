@@ -20,9 +20,35 @@ test('institution uploads, reviews, commits, corrects, and reads history', async
   await page.getByRole('button', { name: 'Sign in', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'A clearer view of your intake' })).toBeVisible()
   await page.getByRole('navigation').getByRole('link', { name: 'Upload admissions' }).click()
+  await page.setViewportSize({ width: 1536, height: 730 })
+  const tip = page.locator('.guidance .help-box p')
+  await expect(tip).toContainText('fixtures/')
+  expect(await tip.evaluate((element) => getComputedStyle(element).display)).toBe('block')
+  const sidebarBottom = await page.locator('.sidebar .user-card').boundingBox()
+  expect(
+    Boolean(sidebarBottom && sidebarBottom.y >= 0 && sidebarBottom.y + sidebarBottom.height <= 730),
+  ).toBe(true)
+  const navBounds = await page.getByRole('navigation').boundingBox()
+  const lastLink = await page
+    .getByRole('navigation')
+    .getByRole('link', { name: 'Activity history', exact: true })
+    .boundingBox()
+  expect(
+    Boolean(
+      navBounds && lastLink && lastLink.y + lastLink.height <= navBounds.y + navBounds.height,
+    ),
+  ).toBe(true)
   await page.getByLabel('Student CSV').setInputFiles(resolve('..', 'fixtures', 'intake-65.csv'))
   await page.getByRole('button', { name: 'Validate and preview' }).click()
   await expect(page.getByRole('heading', { name: 'intake-65.csv' })).toBeVisible()
+  await page.getByRole('button', { name: /apaar missing\s+5/i }).click()
+  const issue = page.locator('.row-issue').first()
+  await expect(
+    issue.getByRole('button', { name: 'Explain APAAR_MISSING', exact: true }),
+  ).toHaveText('Why this issue?')
+  const body = await issue.locator('.row-issue-main').boundingBox()
+  const caseButton = await issue.locator('.row-case-button').boundingBox()
+  expect(Boolean(body && caseButton && caseButton.x >= body.x + body.width + 12)).toBe(true)
   await expect(
     page
       .getByRole('cell', {

@@ -6,6 +6,8 @@ An AI-assisted SIH 2026 prototype with a Python FastAPI backend, PostgreSQL, and
 
 The demo now has dedicated student, verifier, and officer interfaces with guided actions and compact forms. The student record card is available at **My records → View student card**; the consent QR appears after approval under **Shared access**. See [the actual screen previews and role flows](docs/13-demo-interface.md).
 
+For your screen recording, use the [timed demo script](docs/14-demo-video-script.md) and [voice-over-only text](docs/demo-voiceover.txt): planned 7:20, with an 8:30 hard stop.
+
 ## Start on Windows
 
 Follow the [native Windows setup](docs/08-windows-setup.md). It covers tools, your Git identity, dependency installation, native PostgreSQL, migrations, seed accounts, startup, and checks. Docker is optional.
@@ -20,7 +22,7 @@ After pulling schema changes, run `uv run --frozen alembic upgrade head` from `b
 
 For existing synthetic records, initialise the interval queue once with `uv run --frozen python -m app.reconcile_intervals --demo` from `backend`. This explicit backfill supports up to 500 people, retains review history, and does not run automatically on startup.
 
-To enable audit integrity and consent locally, run `uv run --frozen python ../scripts/configure_extensions.py --enable-audit --enable-consent` from `backend`, migrate, seed the demo accounts, and restart. Keep both generated extension keys. The officer's **Activity history → Verify audit chain** checks retained events and the legacy snapshot captured at activation. It does not establish original legacy authenticity or protect against restoring the entire database to an older snapshot.
+To enable audit integrity and consent locally, run `uv run --frozen python ../scripts/configure_extensions.py --enable-audit --enable-consent` from `backend`, migrate, seed the demo accounts, and restart. Keep both generated extension keys. The officer's **Activity history → Run integrity check** checks retained events and the legacy snapshot captured at activation. It does not establish original legacy authenticity or protect against restoring the entire database to an older snapshot.
 
 ## Read in this order
 

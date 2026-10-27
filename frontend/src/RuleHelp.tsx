@@ -16,7 +16,15 @@ interface Rule {
   reviewed_date: string | null
 }
 
-export default function RuleHelp({ code, ruleSetId }: { code: string; ruleSetId: string }) {
+export default function RuleHelp({
+  code,
+  ruleSetId,
+  label,
+}: {
+  code: string
+  ruleSetId: string
+  label?: string
+}) {
   const [open, setOpen] = useState(false)
   const query = useQuery({
     queryKey: ['rule', ruleSetId, code],
@@ -29,7 +37,7 @@ export default function RuleHelp({ code, ruleSetId }: { code: string; ruleSetId:
   return (
     <>
       <button className="rule-link" onClick={() => setOpen(true)} aria-label={`Explain ${code}`}>
-        {code.replaceAll('_', ' ').toLowerCase()}
+        {label || code.replaceAll('_', ' ').toLowerCase()}
       </button>
       {open && (
         <Dialog title="Why this issue needs attention" close={() => setOpen(false)}>

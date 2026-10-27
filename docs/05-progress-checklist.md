@@ -4,7 +4,7 @@ title: Progress checklist
 description: Track implementation gates and executed evidence without invented completion.
 tags: [apaar, progress, testing, release]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-27T16:50:46Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-27T18:26:07Z"}
 sources:
   - resource: 03-feature-specification.md
   - resource: 04-implementation-phases.md
@@ -14,7 +14,7 @@ sources:
 
 ## Current state
 
-Core, the correction workspace, interval review, audit integrity, and student-approved verification/QR are locally verified. Latest backend regression: **113 passed**, 108.76 s. Frontend: **eight tests passed**, lint/format/types/build passed. **Six browser journeys passed together**, 16.7 s, including the redesigned role flows and empty/error recovery. Populated migration and retained-key restart passed. Windows execution of the new commands, hosted deployment, and remote CI remain unverified. Follow the [complete demo walkthrough](12-demo-walkthrough.md) and [new interface guide with screen previews](13-demo-interface.md).
+Core, the correction workspace, interval review, audit integrity, and student-approved verification/QR are locally verified. Latest backend regression: **113 passed**, 108.76 s. Frontend: **eight tests passed**, lint/format/types/build passed. **Six browser journeys passed together**, 18.5 s, including the redesigned role flows and empty/error recovery. Populated migration and retained-key restart passed. Windows execution of the new commands, hosted deployment, and remote CI remain unverified. Follow the [complete demo walkthrough](12-demo-walkthrough.md) and [new interface guide with screen previews](13-demo-interface.md).
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 
@@ -182,6 +182,7 @@ Implement test-only fault injection outside public API routes. Create fresh data
 
 | Check / feature | Command or scenario | Result + count / timing | Revision | Evidence location |
 |---|---|---|---|---|
+| Institution layout / video script | Frontend checks/build; complete browser suite; short-height visual check; narration/cue validation | **8 frontend passed**; **6 browser passed**, 18.5 s; tip flow, action separation, 1536×730 sign-out/navigation fit; **10 synced scenes / 619 spoken words** | Upload/report follow-up | `core.spec.ts`, two inspected institution previews, Document 14 and narration text. Final compact-height menu fit additionally checked in the real browser. Backend unchanged and not retested for this UI-only update; human voice timing/recording remains pending. |
 | Demo role UX / student card | Full PostgreSQL regression; frontend lint/format/types/build and eight tests; all six browser journeys | **113 backend passed**, 108.76 s; **8 frontend passed**; **6 browser passed**, 16.7 s | Demo interface implementation | Person-scoped request-filter test; student card before consent; compact verifier fields; QR/stop-sharing; officer review; mobile controls; empty/error/retry. First browser pass found a select-label query mismatch and an inexact heading assertion; fixed, then focused and complete runs passed. Separate fresh synthetic databases retained prior data; previews inspected in Document 13. |
 | Consent sharing card | Frontend lint/format, eight tests, type/build; focused real consent journey | **8 frontend passed**; **1 browser passed**, 6.1 s total; 390 px layout, card field limits, and hide-on-revoke passed | Sharing-card follow-up | `ConsentShareCard.tsx`, `frontend/tests/verification.spec.ts`; existing dedicated synthetic database, no reset. Backend code unchanged; backend tests not rerun for this UI update. |
 | E7 / final local regression | `uv run --frozen pytest -q`; frontend checks/build; all browser scenarios; populated migration; retained-key restart | **112 backend passed**, 93.54 s; **8 frontend passed**; **4 browser passed** together (12.7 s total including initial consent-selector failure), then corrected consent journey **1 passed**, 4.3 s; retained 72 enrolments / 7 users / 1 grant / audit watermark 23 on restart | E7 implementation | `backend/tests/test_verification.py` (20 scenarios), separate-key helper tests, `frontend/src/consent.test.ts`, `frontend/tests/verification.spec.ts`, Document 12. Initial consent selector matched both legitimate own-college records; selecting the intended college passed. Hosted flags/headers/logs and native Windows execution remain unverified. |

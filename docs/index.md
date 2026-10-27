@@ -14,6 +14,8 @@ This is the entry point for people and AI coding assistants. Core application co
 
 ## Delivery
 
+- [Timed demo video script](14-demo-video-script.md) - Follow the 7:20 screen/voice-over plan, preparation notes, and narration-only text.
+
 - [Demo interface and role flows](13-demo-interface.md) - See the student card, student/verifier navigation, officer review queue, and actual local screen previews.
 
 - [Full demo walkthrough](12-demo-walkthrough.md) - Upgrade Windows safely and use all locally delivered roles and features.

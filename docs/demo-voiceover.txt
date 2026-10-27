@@ -1,0 +1,19 @@
+A student record can fail a check because of a missing identifier, a wrong date, or an outdated college entry. Staff then spend time comparing spreadsheets and deciding what to fix. APAAR Workspace brings that work into one controlled flow: review, correct, count, and share with permission. This demonstration uses synthetic student data and a simulated registry.
+
+I am signed in as a college administrator. I choose the academic year and upload our sample CSV. The platform checks the file before changing any admissions. This example has sixty-five rows: sixty have no issues, five have identity warnings, and none have blocking errors. I can filter those warnings. Each row gives a readable explanation, a help link, and a separate action to open a correction case.
+
+Here is why the distinction matters. A missing identifier is an identity gap; it does not automatically remove a recorded admission from the intake count. I save the acceptable rows and return to the overview. The dashboard separates active admissions, unresolved identity details, intake warnings, and held candidates. The category breakdown keeps base and supernumerary counts separate from nationality flags.
+
+Now I upload a second file with an incorrect start date. The invalid row stays outside the saved admission records. I open its case and review a correction. I change the date, then preview the repair. This shows the field change and its effect on intake before I apply it. After I apply it, the valid record is saved, the case resolves, and the held-candidate count falls by one. The original error report remains available, so staff can see both the submitted problem and the later correction.
+
+The officer can now review a record reported by two colleges with overlapping dates. Both entries are shown together, so the officer can compare the evidence before recording an outcome. An overlap is a reason to investigate, not an automatic fraud finding. In this demo, I select More evidence needed. Both admission records remain available, and the decision is recorded for follow-up.
+
+Next, I run the history integrity check. It checks retained audit entries against their stored chain. The result shows how many events were checked and their sequence. This helps identify changes to retained history; it does not make the database tamper-proof.
+
+The student has a simpler view. My records shows the records linked to this account. The student card summarises the course, college, academic year, admission state, and masked APAAR. It is a demo record summary. To share a record, the student starts sharing and copies a one-use request code. Creating this code does not disclose the record.
+
+On the verifier tab, I paste that code, choose a purpose, and request Programme and Institution. The student opens Requests and refreshes the inbox. They see who is asking and why. Nothing is preselected. I approve only Programme, for five minutes. The platform moves to Shared access and displays the new QR and link. I copy that link and return to the verifier. When I open it, the result contains only the course name. The college name stays hidden because the student did not approve it. Access also depends on the signed-in verifier, expiry, and the current consent.
+
+The student can stop sharing at any time. I confirm Stop sharing, then try the same link again on the verifier tab. This time the check is refused. The student can also open Access history to see the organisation, approved field names, and access time. Stopping access prevents future checks; it cannot take back information already viewed.
+
+Built with Python, FastAPI, PostgreSQL, and React, APAAR Workspace connects correction, honest admission counts, review, and controlled sharing in one workflow. This is a local prototype; official integration remains outside this demonstration.

@@ -50,9 +50,11 @@ const IntakeChart = lazy(() => import('./IntakeChart'))
 export function Badge({ value }: { value: string }) {
   return (
     <span
-      className={`badge ${['VERIFIED', 'COMMITTED', 'OK', 'ENROLLED'].includes(value) ? 'good' : ['INVALID', 'ERROR', 'HELD', 'WITHDRAWN'].includes(value) ? 'danger' : 'neutral'}`}
+      className={`badge ${['VERIFIED', 'COMMITTED', 'OK', 'ENROLLED', 'SUPERSEDED_BY_CORRECTION'].includes(value) ? 'good' : ['INVALID', 'ERROR', 'HELD', 'WITHDRAWN'].includes(value) ? 'danger' : 'neutral'}`}
     >
-      {value.replaceAll('_', ' ').toLowerCase()}
+      {value === 'SUPERSEDED_BY_CORRECTION'
+        ? 'Corrected'
+        : value.replaceAll('_', ' ').toLowerCase()}
     </span>
   )
 }
@@ -636,11 +638,7 @@ function BatchPage({ user }: { user: User }) {
             <div className="section-title">
               <div>
                 <h2>Review issues</h2>
-                <p>
-                  Choose an issue to filter rows. Counts below refer to issues, not unique students.
-                  Original issues remain in this report; superseded rows have been corrected and no
-                  longer count as held work.
-                </p>
+                <p>Filter the rows, read what needs attention, then open a case to correct it.</p>
               </div>
               {user.institution_id && (
                 <button
@@ -655,6 +653,14 @@ function BatchPage({ user }: { user: User }) {
                 </button>
               )}
             </div>
+            <details className="report-help">
+              <summary>How to read this report</summary>
+              <p>
+                Filter counts refer to issues, so one student can appear in more than one filter.
+                Original issues remain in this report. Rows marked Corrected have been superseded
+                and no longer count as held work.
+              </p>
+            </details>
             <div className="issue-filters">
               <button className={!code ? 'chip selected' : 'chip'} onClick={() => setCode('')}>
                 All rows
@@ -670,7 +676,7 @@ function BatchPage({ user }: { user: User }) {
               ))}
             </div>
             <div className="table-wrap">
-              <table>
+              <table className="batch-rows">
                 <thead>
                   <tr>
                     <th>Row / reference</th>
@@ -696,18 +702,32 @@ function BatchPage({ user }: { user: User }) {
                         {r.issues.length ? (
                           r.issues.map((issue, index) => (
                             <div className="row-issue" key={index}>
-                              <RuleHelp code={issue.code} ruleSetId={b.rule_set_id} />{' '}
-                              <b>{issue.field}</b> · {issue.message}
+                              <div className="row-issue-main">
+                                <span className="row-issue-field">
+                                  {issue.field === 'apaar_id'
+                                    ? 'APAAR ID'
+                                    : issue.field.replaceAll('_', ' ')}
+                                </span>
+                                <p>{issue.message}</p>
+                                <RuleHelp
+                                  code={issue.code}
+                                  ruleSetId={b.rule_set_id}
+                                  label="Why this issue?"
+                                />
+                                {r.status === 'SUPERSEDED_BY_CORRECTION' && (
+                                  <small>Original issue retained for history.</small>
+                                )}
+                              </div>
                               {user.institution_id && r.status !== 'SUPERSEDED_BY_CORRECTION' && (
                                 <button
-                                  className="rule-link"
+                                  className="secondary row-case-button"
                                   disabled={openCase.isPending}
                                   aria-label={`Open ${issue.code} case for ${r.student_ref || `row ${r.row_no}`}`}
                                   onClick={() =>
                                     openCase.mutate({ batch_row_id: r.id, issue_code: issue.code })
                                   }
                                 >
-                                  Open case
+                                  Open case <ArrowRight size={13} />
                                 </button>
                               )}
                             </div>

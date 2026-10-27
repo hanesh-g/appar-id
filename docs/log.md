@@ -2,6 +2,11 @@
 
 ## 2026-10-27
 
+- Fixed institution upload/report layout: direct-child guidance paragraph rules prevent inline code from becoming a separate flex column; the native file control is readable; issue fields/messages/help and case buttons have distinct space; corrected source rows have a plain Corrected label and retained-history explanation.
+- Reserved sidebar account space and compacted the short-height layout so navigation and sign-out fit at 1536×730. Inspected two actual synthetic screen previews. Eight frontend tests and lint/format/types/build passed; the complete six browser journeys passed in 18.5 s, with separate real-browser verification of the final menu fit. No backend code, schema, key, or existing shared data was changed/reset; no backend test rerun was needed for this UI update.
+- Drafted a 7:20 screen-recording/voice-over plan with an 8:30 hard stop, ten exact narration scenes, 619 spoken words, a synchronized teleprompter text file, role-tab/data preparation, and an honest alternate scene for an already-corrected sample. Human rehearsal, actual voice timing, and video recording are not claimed.
+
+
 - Reworked the student and verifier UI into a responsive navigation shell with focused tasks, short guidance, plain status labels, explicit empty/loading/error states, copy feedback, and mobile sign-out. Scoped checkbox/text-input styles fix the inherited column layout and minimum-height problem shown in the user's screenshots.
 - Added a directly discoverable personal student record card before consent: My records → View student card. It uses existing own-record fields and the workspace account display name; no new verified-legal-name or official-credential claim. Guided sharing creates a one-use code; approval navigates/focuses the expiring consent QR under Shared access; stopping access requires confirmation. Request history exposes no unapproved record values.
 - Added an action-focused officer overview, a default open-overlap queue, compact two-record evidence comparison, an explicit bounded outcome/save step, and readable audit-check results with expandable limits. Existing institution correction flows and server authorisation remain covered.
