@@ -20,7 +20,14 @@ test('officer verifies the audit chain after a real staged upload', async ({ pag
     await page.getByLabel('Email address').fill(email)
     await page.getByLabel('Password', { exact: true }).fill(password())
     await page.getByRole('button', { name: 'Sign in', exact: true }).click()
-    await expect(page.getByRole('heading', { name: 'A clearer view of your intake' })).toBeVisible()
+    await expect(
+      page.getByRole('heading', {
+        name:
+          email === 'officer@example.test'
+            ? 'Admission oversight'
+            : 'A clearer view of your intake',
+      }),
+    ).toBeVisible()
   }
   await signIn('collegea@example.test')
   await page.getByRole('navigation').getByRole('link', { name: 'Upload admissions' }).click()
@@ -35,7 +42,7 @@ test('officer verifies the audit chain after a real staged upload', async ({ pag
     .getByRole('navigation')
     .getByRole('link', { name: 'Activity history', exact: true })
     .click()
-  await page.getByRole('button', { name: 'Verify audit chain', exact: true }).click()
+  await page.getByRole('button', { name: 'Run integrity check', exact: true }).click()
   await expect(page.getByRole('status')).toContainText('Integrity check passed')
   await expect(page.getByRole('status')).toContainText('not original legacy authenticity')
 })

@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, Query, Request
@@ -6,6 +6,7 @@ from sqlalchemy import func, select
 
 from . import verification as domain
 from .api import DB, SignedIn
+from .db import utcnow
 from .errors import DomainError
 from .models import (
     ConsentGrant,
@@ -101,12 +102,24 @@ def submitted(db: DB, user: Verifier, page: int = Query(1, ge=1)):
 
 
 @router.get("/me/verification-requests", response_model=PageOut[StudentRequestOut])
-def inbox(db: DB, user: Student, page: int = Query(1, ge=1)):
+def inbox(
+    db: DB,
+    user: Student,
+    page: int = Query(1, ge=1),
+    status: Literal["PENDING", "APPROVED", "DENIED", "EXPIRED"] | None = None,
+):
     stmt = (
         select(VerificationRequest)
         .where(VerificationRequest.student_person_id == user.person_id)
         .order_by(VerificationRequest.created_at.desc(), VerificationRequest.id)
     )
+
+    if status == "PENDING":
+        stmt = stmt.where(VerificationRequest.status == "PENDING", VerificationRequest.expires_at > utcnow())
+    elif status == "EXPIRED":
+        stmt = stmt.where(VerificationRequest.status == "PENDING", VerificationRequest.expires_at <= utcnow())
+    elif status:
+        stmt = stmt.where(VerificationRequest.status == status)
 
     def render(row):
         record = domain.record(db, user.person_id, row.enrolment_id)

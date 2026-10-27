@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { api } from './api'
+import { ShieldCheck } from 'lucide-react'
 
 interface Verification {
   verified: boolean
@@ -16,14 +17,14 @@ export default function AuditIntegrity() {
   const check = useMutation({ mutationFn: () => api<Verification>('/audit-events/verify') })
   const result = check.data
   return (
-    <section className="panel">
+    <section className="panel audit-check-panel">
       <div className="section-title">
         <div>
-          <h2>Audit integrity</h2>
-          <p>Check the retained chain at a consistent database snapshot.</p>
+          <h2>Check history integrity</h2>
+          <p>Check whether the retained activity history matches its recorded integrity values.</p>
         </div>
         <button className="secondary" disabled={check.isPending} onClick={() => check.mutate()}>
-          Verify audit chain
+          <ShieldCheck size={16} /> {check.isPending ? 'Checking history…' : 'Run integrity check'}
         </button>
       </div>
       {check.error && (
@@ -47,11 +48,14 @@ export default function AuditIntegrity() {
               .
             </p>
           )}
-          <p>
-            Latest digest: {result.last_event_hash.slice(0, 16)}… · Legacy snapshot:{' '}
-            {result.legacy_events} events.
-          </p>
-          <p>{result.scope}</p>
+          <details className="audit-check-details">
+            <summary>Check details and limits</summary>
+            <p>
+              Latest digest: {result.last_event_hash.slice(0, 16)}… · Legacy snapshot:{' '}
+              {result.legacy_events} events.
+            </p>
+            <p>{result.scope}</p>
+          </details>
         </div>
       )}
     </section>

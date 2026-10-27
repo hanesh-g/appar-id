@@ -29,6 +29,7 @@ import CategoryBreakdown from './CategoryBreakdown'
 import ResolutionDesk from './ResolutionDesk'
 import OverlapWorkbench from './OverlapWorkbench'
 import AuditIntegrity from './AuditIntegrity'
+import OfficerOverview from './OfficerOverview'
 import {
   api,
   download,
@@ -1338,7 +1339,7 @@ export default function App() {
           </NavLink>
           {user.role === 'officer' && (
             <NavLink to="/overlaps">
-              <ShieldCheck size={18} /> Interval reviews
+              <ShieldCheck size={18} /> Overlap reviews
             </NavLink>
           )}
         </nav>
@@ -1357,7 +1358,7 @@ export default function App() {
             <strong>{user.name}</strong>
             <small>
               {user.role === 'officer'
-                ? 'Officer · interval reviewer'
+                ? 'Officer · admissions review'
                 : 'Institution administrator'}
             </small>
           </div>
@@ -1382,7 +1383,16 @@ export default function App() {
         </div>
         <main>
           <Routes>
-            <Route path="/" element={<DashboardPage user={user} />} />
+            <Route
+              path="/"
+              element={
+                user.role === 'officer' ? (
+                  <OfficerOverview auditEnabled={Boolean(health.data?.audit_chain_enabled)} />
+                ) : (
+                  <DashboardPage user={user} />
+                )
+              }
+            />
             <Route
               path="/upload"
               element={user.institution_id ? <UploadPage /> : <Navigate to="/" />}

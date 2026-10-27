@@ -41,27 +41,78 @@ test('student limits QR disclosure and can revoke access immediately', async ({ 
   const student = await studentContext.newPage()
   const verifier = await verifierContext.newPage()
   const requestedUrls: string[] = []
+  const clientErrors: string[] = []
+  student.on('pageerror', (error) => clientErrors.push(error.name))
+  verifier.on('pageerror', (error) => clientErrors.push(error.name))
   verifier.on('request', (request) => requestedUrls.push(request.url()))
   await student.goto('/')
   await signIn(student, 'student1@example.test')
-  await expect(student.getByRole('heading', { name: 'Your records and consent' })).toBeVisible()
+  await expect(student.getByRole('heading', { name: 'Your student records' })).toBeVisible()
   await expect(student.getByRole('link', { name: 'Enrolments', exact: true })).toHaveCount(0)
+  await student
+    .getByRole('navigation')
+    .getByRole('link', { name: 'My records', exact: true })
+    .click()
+  const record = student.getByRole('article').filter({ hasText: 'Deccan Institute of Technology' })
+  await record.getByRole('button', { name: 'View student card', exact: true }).click()
+  const studentCard = student
+    .getByRole('dialog')
+    .getByRole('article', { name: 'Student record card' })
+  await expect(studentCard).toContainText('Computer Science')
+  await expect(studentCard).toContainText('Not an official APAAR ID or certificate.')
+  await expect(studentCard).not.toContainText('900000000001')
+  await student.setViewportSize({ width: 390, height: 844 })
+  expect(
+    await student.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+  ).toBe(true)
+  await expect(student.getByRole('dialog')).toBeVisible()
+  await student.setViewportSize({ width: 1280, height: 900 })
+  await student.getByRole('button', { name: 'Close dialog', exact: true }).click()
   await student
     .getByRole('article')
     .filter({ hasText: 'Deccan Institute of Technology' })
-    .getByRole('button', { name: 'Create request code', exact: true })
+    .getByRole('button', { name: 'Start sharing', exact: true })
     .click()
   const code = await student.getByLabel('Request code', { exact: true }).inputValue()
+  await student.getByRole('button', { name: 'Close dialog', exact: true }).click()
   await verifier.goto('/')
   await signIn(verifier, 'verifier1@example.test')
-  await expect(verifier.getByRole('heading', { name: 'Request and verify' })).toBeVisible()
+  await expect(verifier.getByRole('heading', { name: 'Verify a student record' })).toBeVisible()
+  await verifier
+    .getByRole('navigation')
+    .getByRole('link', { name: 'Request access', exact: true })
+    .click()
+  const picker = verifier.getByRole('group', { name: 'Choose fields to request' })
+  expect(await picker.evaluate((element) => element.getBoundingClientRect().height < 330)).toBe(
+    true,
+  )
+  expect(
+    await picker
+      .locator('label')
+      .first()
+      .evaluate((element) => getComputedStyle(element).flexDirection),
+  ).toBe('row')
+  await verifier.setViewportSize({ width: 390, height: 844 })
+  expect(
+    await verifier.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+  ).toBe(true)
+  await expect(verifier.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible()
+  await verifier.setViewportSize({ width: 1280, height: 900 })
   await secretInput(verifier, 'Student request code', code)
   await verifier.getByRole('checkbox', { name: 'Programme', exact: true }).check()
   await verifier.getByRole('checkbox', { name: 'Institution', exact: true }).check()
-  await verifier.getByRole('button', { name: 'Submit consent request', exact: true }).click()
+  await verifier.getByRole('button', { name: 'Send approval request', exact: true }).click()
   await expect(verifier.getByRole('status')).toContainText('Request submitted')
-  await student.getByRole('button', { name: 'Sign out', exact: true }).click()
-  await signIn(student, 'student1@example.test')
+  await verifier.getByRole('link', { name: 'Track your requests', exact: true }).click()
+  await expect(
+    verifier.getByRole('heading', { name: 'Your request history', exact: true }),
+  ).toBeVisible()
+  await expect(verifier.getByText('Computer Science', { exact: true })).toHaveCount(0)
+  await student
+    .getByRole('navigation')
+    .getByRole('link', { name: /^Requests/ })
+    .click()
+  await student.getByRole('button', { name: 'Refresh', exact: true }).click()
   const pending = student
     .getByRole('article')
     .filter({ has: student.getByRole('button', { name: 'Approve selected fields' }) })
@@ -99,21 +150,34 @@ test('student limits QR disclosure and can revoke access immediately', async ({ 
   await verifier.getByRole('button', { name: 'Verify approved fields' }).click()
   const result = verifier
     .getByRole('status')
-    .filter({ has: verifier.getByRole('heading', { name: 'Approved fields' }) })
+    .filter({ has: verifier.getByRole('heading', { name: 'Approved fields', exact: true }) })
   await expect(result).toContainText('Computer Science')
   await expect(result.locator('dt')).toHaveText(['Programme'])
   expect(requestedUrls.every((url) => !url.includes(opaque))).toBe(true)
-  await student.getByRole('button', { name: 'Revoke access', exact: true }).click()
-  await expect(student.getByRole('button', { name: 'Revoke access', exact: true })).toHaveCount(0)
+  await student.getByRole('button', { name: 'Stop sharing', exact: true }).click()
+  await expect(student.getByRole('dialog')).toContainText('stop future checks')
+  await student.getByRole('button', { name: 'Confirm stop sharing', exact: true }).click()
+  await expect(student.getByRole('button', { name: 'Stop sharing', exact: true })).toHaveCount(0)
   await expect(issued).toHaveCount(0)
   await secretInput(verifier, 'Student consent link', shared)
   await verifier.getByRole('button', { name: 'Verify approved fields' }).click()
-  await expect(verifier.getByRole('alert')).toContainText('Verification is unavailable')
-  await expect(verifier.getByRole('heading', { name: 'Approved fields' })).toHaveCount(0)
-  await student.getByRole('button', { name: 'Sign out', exact: true }).click()
-  await signIn(student, 'student1@example.test')
+  await expect(verifier.getByRole('alert')).toContainText('This link cannot be opened')
+  await expect(verifier.getByRole('heading', { name: 'Approved fields', exact: true })).toHaveCount(
+    0,
+  )
+  await student
+    .getByRole('navigation')
+    .getByRole('link', { name: 'Access history', exact: true })
+    .click()
   await expect(student.getByRole('heading', { name: 'Access history' })).toBeVisible()
-  await expect(student.getByText('No verifier has accessed your records.')).toHaveCount(0)
+  await expect(
+    student
+      .locator('.activity-list')
+      .getByRole('heading', { name: 'Demo admissions verifier', exact: true })
+      .first(),
+  ).toBeVisible()
+  await expect(student.getByText('No record checks yet')).toHaveCount(0)
+  expect(clientErrors).toEqual([])
   await studentContext.close()
   await verifierContext.close()
 })

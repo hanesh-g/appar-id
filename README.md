@@ -4,6 +4,8 @@ An AI-assisted SIH 2026 prototype with a Python FastAPI backend, PostgreSQL, and
 
 **Current state:** local core implemented and verified with PostgreSQL integration tests, frontend tests/build, and a real-browser journey. Hosted deployment is not yet configured or verified. APAAR checks are simulated; all provided student fixtures are synthetic. See the [current evidence](docs/05-progress-checklist.md).
 
+The demo now has dedicated student, verifier, and officer interfaces with guided actions and compact forms. The student record card is available at **My records → View student card**; the consent QR appears after approval under **Shared access**. See [the actual screen previews and role flows](docs/13-demo-interface.md).
+
 ## Start on Windows
 
 Follow the [native Windows setup](docs/08-windows-setup.md). It covers tools, your Git identity, dependency installation, native PostgreSQL, migrations, seed accounts, startup, and checks. Docker is optional.

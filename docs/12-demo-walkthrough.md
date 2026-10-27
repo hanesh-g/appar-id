@@ -4,7 +4,7 @@ title: Full local demo walkthrough
 description: Update Windows safely and demonstrate correction, counts, overlap review, audit integrity, and consent.
 tags: [apaar, windows, demo, consent, operations]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T18:03:26Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-27T16:50:46Z"}
 sources:
   - resource: 05-progress-checklist.md
   - resource: 08-windows-setup.md
@@ -20,7 +20,7 @@ This guide uses synthetic adult students and a simulated registry. The local fea
 Stop the API with Ctrl+C before upgrading. Open PowerShell and run:
 
 ```powershell
-Set-Location D:\Projects\appar-id
+Set-Location D:\Projects\appar-id\appar-id
 git pull --ff-only
 Set-Location backend
 uv sync --frozen
@@ -40,13 +40,13 @@ Start the API and frontend in two PowerShell terminals:
 
 ```powershell
 # Terminal 1
-Set-Location D:\Projects\appar-id
+Set-Location D:\Projects\appar-id\appar-id
 .\scripts\Start-Backend.ps1
 ```
 
 ```powershell
 # Terminal 2
-Set-Location D:\Projects\appar-id
+Set-Location D:\Projects\appar-id\appar-id
 .\scripts\Start-Frontend.ps1
 ```
 
@@ -83,29 +83,31 @@ An expired proposal or changed case/record/intake needs a fresh preview. An old 
 
 1. Sign in as College B. Upload and commit `fixtures/identity-cases.csv`. Its verified `STU-001` is the same synthetic person as College A's student 001.
 2. College B's own record can show a generic pending-review notice. It does not identify the other college or disclose its record.
-3. Sign in as the officer and open **Interval reviews**. Inspect the two recorded intervals. Select a bounded outcome such as **Reviewed: permitted dual**, **Reviewed: transfer lag**, or **Needs more evidence**.
+3. Sign in as the officer. The Admission oversight page highlights the review queue. Open **Overlap reviews → Review this overlap**, compare the two college records, choose a **Review outcome**, and select **Save review**. Outcomes are **Dual study reviewed**, **Transfer delay reviewed**, and **More evidence needed**. The filter starts at Needs review; select All reviews to inspect earlier decisions.
 4. Both admission records remain. A date intersection is a review signal; it is not a fraud decision or proof of an official dual-study rule. Changed intervals can reopen or close the review with retained history.
 
 For older synthetic records, initialise the queue once from `backend` with `uv run --frozen python -m app.reconcile_intervals --demo`. This explicit, repeatable backfill supports at most 500 people. It does not run on startup.
 
 ## Officer: verify the audit history
 
-Open **Activity history → Verify audit chain**. A successful check reports its sequence watermark and any legacy snapshot captured when signing started. It detects retained-history changes under the documented threat model. It does not prove original legacy authenticity, survive complete database rollback undetectably, or protect against compromise of the application and its keys. There is no external anchor.
+Open **Activity history → Run integrity check**. Expand **Check details and limits** for the watermark, legacy snapshot, and technical limits. A successful check reports its sequence watermark and any legacy snapshot captured when signing started. It detects retained-history changes under the documented threat model. It does not prove original legacy authenticity, survive complete database rollback undetectably, or protect against compromise of the application and its keys. There is no external anchor.
 
 ## Student and verifier: share only approved fields
 
-1. Sign in as `student1@example.test`. Under **Your verified records**, choose the intended college record and select **Create request code**. With both college fixtures committed, this student has two legitimate records.
-2. Give that code to `verifier1@example.test` through your chosen channel. The code expires after 15 minutes and can create one matching request. It reveals no admission fields.
-3. In the verifier workspace, paste the code, choose a purpose, select fields such as **Programme** and **Institution**, and select **Submit consent request**. The acknowledgement is generic. A guessed/expired/used code does not reveal whether a student exists.
-4. Return to the student workspace. Requests refresh every 15 seconds; signing out and back in also refreshes. Inspect the verifier organisation, purpose, requested fields, linked record, and request expiry.
-5. Check only **Programme**, choose an access duration of 5, 15, or 60 minutes, and select **Approve selected fields**. Nothing is preselected. Alternatively, select **Deny request**.
-6. Review the newly displayed sharing card: named verifier, purpose, approved fields, and expiry. Copy its link or share its QR with that verifier before leaving; the link is revealed once. The card is labelled as a synthetic demo and requires verifier sign-in. Its link carries an opaque token in its fragment; it contains no student record fields. There are no social-post buttons or permanent ID/certificate downloads.
-7. The verifier opens the link and signs in, or pastes it into **Student consent link**. Select **Verify approved fields**. The result contains only Programme, although the original request asked for two fields. A QR by itself does not grant access to another verifier.
-8. In the student workspace, select **Revoke access**. The displayed sharing card is hidden after that revoke succeeds, and the next request checked after revocation commits is refused. Access history records the verifier, purpose, field names, and time. Previously delivered information cannot be retracted.
+1. Sign in as `student1@example.test`. Open **My records** and choose the intended college. **View student card** opens the personal record card before any sharing request. **Start sharing** opens a guided dialog and creates the one-use request code. With both college fixtures committed, this student has two legitimate records.
+2. Select **Copy request code** and give that code to `verifier1@example.test` through your chosen channel. The code expires after 15 minutes and can create one matching request. It reveals no admission fields.
+3. In the verifier workspace, open **Request access**, paste the code, choose a purpose, select fields such as **Programme** and **Institution**, and select **Send approval request**. The acknowledgement is generic. A guessed/expired/used code does not reveal whether a student exists.
+4. Return to the student workspace and open **Requests**. Use **Refresh** or wait for its 15-second update. The pending list excludes expired requests. Inspect the verifier organisation, purpose, requested fields, linked record, and request expiry.
+5. Check only **Programme**, choose an access duration of 5, 15, or 60 minutes, and select **Approve selected fields**. Nothing is preselected. Alternatively, select **Decline request**.
+6. Approval moves to **Shared access** and brings the newly revealed QR/link into view. Review that sharing card: named verifier, purpose, approved fields, and expiry. Copy its link or share its QR with that verifier before leaving; the link is revealed once. The card is labelled as a synthetic demo and requires verifier sign-in. Its link carries an opaque token in its fragment; it contains no student record fields. There are no social-post buttons or permanent ID/certificate downloads.
+7. The verifier opens the link and signs in, or opens **Verify a link** and pastes it into **Student consent link**. Select **Verify approved fields**. The result contains only Programme, although the original request asked for two fields. A QR by itself does not grant access to another verifier.
+8. In the student workspace, open **Shared access → Stop sharing → Confirm stop sharing**. The displayed sharing card is hidden after that revoke succeeds, and the next request checked after revocation commits is refused. The **Access history** page records the verifier, purpose, field names, and time. Previously delivered information cannot be retracted.
 
 The request expires after 24 hours. Grant expiry is at most 60 minutes and never later than the request. Resolve checks the live grant, caller/organisation, active student, expiry, revocation, and approved record version. Record changes invalidate the link. Approval also checks the record version shown to the student, so a concurrent correction requires review again.
 
 If a link was lost, **Replace lost link** explicitly invalidates the previous grant and issues a new 15-minute link with the same fields, provided the record is unchanged and the request is still live. Only the latest grant can be replaced. A changed record needs a new request and consent. Keep links out of logs, analytics, and browser storage. Reloading after the fragment has been cleared can require opening the link again.
+
+See [the interface guide and actual screenshots](13-demo-interface.md) for the visible student card and the role-specific navigation.
 
 ## Recovery and remaining human work
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { fieldLabels, purposeLabels, type IssuedGrant } from './consent'
 
@@ -11,6 +11,17 @@ export default function ConsentShareCard({
 }) {
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState('')
+  const cardRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (!value.token) return
+    cardRef.current?.focus({ preventScroll: true })
+    cardRef.current?.scrollIntoView({
+      block: 'start',
+      behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+        ? 'instant'
+        : 'smooth',
+    })
+  }, [value.token])
   if (!value.token) return null
   const { grant } = value
   const link = `${window.location.origin}/verify#token=${encodeURIComponent(value.token)}`
@@ -32,7 +43,12 @@ export default function ConsentShareCard({
     }
   }
   return (
-    <section className="panel consent-card consent-share" aria-label="New consent link">
+    <section
+      ref={cardRef}
+      tabIndex={-1}
+      className="panel consent-card consent-share"
+      aria-label="New consent link"
+    >
       <div className="consent-share-instructions">
         <div className="eyebrow">YOU CONTROL WHAT YOU SHARE</div>
         <h2>Your consent link</h2>

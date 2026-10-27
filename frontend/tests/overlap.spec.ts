@@ -22,7 +22,14 @@ test('officer reviews an overlap while institutions receive only a generic notic
     await page.getByLabel('Email address').fill(email)
     await page.getByLabel('Password', { exact: true }).fill(password())
     await page.getByRole('button', { name: 'Sign in', exact: true }).click()
-    await expect(page.getByRole('heading', { name: 'A clearer view of your intake' })).toBeVisible()
+    await expect(
+      page.getByRole('heading', {
+        name:
+          email === 'officer@example.test'
+            ? 'Admission oversight'
+            : 'A clearer view of your intake',
+      }),
+    ).toBeVisible()
   }
   await signIn('collegeb@example.test')
   await page.getByRole('navigation').getByRole('link', { name: 'Upload admissions' }).click()
@@ -43,17 +50,25 @@ test('officer reviews an overlap while institutions receive only a generic notic
   await signIn('officer@example.test')
   await page
     .getByRole('navigation')
-    .getByRole('link', { name: 'Interval reviews', exact: true })
+    .getByRole('link', { name: 'Overlap reviews', exact: true })
     .click()
-  await expect(page.getByRole('heading', { name: 'Enrolment interval reviews' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Review overlapping enrolments' })).toBeVisible()
   await expect(
-    page.getByRole('cell', { name: 'Deccan Institute of Technology', exact: true }).first(),
+    page.getByRole('heading', { name: 'Deccan Institute of Technology', exact: true }).first(),
   ).toBeVisible()
   await expect(
-    page.getByRole('cell', { name: 'Riverdale Technical College', exact: true }).first(),
+    page.getByRole('heading', { name: 'Riverdale Technical College', exact: true }).first(),
   ).toBeVisible()
-  await page.getByRole('button', { name: 'Reviewed: permitted dual', exact: true }).first().click()
-  await expect(page.locator('.overlap-review .section-title p').first()).toContainText(
-    'reviewed permitted dual',
+  await page.getByRole('button', { name: 'Review this overlap' }).first().click()
+  await page.setViewportSize({ width: 390, height: 844 })
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
   )
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.getByLabel('Review outcome', { exact: true }).selectOption('REVIEWED_PERMITTED_DUAL')
+  await page.getByRole('button', { name: 'Save review', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('Review saved: Dual study reviewed')
+  await page.getByLabel('Review status', { exact: true }).selectOption('')
+  await expect(page.locator('.overlap-review').first()).toContainText('Reviewed: dual study')
 })

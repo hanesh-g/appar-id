@@ -14,6 +14,8 @@ This is the entry point for people and AI coding assistants. Core application co
 
 ## Delivery
 
+- [Demo interface and role flows](13-demo-interface.md) - See the student card, student/verifier navigation, officer review queue, and actual local screen previews.
+
 - [Full demo walkthrough](12-demo-walkthrough.md) - Upgrade Windows safely and use all locally delivered roles and features.
 
 - [Feature extension execution plan](11-feature-execution-plan.md) - Plan the five new feature groups on top of the existing core, with proposed contracts, human tasks, negative tests, and two release cuts.

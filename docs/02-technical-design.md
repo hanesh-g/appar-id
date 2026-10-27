@@ -4,7 +4,7 @@ title: Technical design
 description: Define the Python stack, data, API, deployment, and security contracts.
 tags: [apaar, python, fastapi, architecture, deployment]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T16:12:00Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-27T16:50:46Z"}
 sources:
   - resource: "User-uploaded APAAR ID Student Data Platform (SIH26263) Phase-by-Phase Build Guide.pdf, 18 pages"
   - resource: 01-problem-and-scope.md
@@ -35,6 +35,8 @@ E6 implemented contract: optional `AUDIT_CHAIN_ENABLED=true` requires a separate
 E7 implemented contract: `CONSENT_ENABLED=true` requires an independent retained `GRANT_TOKEN_KEY` and `GRANT_KEY_ID`. The demo seed adds two adult students and two approved verifiers while preserving existing passwords/bindings. Random 256-bit request handles expire after 15 minutes and are consumed once. Bounded, idempotent requests expire after 24 hours; invalid handles receive an indistinguishable acknowledgement/submission shape without a student inbox entry. A per-verifier database advisory lock serialises a 10-request/minute bound.
 
 Students explicitly approve a requested whitelist subset and 1–60 minute expiry, checking both the request and displayed record version. Grants bind person, enrolment/version, individual verifier/organisation, purpose, fields, expiry, key ID, and revocation. Only digests are stored; approval/reissue reveals the token once. Reissue invalidates the prior grant and requires the latest unchanged grant/request. Resolve locks programme/person/enrolment before request/grant rows, validates live state, and commits access/audit before disclosure. Failure records no successful access. Student/verifier screens use no browser storage; QR fragments are captured once, cleared before routing, and POSTed after login. `qrcode.react` is pinned to 4.2.0. Sensitive API responses are no-store/no-referrer; Vercel header configuration and a frontend referrer meta tag are supplied, with hosted behaviour still unverified.
+
+Demo UI update: role-specific React routes use focused record, approval, access, and history components with shared scoped form controls. Student and verifier pages use a responsive navigation shell; officer overview/queue reuse core scopes. `GET /api/v1/me/verification-requests` accepts optional `PENDING|APPROVED|DENIED|EXPIRED` status filters; PENDING excludes expired requests, and totals remain person-scoped before pagination. No migration or new runtime dependency is introduced. The visible student card uses existing own-record fields and the workspace display name, with no new legal-name or official-credential claim. See [the interface guide](13-demo-interface.md).
 
 ## 1. Architecture baseline
 

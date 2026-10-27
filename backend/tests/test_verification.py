@@ -385,3 +385,44 @@ def test_extension_seed_is_repeatable_without_password_or_binding_changes(client
         seed_verification(db, "Different-password-is-never-applied", Crypto(client.app.state.settings))
         after = {u.email: (u.password_hash, u.person_id, u.verifier_org_id) for u in db.scalars(select(User))}
     assert before == after and len(after) == 7
+
+
+def test_student_request_filters_count_only_live_pending_and_preserve_person_scope(client, actors):
+    pending, _, _ = request_consent(client, actors)
+    denied, _, _ = request_consent(client, actors)
+    assert (
+        client.post(
+            f"/api/v1/me/verification-requests/{denied}/deny",
+            headers=actors["student1"],
+            json={"expected_version": 1},
+        ).status_code
+        == 200
+    )
+    expired, _, _ = request_consent(client, actors)
+    approved, _, _ = request_consent(client, actors)
+    assert approve(client, actors, approved).status_code == 200
+    with Session(client.app.state.engine) as db:
+        db.get(VerificationRequest, expired).expires_at = utcnow() - timedelta(seconds=1)
+        db.commit()
+    for status, expected in [
+        ("PENDING", pending),
+        ("DENIED", denied),
+        ("EXPIRED", expired),
+        ("APPROVED", approved),
+    ]:
+        response = client.get(
+            "/api/v1/me/verification-requests", headers=actors["student1"], params={"status": status}
+        )
+        assert response.status_code == 200 and response.json()["total"] == 1
+        assert response.json()["items"][0]["id"] == expected
+        assert (
+            client.get(
+                "/api/v1/me/verification-requests", headers=actors["student2"], params={"status": status}
+            ).json()["total"]
+            == 0
+        )
+    assert client.get("/api/v1/me/verification-requests", headers=actors["student1"]).json()["total"] == 4
+    assert (
+        client.get("/api/v1/me/verification-requests?status=UNKNOWN", headers=actors["student1"]).status_code
+        == 422
+    )

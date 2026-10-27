@@ -1,5 +1,14 @@
 # Documentation update log
 
+## 2026-10-27
+
+- Reworked the student and verifier UI into a responsive navigation shell with focused tasks, short guidance, plain status labels, explicit empty/loading/error states, copy feedback, and mobile sign-out. Scoped checkbox/text-input styles fix the inherited column layout and minimum-height problem shown in the user's screenshots.
+- Added a directly discoverable personal student record card before consent: My records → View student card. It uses existing own-record fields and the workspace account display name; no new verified-legal-name or official-credential claim. Guided sharing creates a one-use code; approval navigates/focuses the expiring consent QR under Shared access; stopping access requires confirmation. Request history exposes no unapproved record values.
+- Added an action-focused officer overview, a default open-overlap queue, compact two-record evidence comparison, an explicit bounded outcome/save step, and readable audit-check results with expandable limits. Existing institution correction flows and server authorisation remain covered.
+- Added an optional typed, person-scoped request-status filter so pending badges/counts exclude expired requests before pagination. No migration, key change, runtime dependency, account reset, or shared-data reset was needed. Split record, request-review, grant, and shared UI components for maintainability.
+- Validation: **113 backend tests passed** in 108.76 s; frontend lint/format/types/build and **eight tests passed**; final complete browser run **six passed** in 16.7 s. Includes student-card discovery, desktop/390 px controls, request-history privacy, approve/resolve/stop-sharing, officer review, and error/empty recovery. Initial select-label and inexact-heading test failures were corrected. TypeScript also caught a missing history icon import during the component split; it was restored and the browser test now waits for a loaded history entry and rejects client errors. Passing focused/final runs and the completed build cover those fixes. Separate synthetic databases preserve previous data.
+- Inspected actual local desktop/mobile screenshots and saved five previews plus Document 13. Updated native Windows paths and exact demo navigation. Hosted validation, native Windows execution of this update, real-policy/identity review, and external user usability feedback remain open.
+
 ## 2026-10-26
 
 - Evaluated the user's event-ticket reference and adapted only its useful card presentation to the existing consent QR flow. The card clearly shows recipient, purpose, approved fields, expiry/timezone, synthetic-demo scope, and sign-in requirement. Local successful revocation hides the issued card; the live server still controls disclosure. No new backend, dependency, public profile, barcode, or persistent credential was added.

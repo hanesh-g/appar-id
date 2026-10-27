@@ -4,7 +4,7 @@ title: Progress checklist
 description: Track implementation gates and executed evidence without invented completion.
 tags: [apaar, progress, testing, release]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-26T18:03:26Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-27T16:50:46Z"}
 sources:
   - resource: 03-feature-specification.md
   - resource: 04-implementation-phases.md
@@ -14,7 +14,7 @@ sources:
 
 ## Current state
 
-Core, the correction workspace, interval review, audit integrity, and student-approved verification/QR are locally verified. Latest backend regression: **112 passed**, 93.54 s. Frontend: **eight tests passed**, lint/format/types/build passed. **Five browser journeys** passed across the recorded runs. Populated migration and retained-key restart passed. Windows execution of the new commands, hosted deployment, and remote CI remain unverified. Follow the [complete demo walkthrough](12-demo-walkthrough.md).
+Core, the correction workspace, interval review, audit integrity, and student-approved verification/QR are locally verified. Latest backend regression: **113 passed**, 108.76 s. Frontend: **eight tests passed**, lint/format/types/build passed. **Six browser journeys passed together**, 16.7 s, including the redesigned role flows and empty/error recovery. Populated migration and retained-key restart passed. Windows execution of the new commands, hosted deployment, and remote CI remain unverified. Follow the [complete demo walkthrough](12-demo-walkthrough.md) and [new interface guide with screen previews](13-demo-interface.md).
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 
@@ -151,6 +151,17 @@ The [execution plan](11-feature-execution-plan.md) maps the supplied five task-c
 - [ ] E8 / SHARED: Hosted upgrade, exact-origin/role/log checks, restart, and full demonstration pass; human hosting/rehearsal decisions.
 - [ ] HUMAN: Review applicable policy sources, correction ownership, student linking/verifier approval, and real-data requirements before any official claim or real-data pilot.
 
+## Demo interface follow-up
+
+- [x] Student: separate Overview, My records, Requests, Shared access, and Access history; pending count excludes expired work.
+- [x] Student record card visible before consent at My records → View student card; existing account/own-record data only, masked APAAR, clear demo scope.
+- [x] Guided one-use code creation/copy, explicit field/value review, sharing-period choice, automatic navigation/focus to the approved QR card, and confirmation before stopping access.
+- [x] Verifier: distinct request-code/approved-link starting points, compact field grid, private submission history, and approved-fields-only result.
+- [x] Officer: action-focused overview, open review queue, side-by-side evidence, explicit decision/save, and expandable audit-check limits.
+- [x] Scoped form styles fix column-oriented checkbox labels and inherited input heights. Named controls, focus movement, mobile sign-out, retry/empty guidance, and 390 px checks passed.
+- [x] Actual synthetic desktop/mobile screenshots inspected and saved in Document 13. No tokens, passwords, or full APAAR IDs appear in those previews.
+- [ ] Hosted visual check, native Windows execution of this update, and feedback from external demo users remain unverified.
+
 ## Test fixtures and expected results
 
 | Fixture | Construction | Required result |
@@ -171,6 +182,7 @@ Implement test-only fault injection outside public API routes. Create fresh data
 
 | Check / feature | Command or scenario | Result + count / timing | Revision | Evidence location |
 |---|---|---|---|---|
+| Demo role UX / student card | Full PostgreSQL regression; frontend lint/format/types/build and eight tests; all six browser journeys | **113 backend passed**, 108.76 s; **8 frontend passed**; **6 browser passed**, 16.7 s | Demo interface implementation | Person-scoped request-filter test; student card before consent; compact verifier fields; QR/stop-sharing; officer review; mobile controls; empty/error/retry. First browser pass found a select-label query mismatch and an inexact heading assertion; fixed, then focused and complete runs passed. Separate fresh synthetic databases retained prior data; previews inspected in Document 13. |
 | Consent sharing card | Frontend lint/format, eight tests, type/build; focused real consent journey | **8 frontend passed**; **1 browser passed**, 6.1 s total; 390 px layout, card field limits, and hide-on-revoke passed | Sharing-card follow-up | `ConsentShareCard.tsx`, `frontend/tests/verification.spec.ts`; existing dedicated synthetic database, no reset. Backend code unchanged; backend tests not rerun for this UI update. |
 | E7 / final local regression | `uv run --frozen pytest -q`; frontend checks/build; all browser scenarios; populated migration; retained-key restart | **112 backend passed**, 93.54 s; **8 frontend passed**; **4 browser passed** together (12.7 s total including initial consent-selector failure), then corrected consent journey **1 passed**, 4.3 s; retained 72 enrolments / 7 users / 1 grant / audit watermark 23 on restart | E7 implementation | `backend/tests/test_verification.py` (20 scenarios), separate-key helper tests, `frontend/src/consent.test.ts`, `frontend/tests/verification.spec.ts`, Document 12. Initial consent selector matched both legitimate own-college records; selecting the intended college passed. Hosted flags/headers/logs and native Windows execution remain unverified. |
 | E6 audit integrity | Tamper/genesis/key/snapshot checks; full backend; officer browser | **24 focused passed**, 14.81 s; **90 full passed**, 52.57 s; **1 browser passed**, 4.0 s; frontend lint/types/build passed | E6 implementation | `test_audit_integrity.py`, key-helper tests, migration checks, `frontend/tests/audit.spec.ts`. Browser initially could not reach the stopped frontend process; restart and rerun passed. |
