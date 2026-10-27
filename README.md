@@ -39,8 +39,6 @@ To enable audit integrity and consent locally, run `uv run --frozen python ../sc
 | [Full demo walkthrough](docs/12-demo-walkthrough.md) | How do I update Windows and demonstrate the correction, officer, student, and verifier workflows? |
 | [Feature extension execution plan](docs/11-feature-execution-plan.md) | In which order should we build resolution/diff, rule help, categories, overlap review, audit integrity, and consent/QR, with which release gates? |
 
-The `docs/` directory is an [OKF v0.2 knowledge bundle](docs/index.md). Its concept files contain YAML metadata and links for people and AI assistants. It needs no running OKF service.
-
 ## Working agreement
 
 - Build the **CORE** features first. **NEXT** features are optional extensions. **LATER** features are outside this demo.
@@ -53,9 +51,6 @@ The `docs/` directory is an [OKF v0.2 knowledge bundle](docs/index.md). Its conc
 ## Sources and uncertainties
 
 Primary input: *APAAR ID Student Data Platform (SIH26263): Phase-by-Phase Build Guide*, uploaded by the user. It contains 18 pages and detailed Phases 0–3. References to later phases do not supply their full specifications. The official SIH problem statement and real APAAR integration contract have not been independently verified.
-
-User constraints: approximately two days; AI-assisted development; Python backend; Vercel frontend; Render backend.
-
 The user supplied `GoogleCloudPlatform/knowledge-catalog`. Its frozen `okf/` copy points to the canonical `GoogleCloudPlatform/open-knowledge-format` repository. **OKF means Open Knowledge Format.** The inspected specification is v0.2. The reviewed sources do not establish a direct code dependency on a specific LLM-Wiki implementation. See the [pinned-source assessment](docs/07-okf-assessment.md). The format is used for these documents; the reference agent is not a core runtime dependency.
 
 These documents are a proposed implementation baseline for review. They do not establish government approval, legal compliance, production security, or live deployment.
