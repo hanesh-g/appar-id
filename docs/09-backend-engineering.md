@@ -46,6 +46,8 @@ The actions workflow is checked in; its remote execution must be verified after 
 
 ## Deploy backend to Render
 
+For exact Windows commands, every host setting and the first-demo sequence, use [the deployment guide](16-deployment-guide.md). It includes an explicit one-time migration/seed start command for a fresh single-instance synthetic demo when an interactive host Shell is unavailable, then restores the normal start command. Live upgrades continue to require a controlled release operation.
+
 `render.yaml` is a proposed blueprint for a synthetic demo. It uses the free web-service plan; verify its current cold-start and availability limitations. A reliable judged demo may need a human-approved plan change.
 
 1. Create/select a managed PostgreSQL database. Preserve its connection credentials and follow its supported TLS/certificate settings.
@@ -69,7 +71,7 @@ The blueprint does not create a database, enter secrets, execute migrations, or 
 
 ## What remains before real-data production use
 
-This code uses production-oriented practices. It is still a synthetic prototype. A real-data release needs a separate security/policy/operations gate: approved registry access and matching rules; applicable intake policy; legal basis and consent where required; retention/deletion; managed secret storage and key rotation; backups and restore drills; distributed throttling; operational alerts; dependency/security review; capacity testing; and incident ownership. Optional consent verification is not yet implemented.
+This code uses production-oriented practices. It is still a synthetic prototype. A real-data release needs a separate security/policy/operations gate: approved registry access and matching rules; applicable intake policy; legal basis and consent where required; retention/deletion; managed secret storage and key rotation; backups and restore drills; distributed throttling; operational alerts; dependency/security review; capacity testing; and incident ownership. Optional consent verification is locally implemented behind explicit enablement; real-data identity proofing and operational review remain separate gates.
 
 Do not label the app government-approved, compliant, tamper-proof, fraud-proof, or production-certified based on its stack or local tests.
 

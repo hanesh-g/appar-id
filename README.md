@@ -10,6 +10,8 @@ Institution onboarding now includes **Institution approval**: an officer reviews
 
 For recording, use the [action-by-action guide](docs/14-demo-video-script.md): 141 numbered steps across 17 chapters, each with before-action narration, the exact action, a wait condition and result narration. The [full narration](docs/demo-voiceover.txt) and [chapter audio text](docs/demo-voiceover-sections.md) match those steps. This detailed version has no imposed runtime or overall character cap; both college imports and every role transition are shown in the story.
 
+To host the demo, follow the [Render + Vercel deployment steps](docs/16-deployment-guide.md): managed PostgreSQL, generated private `.env.render` settings, an explicit first-deployment migration/seed, then the normal API start and the exact Vercel origin. The helper `uv run --project backend --frozen python scripts/configure_render.py` prepares hosted secrets without changing local settings. Hosting remains unverified until performed in your accounts.
+
 ## Start on Windows
 
 Follow the [native Windows setup](docs/08-windows-setup.md). It covers tools, your Git identity, dependency installation, native PostgreSQL, migrations, seed accounts, startup, and checks. Docker is optional.

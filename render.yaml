@@ -16,6 +16,8 @@ services:
         value: demo
       - key: REGISTRY_MODE
         value: mock
+      - key: MOCK_REGISTRY_OUTAGE
+        value: "false"
       - key: JWT_SECRET
         generateValue: true
       - key: DATABASE_URL
@@ -37,4 +39,7 @@ services:
       - key: GRANT_KEY_ID
         value: grant-v1
       - key: GRANT_TOKEN_KEY
+        sync: false
+      # Used only by the explicitly invoked first-deployment seed; the normal start does not seed.
+      - key: DEMO_PASSWORD
         sync: false

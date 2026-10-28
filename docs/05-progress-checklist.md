@@ -32,6 +32,13 @@ Core, the correction workspace, interval review, audit integrity, student-approv
 - [x] Checked the step/narration/chapter mapping, current interface labels, synthetic fixture counts and documentation links. Each chapter's narration stays under 5,000 characters; the current detailed request removes the earlier overall character/runtime limits. Both college approvals and all three CSV imports are shown on screen; no hidden College B preload is required.
 - [ ] HUMAN: Rehearse the detailed walkthrough on a separate fresh recording database, record each chapter with its matching narration, and review the full export for continuity and result timing. An earlier condensed voice-over was completed; this does not establish that the expanded recording has been made.
 
+## Deployment instructions and hosted-settings helper — 28 October
+
+- [x] Added Document 16 with repository-specific Render PostgreSQL/API and Vercel settings, an explicit first-demo migration/seed sequence, restoration of the normal start command, exact-origin setup and hosted recording preparation.
+- [x] Checked the private `.env.render` helper against typed settings: four distinct base64 32-byte keys, adequate JWT/password length, exclusive creation, retained first-run values and unchanged local `.env`. The output path is ignored by Git. Static checks passed; no hosted service or database was created by these checks.
+- [x] Executed the exact first-demo migration/seed/start command on a new isolated PostgreSQL database, then restarted with the normal start command and retained keys. Both runs passed health, college/officer/student login, seven-account count, empty admissions, two pending colleges and audit integrity with unchanged restart watermark. This was local command verification, not a Render/Vercel deployment.
+- [ ] HUMAN/SHARED: Create the chosen hosting resources, enter settings privately, run migrations/seed, verify hosted login and the full workflow, and confirm retained-key restart and provider plan behaviour. Official hosting documentation could not be fetched here; current account UI/pricing remains to be checked.
+
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 
 ## Phase gates

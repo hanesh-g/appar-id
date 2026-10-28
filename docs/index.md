@@ -14,6 +14,8 @@ This is the entry point for people and AI coding assistants. Core application co
 
 ## Delivery
 
+- [Render + Vercel deployment guide](16-deployment-guide.md) - Generate private hosted settings, create PostgreSQL and the Python API, perform explicit first-demo initialisation, then deploy the frontend and set exact CORS origins.
+
 - [Institution approval demo](15-institution-approval-demo.md) - Review synthetic institution/year/programme evidence and enable admissions as an officer; follow the final guide for the approval recording scene.
 
 - [Action-by-action voice-over and recording guide](14-demo-video-script.md) - Follow 141 numbered steps across 17 chapters, with before-action narration, precise actions, wait conditions and result narration. No fixed runtime; both colleges' imports are shown on screen.
