@@ -4,7 +4,7 @@ title: Final voice-over and screen recording guide
 description: A synchronized eleven-scene demo with narration under 5000 characters, including synthetic institution approval.
 tags: [apaar, demo, recording, voiceover, sih]
 status: draft
-generated: {by: codex/build-pack-v1, at: "2026-10-28T04:10:09Z"}
+generated: {by: codex/build-pack-v1, at: "2026-10-28T04:21:10Z"}
 sources:
   - resource: 12-demo-walkthrough.md
   - resource: 13-demo-interface.md
@@ -14,11 +14,11 @@ sources:
 
 # 14 — Final voice-over and recording guide
 
-**Estimated screen runtime: 8:05. Hard stop: 8:30, including title and outro.** A shorter edit is welcome. These are planning cues, not measured human speech or a completed recording. Use the actual voice track to align the footage.
+**Estimated screen runtime: 7:10. Hard stop: 8:30, including title and outro.** A shorter edit is welcome. These are planning cues, not measured human speech or a completed recording. Use the actual voice track to align the footage.
 
-The [final narration-only file](demo-voiceover.txt) contains **4,715 characters, including spaces, LF line breaks and the final newline**, and **686 whitespace-separated words**. Its content is ASCII, so UTF-8 bytes, Unicode characters and UTF-16 code units have the same count. It stays below 5,000 even with Windows CRLF line endings. The 5,000-character limit applies to the spoken script, not this preparation guide.
+The [final narration-only file](demo-voiceover.txt) contains **4,101 characters, including spaces, LF line breaks and the final newline**, and **607 whitespace-separated words**. Its content is ASCII, so UTF-8 bytes, Unicode characters and UTF-16 code units have the same count. It stays below 5,000 even with Windows CRLF line endings. The 5,000-character limit applies to the spoken script, not this preparation guide.
 
-At 115–130 words/minute, narration takes about 5:17–5:58; the timeline leaves the rest for screen actions and pauses. Each of the eleven paragraphs in the text file matches the same numbered scene below. Read only the blockquoted voice-over, not titles, timings or screen cues. This replaces the earlier narration and running order; institution approval is now its own scene.
+At 115–130 words/minute, narration takes about 4:40–5:17; the timeline leaves the rest for screen actions and pauses. Each of the eleven paragraphs in the text file matches the same numbered scene below. Read only the blockquoted voice-over, not titles, timings or screen cues. The opening takes about 25–30 seconds; the full problem title stays on screen. The other ten narration paragraphs are unchanged. Institution approval remains its own scene.
 
 ## 1. Prepare the application outside the video
 
@@ -111,33 +111,34 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 | Time | Scene | Screen |
 |---|---|---|
-| 00:00–01:25 | 1. SIH problem, first principles, and solution | Title slide → College A |
-| 01:25–02:05 | 2. Institution approval before admissions | College A → Officer → College A |
-| 02:05–02:45 | 3. Upload and understand the dry run | College A → Upload admissions |
-| 02:45–03:20 | 4. Commit and read the dashboard | College A → Commit batch → Overview |
-| 03:20–04:20 | 5. Correct a held row and retain its history | College A → Upload admissions → Resolution Desk |
-| 04:20–04:55 | 6. Officer review of overlapping enrolments | Officer → Overlap reviews |
-| 04:55–05:15 | 7. Check audit integrity | Officer → Activity history |
-| 05:15–05:50 | 8. Student records, personal card, and request code | Student → My records |
-| 05:50–07:05 | 9. Student-approved fields, sharing card, and verifier result | Verifier → Student → Verifier |
-| 07:05–07:40 | 10. Revoke the grant and inspect access history | Student → Verifier → Student |
-| 07:40–08:05 | 11. Close with implemented value | Student overview or officer overview |
+| 00:00–00:30 | 1. SIH problem and quick introduction | Title slide → College A |
+| 00:30–01:10 | 2. Institution approval before admissions | College A → Officer → College A |
+| 01:10–01:50 | 3. Upload and understand the dry run | College A → Upload admissions |
+| 01:50–02:25 | 4. Commit and read the dashboard | College A → Commit batch → Overview |
+| 02:25–03:25 | 5. Correct a held row and retain its history | College A → Upload admissions → Resolution Desk |
+| 03:25–04:00 | 6. Officer review of overlapping enrolments | Officer → Overlap reviews |
+| 04:00–04:20 | 7. Check audit integrity | Officer → Activity history |
+| 04:20–04:55 | 8. Student records, personal card, and request code | Student → My records |
+| 04:55–06:10 | 9. Student-approved fields, sharing card, and verifier result | Verifier → Student → Verifier |
+| 06:10–06:45 | 10. Revoke the grant and inspect access history | Student → Verifier → Student |
+| 06:45–07:10 | 11. Close with implemented value | Student overview or officer overview |
 
 ## 6. Exact narration and matching screen actions
 
-### Scene 1 · 00:00–01:25 — SIH problem, first principles, and solution
+### Scene 1 · 00:00–00:30 — SIH problem and quick introduction
 
 **On screen:** Title slide → College A.
 
-- Show a title slide: **SIH 2026 · AICTE · SIH26263**, followed by the exact problem-statement title and **APAAR Workspace**.
-- During the problem explanation, move to College A's overview or Upload admissions page. Keep the demo/simulated label visible; use the institutional task screens rather than terminals or code.
+- Show **SIH 2026 · AICTE · SIH26263** and **APAAR Workspace** immediately. Keep the full problem-statement title on screen; the voice-over uses the short reference.
+- Display the full title: **Development of an APAAR ID-Based Student Data Management and Verification Platform for AICTE-Approved Institutions**.
+- Move to College A's overview or Upload admissions page while explaining the issue. Keep the demo/simulated label visible and enter the live workflow by 00:30.
 - Leave College A unreviewed for the next scene. This section explains the problem without asserting that the official APAAR platform failed.
 
 **Voice-over — read this:**
 
-> This video presents our prototype for Smart India Hackathon 2026, for AICTE problem statement SIH26263: Development of an APAAR ID-Based Student Data Management and Verification Platform for AICTE-Approved Institutions. Our solution is APAAR Workspace. An identifier connects records to a student, but colleges must still check admission data, correct errors, and control access. Consider a spreadsheet with missing identifiers, an invalid date, and overlapping enrolments. Rejecting the whole file delays valid admissions. Accepting every row can introduce errors. Separate spreadsheets and messages make corrections difficult to track. APAAR Workspace connects these tasks: colleges manage admissions, officers review concerns, students control sharing, and verifiers receive approved information. This demonstration uses synthetic data and simulated approval and APAAR checks. It is not an official government service.
+> This is APAAR Workspace, our prototype for Smart India Hackathon 2026, AICTE problem statement SIH26263. Missing IDs and incorrect records complicate admissions. We help colleges check and correct data, while students control record sharing. Let's see it in action using synthetic data and simulated checks.
 
-### Scene 2 · 01:25–02:05 — Institution approval before admissions
+### Scene 2 · 00:30–01:10 — Institution approval before admissions
 
 **On screen:** College A → Officer → College A.
 
@@ -151,7 +152,7 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 > First, the college needs approval for admission submissions. An unreviewed college is blocked. The officer reviews the institution, academic year, validity, and programme intake against a synthetic catalogue. After the officer approves the matching evidence, demo submissions are enabled. Colleges cannot approve themselves. This demonstrates the approval control; it does not verify actual AICTE approval.
 
-### Scene 3 · 02:05–02:45 — Upload and understand the dry run
+### Scene 3 · 01:10–01:50 — Upload and understand the dry run
 
 **On screen:** College A → Upload admissions.
 
@@ -163,7 +164,7 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 > The college administrator selects the academic year and uploads a CSV. A dry run checks the file without changing admissions. The preview separates acceptable rows, warnings, and blocking errors. Each issue explains what happened and what to do next. Missing APAAR identifiers remain visible as identity gaps, rather than removing students from the workflow.
 
-### Scene 4 · 02:45–03:20 — Commit and read the dashboard
+### Scene 4 · 01:50–02:25 — Commit and read the dashboard
 
 **On screen:** College A → Commit batch → Overview.
 
@@ -175,7 +176,7 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 > After reviewing the preview, the administrator commits the acceptable rows. The dashboard separates active admissions, identity gaps, intake warnings, and held candidates. A missing identifier and a structurally invalid row are different problems. Keeping them separate helps the college understand its intake and the work that remains.
 
-### Scene 5 · 03:20–04:20 — Correct a held row and retain its history
+### Scene 5 · 02:25–03:25 — Correct a held row and retain its history
 
 **On screen:** College A → Upload admissions → Resolution Desk.
 
@@ -189,7 +190,7 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 > Now we open a row blocked by an invalid date. The administrator creates a case in the Resolution Desk, enters a correction, and previews the change before applying it. The system checks whether the underlying record has changed since that preview. After a successful correction, the admission is saved, the case resolves, and that row stops counting as held work. The original validation report remains available, preserving the initial issue and the correction history.
 
-### Scene 6 · 04:20–04:55 — Officer review of overlapping enrolments
+### Scene 6 · 03:25–04:00 — Officer review of overlapping enrolments
 
 **On screen:** Officer → Overlap reviews.
 
@@ -202,7 +203,7 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 > The officer workspace highlights enrolments linked to the same verified person with overlapping dates. An overlap is a reason to review evidence, not an automatic fraud finding. The officer compares the records and records an outcome. Here, we select More evidence needed. Both admission records remain available, and the decision is recorded for follow-up.
 
-### Scene 7 · 04:55–05:15 — Check audit integrity
+### Scene 7 · 04:00–04:20 — Check audit integrity
 
 **On screen:** Officer → Activity history.
 
@@ -214,7 +215,7 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 > Important actions produce audit events. The integrity check verifies the retained audit chain and can detect changes to that recorded history. This supports accountability, with the check's limits explained in the interface.
 
-### Scene 8 · 05:15–05:50 — Student records, personal card, and request code
+### Scene 8 · 04:20–04:55 — Student records, personal card, and request code
 
 **On screen:** Student → My records.
 
@@ -227,7 +228,7 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 > The student workspace answers three questions: What records do I have? Who wants access? What have I shared? The student card summarises the course, college, academic year, admission state, and masked APAAR identifier. It is a workspace summary, not an official identity credential. To begin sharing, the student creates a temporary request code. Giving someone this code does not disclose the record.
 
-### Scene 9 · 05:50–07:05 — Student-approved fields, sharing card, and verifier result
+### Scene 9 · 04:55–06:10 — Student-approved fields, sharing card, and verifier result
 
 **On screen:** Verifier → Student → Verifier.
 
@@ -241,7 +242,7 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 > The verifier enters the code, selects a purpose, and requests Programme and Institution. The student sees who is asking, why, and which fields they want. Nothing is preselected. Here, the student approves only Programme for five minutes. The sharing card shows the intended recipient, approved fields, expiry, and a QR code with a copyable link. When the intended verifier opens the link and signs in, the system checks the grant again. The result contains only the programme. The institution was requested but was not approved, so it is not returned.
 
-### Scene 10 · 07:05–07:40 — Revoke the grant and inspect access history
+### Scene 10 · 06:10–06:45 — Revoke the grant and inspect access history
 
 **On screen:** Student → Verifier → Student.
 
@@ -254,7 +255,7 @@ If you already recorded an earlier narration, keep matching sections and replace
 
 > The student can stop sharing before expiry. After revocation, another attempt to use the same link is denied. Access history shows the recorded verification access. This helps the student understand how the approved information was used. Revocation blocks future access through the grant; it cannot erase information already seen by a recipient.
 
-### Scene 11 · 07:40–08:05 — Close with implemented value
+### Scene 11 · 06:45–07:10 — Close with implemented value
 
 **On screen:** Student overview or officer overview.
 

@@ -28,8 +28,8 @@ Core, the correction workspace, interval review, audit integrity, student-approv
 
 ## Final recording materials — 28 October
 
-- [x] Replaced the existing narration text and Document 14 in place: **4,715 characters including spaces/LF line breaks**, **686 words**, and **eleven synchronized scenes**, with SIH26263, problem/solution and a dedicated synthetic institution approval scene.
-- [x] Checked the exact narration/guide match, continuous 00:00–08:05 cue timeline, 5,000-character limit under LF and Windows CRLF, shorter existing-approval/correction alternatives, and local documentation links. Updated README/index and the approval guide to use the final script.
+- [x] Replaced the existing narration text and Document 14 in place: **4,101 characters including spaces/LF line breaks**, **607 words**, and **eleven synchronized scenes**, with a 25–30 second SIH26263 introduction and a dedicated synthetic institution approval scene. The remaining ten narration paragraphs are unchanged.
+- [x] Checked the exact narration/guide match, continuous 00:00–07:10 cue timeline, 5,000-character limit under LF and Windows CRLF, shorter existing-approval/correction alternatives, and local documentation links. Updated README/index and the approval guide to use the final script.
 - [ ] HUMAN: Align the screen edit to the actual voice track, review any replacement narration, and confirm the exported video is below 8:30 including title/outro. The user completed an earlier voice-over; producing this revision does not establish that its new lines have been recorded.
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
