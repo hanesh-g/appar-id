@@ -28,9 +28,9 @@ Core, the correction workspace, interval review, audit integrity, student-approv
 
 ## Final recording materials — 28 October
 
-- [x] Replaced the existing narration text and Document 14 in place: **4,101 characters including spaces/LF line breaks**, **607 words**, and **eleven synchronized scenes**, with a 25–30 second SIH26263 introduction and a dedicated synthetic institution approval scene. The remaining ten narration paragraphs are unchanged.
-- [x] Checked the exact narration/guide match, continuous 00:00–07:10 cue timeline, 5,000-character limit under LF and Windows CRLF, shorter existing-approval/correction alternatives, and local documentation links. Updated README/index and the approval guide to use the final script.
-- [ ] HUMAN: Align the screen edit to the actual voice track, review any replacement narration, and confirm the exported video is below 8:30 including title/outro. The user completed an earlier voice-over; producing this revision does not establish that its new lines have been recorded.
+- [x] Replaced the condensed narration and Document 14 with **141 numbered action steps across 17 chapters**, **2,211 spoken words** and **14,153 narration characters**. Each step includes before-action speech, an exact action, a wait condition and optional after-result speech. A matching chapter narration file supports separate audio clips.
+- [x] Checked the step/narration/chapter mapping, current interface labels, synthetic fixture counts and documentation links. Each chapter's narration stays under 5,000 characters; the current detailed request removes the earlier overall character/runtime limits. Both college approvals and all three CSV imports are shown on screen; no hidden College B preload is required.
+- [ ] HUMAN: Rehearse the detailed walkthrough on a separate fresh recording database, record each chapter with its matching narration, and review the full export for continuity and result timing. An earlier condensed voice-over was completed; this does not establish that the expanded recording has been made.
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 

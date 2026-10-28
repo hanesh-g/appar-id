@@ -74,7 +74,7 @@ The institution upload page now keeps its fixture-folder hint in normal text flo
 
 ![Readable issue explanations and separate case actions](assets/ux-batch-issues.png)
 
-Use [the timed video script](14-demo-video-script.md) for a short recording that follows the implemented flow.
+Use [the action-by-action narration and recording guide](14-demo-video-script.md) to film the complete workflow with explicit role transitions and matching spoken actions/results.
 
 The interface uses plain status labels, named form controls, visible focus, a skip link, copy feedback, explicit empty/error states, retry actions, and mobile sign-out. Route changes move focus to the main content. The newly revealed QR card receives focus and scrolls into view, respecting reduced-motion settings. Desktop and 390 px mobile checks cover student cards, field selection, shared access, and the officer decision dialog. The [mobile preview](assets/ux-student-mobile.png) shows the student overview.
 

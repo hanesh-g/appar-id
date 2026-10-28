@@ -30,13 +30,11 @@ An officer reviews the institution, academic year, synthetic source, and matchin
 
 ## Recording addition
 
-Use the [final unified voice-over and recording guide](14-demo-video-script.md) and [narration-only text](demo-voiceover.txt). The final narration has 4,101 characters and eleven matching scenes, including institution approval as scene 2. Estimated screen runtime is 7:10 with an 8:30 hard stop. This replaces the earlier narration draft.
+Use the [action-by-action recording guide](14-demo-video-script.md), [full narration](demo-voiceover.txt), and [chapter audio text](demo-voiceover-sections.md). This version has 141 steps across 17 chapters, with no fixed runtime or overall character cap. Each step separates the spoken action from the result statement so the audience sees what the narration describes.
 
-Before importing the recording dataset, show the college's pending approval, then the officer's synthetic evidence review and approval. Return to the college and refresh before uploading. Review College B outside the recording before loading its overlap fixture. This demonstrates an access control without claiming real AICTE integration.
+Chapter 02 shows College A's genuinely blocked upload. Chapter 03 shows the officer reviewing and approving **both demo colleges** separately. College A then refreshes its status and imports its file. **No college admission data is preloaded**: Chapter 09 introduces and imports College B's identity-cases file on screen, before the officer reviews the resulting overlap. This replaces the older preparation that loaded College B before filming.
 
-Suggested caption: **Institution onboarding: the officer reviews synthetic institution, programme and year evidence. Unreviewed submissions are blocked.**
-
-The primary final script allocates **00:30–01:10** to this approval scene. If retaining an earlier completed voice track unchanged, the caption above can instead accompany 20–35 seconds of footage during its introduction; do not include both versions. Show the college's Upload admissions page and actual backend refusal, switch to the officer's Institution approval page, review College A's demo evidence, tick the acknowledgement and approve, then refresh the college's status before uploading. If College A is already approved, use the final guide's existing-approval narration and show history rather than pretending to approve it for the first time. Keep the finished video below 8:30.
+Keep the source explicitly synthetic. The acknowledgement does not establish real AICTE approval or prove the identity of a college representative. For an exact first-approval demonstration use a separate fresh recording database; preserve earlier approvals/history in the existing database. If showing an already-approved college instead, describe its real history and avoid claiming a new first approval.
 
 ## Native Windows upgrade
 

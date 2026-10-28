@@ -8,7 +8,7 @@ The demo now has dedicated student, verifier, and officer interfaces with guided
 
 Institution onboarding now includes **Institution approval**: an officer reviews a synthetic institution/year/programme catalogue before admission submissions are enabled. Unreviewed, suspended, expired, or mismatched programme evidence blocks new admission writes. This is a simulated approval workflow, not AICTE integration. After upgrading, migrate and have the officer review both demo colleges once; existing admissions/history remain intact. See [the approval setup and recording steps](docs/15-institution-approval-demo.md).
 
-For your screen recording, use the [final recording guide](docs/14-demo-video-script.md) and [voice-over-only text](docs/demo-voiceover.txt): 4,101 characters, eleven synchronized scenes including institution approval, estimated 7:10, and an 8:30 hard stop.
+For recording, use the [action-by-action guide](docs/14-demo-video-script.md): 141 numbered steps across 17 chapters, each with before-action narration, the exact action, a wait condition and result narration. The [full narration](docs/demo-voiceover.txt) and [chapter audio text](docs/demo-voiceover-sections.md) match those steps. This detailed version has no imposed runtime or overall character cap; both college imports and every role transition are shown in the story.
 
 ## Start on Windows
 
