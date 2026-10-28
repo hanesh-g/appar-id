@@ -123,7 +123,9 @@ Read time through an injectable application-clock function. Tests fix that clock
 
 | Table | Important data and constraints |
 |---|---|
-| `institutions` | Internal ID, demo AICTE reference, name, region, state, active status. |
+| `institutions` | Internal ID, unique internal demo reference, and name. Campus and synthetic AICTE identifiers belong to the explicitly simulated approval source. |
+| `institution_approvals` | Unique institution/year, current decision/version, retained synthetic evidence snapshot, reviewer and review time. No automatic approval during migration/seed. |
+| `institution_approval_events` | Unique approval/version, bounded decision/reason, retained evidence, actor and timestamp. Admission writers and decisions share an institution advisory lock before programme/person/enrolment locks. |
 | `users` | Email unique, password hash, role, optional institution ID, active status. Institution role requires institution ID. |
 | `programmes` | Institution, programme name, year, approved intake >= 0. Unique institution/name/year. |
 | `persons` | Internal ID, unique keyed APAAR digest, encrypted APAAR/name/DOB, masked ID suffix. Only a successful mock identity match links a person. |

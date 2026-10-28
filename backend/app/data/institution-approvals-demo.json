@@ -1,0 +1,35 @@
+{
+  "version": "SYNTHETIC-APPROVAL-2026-v1",
+  "mode": "DEMO_FIXTURE",
+  "description": "Invented institution and programme evidence for SIH demonstration. Not an AICTE source or official approval.",
+  "institutions": [
+    {
+      "reference": "DEMO-A",
+      "name": "Deccan Institute of Technology",
+      "aicte_id": "DEMO-AICTE-A",
+      "campus": "Synthetic Deccan campus",
+      "academic_year": "2026-27",
+      "approval_reference": "DEMO-EOA-A-2026-27",
+      "valid_from": "2026-07-01",
+      "valid_until": "2027-06-30",
+      "programmes": [
+        {"name": "Computer Science", "intake": 60},
+        {"name": "Electronics", "intake": 60}
+      ]
+    },
+    {
+      "reference": "DEMO-B",
+      "name": "Riverdale Technical College",
+      "aicte_id": "DEMO-AICTE-B",
+      "campus": "Synthetic Riverdale campus",
+      "academic_year": "2026-27",
+      "approval_reference": "DEMO-EOA-B-2026-27",
+      "valid_from": "2026-07-01",
+      "valid_until": "2027-06-30",
+      "programmes": [
+        {"name": "Computer Science", "intake": 60},
+        {"name": "Electronics", "intake": 60}
+      ]
+    }
+  ]
+}

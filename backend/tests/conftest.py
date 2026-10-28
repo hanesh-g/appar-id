@@ -8,14 +8,16 @@ import pytest
 from dotenv import dotenv_values
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app import services
 from app.config import ROOT, Settings
 from app.db import Base, make_engine
+from app.institution_approval import candidate
 from app.main import create_app
+from app.models import Institution, InstitutionApproval, User
 from app.seed import seed
 
 TEST_PASSWORD = "SyntheticTestOnly!2026"
@@ -52,6 +54,24 @@ def client(monkeypatch):
     Base.metadata.create_all(engine)
     with Session(engine) as db:
         seed(db, TEST_PASSWORD)
+        # Existing workflow tests start with reviewed synthetic institutions.
+        # The application seed deliberately never grants approval. Dedicated
+        # approval tests remove these fixture rows and exercise the real API.
+        officer = db.scalar(select(User).where(User.role == "officer"))
+        for institution in db.scalars(select(Institution)).all():
+            evidence = candidate(db, institution, "2026-27")["evidence"]
+            db.add(
+                InstitutionApproval(
+                    institution_id=institution.id,
+                    academic_year="2026-27",
+                    status="APPROVED",
+                    version=1,
+                    evidence_mode="DEMO_FIXTURE",
+                    evidence_snapshot=evidence,
+                    reviewer_id=officer.id,
+                )
+            )
+        db.commit()
     settings = Settings().model_copy(update={"database_url": SecretStr(url), "mock_registry_outage": False})
     with TestClient(create_app(settings), raise_server_exceptions=False) as test_client:
         yield test_client

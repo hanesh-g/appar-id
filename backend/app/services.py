@@ -11,6 +11,7 @@ from .audit_integrity import enqueue
 from .config import Settings
 from .db import uid, utcnow
 from .errors import DomainError
+from .institution_approval import require_institution, require_programmes
 from .locking import lock_identity_keys
 from .models import Batch, BatchRow, Enrolment, History, Person, Programme, User
 from .permissions import Permission, require_permission
@@ -178,6 +179,7 @@ def upload(
     rule_set_id: str | None = None,
 ) -> Batch:
     require_permission(user, Permission.INSTITUTION_WRITE)
+    approval = require_institution(db, user, year)
     fingerprint = hashlib.sha256(year.encode() + b"\0" + content).hexdigest()
     previous = db.scalar(
         select(Batch).where(Batch.institution_id == user.institution_id, Batch.idempotency_key == key)
@@ -198,6 +200,8 @@ def upload(
     rows = validate_rows(
         parse_csv(content), {p.name: p for p in programmes}, year, settings.mock_registry_outage
     )
+    targets = {row["programme_id"] for row in rows if row["programme_id"]}
+    require_programmes(approval, [p for p in programmes if p.id in targets])
     existing = content_checks(db, rows, user.institution_id, crypto)
     selected_rules = rule_set_id or ensure_current(db)
     require_executable(db, selected_rules)
@@ -282,6 +286,7 @@ def commit_batch(
         return batch
     if batch.status != "DRY_RUN_READY":
         raise DomainError("BATCH_STATE", "Only a reviewed dry run can be committed", 409)
+    approval = require_institution(db, user, batch.academic_year)
     require_executable(db, batch.rule_set_id)
     programmes = db.scalars(
         select(Programme)
@@ -298,6 +303,8 @@ def commit_batch(
         .order_by(BatchRow.row_no)
         .execution_options(populate_existing=True)
     ).all()
+    targets = {row.programme_id for row in stored if row.programme_id}
+    require_programmes(approval, [p for p in programmes if p.id in targets])
     if any(r.status == "SUPERSEDED_BY_CORRECTION" for r in stored):
         raise DomainError("STALE_PREVIEW", "A row was repaired after this preview. Upload again", 409)
     rows = [
@@ -537,6 +544,9 @@ def edit_enrolment(db: Session, user: User, object_id: str, data: EnrolmentPatch
 
 def recheck(db: Session, user: User, crypto: Crypto, settings: Settings) -> dict:
     require_permission(user, Permission.INSTITUTION_WRITE)
+    from .institution_approval import lock_scope
+
+    lock_scope(db, user.institution_id)
     # Programme locks use the same order as commit and prevent identity-link races.
     db.scalars(
         select(Programme)
@@ -553,6 +563,12 @@ def recheck(db: Session, user: User, crypto: Crypto, settings: Settings) -> dict
         .order_by(Enrolment.id)
         .limit(500)
     ).all()
+    for year in sorted({r.academic_year for r in records}):
+        approval = require_institution(db, user, year)
+        programme_ids = {r.programme_id for r in records if r.academic_year == year}
+        require_programmes(
+            approval, db.scalars(select(Programme).where(Programme.id.in_(programme_ids))).all()
+        )
     prepared = {}
     for record in records:
         raw = crypto.decrypt(record.identity_enc)

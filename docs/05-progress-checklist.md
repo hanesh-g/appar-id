@@ -14,7 +14,17 @@ sources:
 
 ## Current state
 
-Core, the correction workspace, interval review, audit integrity, and student-approved verification/QR are locally verified. Latest backend regression: **113 passed**, 108.76 s. Frontend: **eight tests passed**, lint/format/types/build passed. **Six browser journeys passed together**, 18.5 s, including the redesigned role flows and empty/error recovery. Populated migration and retained-key restart passed. Windows execution of the new commands, hosted deployment, and remote CI remain unverified. Follow the [complete demo walkthrough](12-demo-walkthrough.md) and [new interface guide with screen previews](13-demo-interface.md).
+Core, the correction workspace, interval review, audit integrity, student-approved verification/QR, and synthetic institution approval are locally verified. Latest backend regression: **128 passed**, 88.45 s. Frontend: **eight tests passed**, lint/format/types/build passed. **Seven browser journeys passed together**, 17.1 s, including blocked institution admission, officer evidence approval, redesigned role flows and empty/error recovery. The approval migration preserved all 72 admissions and seven accounts in an isolated copy of a populated synthetic database and granted no automatic approvals; Alembic found no model/schema differences. Earlier retained-key restart checks remain recorded below. Windows execution of the new commands, hosted deployment, and remote CI remain unverified. Follow the [complete demo walkthrough](12-demo-walkthrough.md), [approval upgrade and recording guide](15-institution-approval-demo.md), and [interface guide](13-demo-interface.md).
+
+## Institution approval demo addition
+
+- [x] Synthetic catalogue clearly distinguishes invented institution IDs, campus, approval reference, academic year, validity and programme intakes from real AICTE evidence.
+- [x] Officer-only evidence decision, college-only own status, student/verifier denial, source-bound payload, expected version, audit and retained decision snapshots.
+- [x] Admission upload/commit/correction/retry gates; expired/unknown evidence, intake mismatch and changed source fail closed; completed-operation replays remain read-only.
+- [x] Scope lock serialises concurrent first decisions and pending commit versus suspension; failed audit rolls the entire decision back.
+- [x] Additive fresh-schema upgrade/downgrade, populated upgrade without data loss/auto-approval, and metadata comparison passed.
+- [x] College status notices, officer evidence dialog with required acknowledgement, decision history, and desktop/mobile layout checked in the seven-journey browser run. Actual synthetic screenshots are in Document 13.
+- [ ] Authorised real AICTE source/API, applicable approval rules, representative identity proofing, and real-data/hosted operational review. The demo does not establish these.
 
 Use `[x]` only with current evidence. Use an evidence path, commit, test result, or deployed check in the final column. Record blocked work in the blocker table, rather than marking it done. CORE must pass before the demo is described as ready.
 

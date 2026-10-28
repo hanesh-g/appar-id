@@ -20,6 +20,7 @@ from .context import request_id as current_request_id
 from .correction_api import router as correction_router
 from .db import make_engine
 from .errors import DomainError
+from .institution_approval_api import router as institution_approval_router
 from .overlap_api import router as overlap_router
 from .resolution_api import router as resolution_router
 from .rules import MAX_BYTES
@@ -177,6 +178,7 @@ def create_app(settings: Settings | None = None):
     app.include_router(resolution_router)
     app.include_router(correction_router)
     app.include_router(overlap_router)
+    app.include_router(institution_approval_router)
     from .verification_api import router as verification_router
 
     app.include_router(verification_router)

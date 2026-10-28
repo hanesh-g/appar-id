@@ -24,7 +24,17 @@ Set-Location D:\Projects\appar-id\appar-id
 git pull --ff-only
 ```
 
-Restart the backend and frontend in their two terminals using `scripts/Start-Backend.ps1` and `scripts/Start-Frontend.ps1`, or your existing native Windows startup commands. Both must load the new code: the backend supplies the pending-request filter and the frontend supplies the new pages/styles. No new migration, dependency, seed, key generation, or data reset is needed for this UI update. For first-time extension setup, use [the complete walkthrough](12-demo-walkthrough.md).
+Run `uv run --frozen alembic upgrade head` from `backend`, then restart the backend and frontend in their two terminals using `scripts/Start-Backend.ps1` and `scripts/Start-Frontend.ps1`, or your existing native Windows startup commands. The 28 October institution-approval addition requires this additive migration. It preserves admissions and keys. Have the officer review the two synthetic colleges before new uploads; see [the approval guide](15-institution-approval-demo.md). For first-time extension setup, use [the complete walkthrough](12-demo-walkthrough.md).
+
+## Institution approval: review before admission submissions
+
+The officer and college see a separate **Institution approval** page. Colleges see only their own status; the officer reviews both synthetic institutions. The page shows the academic year, invented AICTE identifier, campus, approval reference, validity, and each programme's configured/source intake. A confirmation dialog requires explicit acknowledgement before enabling demo access. The college overview and upload page show the current approval status. Source/version evidence and previous decisions remain available.
+
+![Institution approval with synthetic evidence](assets/ux-institution-approval.png)
+
+![Officer confirmation of synthetic evidence](assets/ux-institution-evidence-review.png)
+
+The new screens were captured locally on 28 October 2026. The entire workflow is labelled simulated; real approval-source integration and representative identity proofing are not implemented.
 
 ## Student: find a record, view the card, control sharing
 

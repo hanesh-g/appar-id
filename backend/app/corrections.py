@@ -12,6 +12,7 @@ from sqlalchemy.dialects.postgresql import insert
 from . import services
 from .db import uid, utcnow
 from .errors import DomainError
+from .institution_approval import require_institution, require_programmes
 from .models import Batch, BatchRow, CaseOrigin, CorrectionOrigin, CorrectionProposal, Enrolment, Programme
 from .resolution import case_event, own_case, work_key
 from .rule_catalog import require_executable
@@ -83,6 +84,7 @@ def masked(field, value):
 
 def preview(db, user, case_id, data, crypto, settings):
     case, original, year = context(db, user, case_id, crypto)
+    approval = require_institution(db, user, year)
     if case.version != data.expected_version or case.status == "RESOLVED":
         raise DomainError("STALE_VERSION", "This case changed. Refresh before reviewing", 409)
     if set(data.changes) - set(HEADERS):
@@ -92,6 +94,8 @@ def preview(db, user, case_id, data, crypto, settings):
         raise DomainError("CORRECTION_KEY", "This correction cannot move an existing enrolment key", 422)
     require_executable(db, case.rule_set_id)
     row, record, summary, snapshot = evaluate(db, user, {**original, **data.changes}, year, settings, crypto)
+    if row["programme_id"]:
+        require_programmes(approval, [db.get(Programme, row["programme_id"])])
     raw = row["raw"]
     blocked = services.has_error(row)
     same = (

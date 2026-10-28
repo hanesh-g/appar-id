@@ -30,6 +30,7 @@ import ResolutionDesk from './ResolutionDesk'
 import OverlapWorkbench from './OverlapWorkbench'
 import AuditIntegrity from './AuditIntegrity'
 import OfficerOverview from './OfficerOverview'
+import InstitutionApproval, { ApprovalNotice } from './InstitutionApproval'
 import {
   api,
   download,
@@ -268,6 +269,7 @@ function DashboardPage({ user }: { user: User }) {
           {data ? `As of ${data.as_of} · India time` : 'Fetching data'}
         </span>
       </div>
+      <ApprovalNotice year={year} />
       <Notice error={query.error} />
       {query.isPending && <Loading />}
       {data && (
@@ -461,6 +463,7 @@ function UploadPage() {
         title="Upload admissions"
         description="Review every issue before changing your institution’s enrolment records."
       />
+      <ApprovalNotice year={year} />
       <div className="steps">
         <span className="step-number">1</span>
         <b>Prepare your file</b>
@@ -867,6 +870,10 @@ function ProgrammesPage({ user }: { user: User }) {
           )
         }
       />
+      <p className="privacy-caption">
+        New or changed programmes need matching reviewed evidence before admission submissions.{' '}
+        <Link to="/institution-approval">View institution approval</Link>.
+      </p>
       <Notice error={query.error} />
       {query.isPending ? (
         <Loading />
@@ -1354,6 +1361,9 @@ export default function App() {
           <NavLink to="/programmes">
             <BookOpen size={18} /> Programmes
           </NavLink>
+          <NavLink to="/institution-approval">
+            <ShieldCheck size={18} /> Institution approval
+          </NavLink>
           <NavLink to="/history">
             <Activity size={18} /> Activity history
           </NavLink>
@@ -1428,6 +1438,7 @@ export default function App() {
               element={user.institution_id ? <ResolutionDesk /> : <Navigate to="/" />}
             />
             <Route path="/programmes" element={<ProgrammesPage user={user} />} />
+            <Route path="/institution-approval" element={<InstitutionApproval user={user} />} />
             <Route
               path="/history"
               element={

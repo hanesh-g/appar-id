@@ -58,7 +58,7 @@ From a third terminal, `Invoke-RestMethod http://127.0.0.1:8000/api/v1/health` m
 |---|---|
 | `collegea@example.test` | Upload, review, commit, and correct the first college's records. |
 | `collegeb@example.test` | Work with the second college's records. |
-| `officer@example.test` | Read across colleges, review interval intersections, verify audit integrity. Cannot edit admissions or approve student consent. |
+| `officer@example.test` | Read across colleges, review synthetic institution approval and interval intersections, verify audit integrity. Cannot edit admissions or approve student consent. |
 | `student1@example.test` | View verified records for synthetic student 001 and control consent. |
 | `student2@example.test` | View only synthetic student 002's verified records and consent. |
 | `verifier1@example.test` | Request consent and resolve grants addressed to this approved demo verifier. |
@@ -67,6 +67,8 @@ From a third terminal, `Invoke-RestMethod http://127.0.0.1:8000/api/v1/health` m
 The student accounts are pre-bound by the demo seed. There is no self-linking by entering an APAAR/DOB. Use separate browser profiles or sign out between roles. Reload requires sign-in because session tokens remain in memory.
 
 ## College: review and correct admissions
+
+Before the first upload, the officer must open **Institution approval → 2026-27 → Review demo evidence**, inspect the synthetic institution, campus, reference, dates and matching programme intakes, check the acknowledgement, and select **Approve demo access** for both colleges. College staff can read their own status but cannot approve themselves. This is new after the approval migration; older admissions/history are preserved. See [the setup and short recording addition](15-institution-approval-demo.md).
 
 1. Sign in as College A. Open **Upload admissions** and select `fixtures/intake-65.csv` for `2026-27`.
 2. Select **Validate and preview**. Read issues and the before/after intake. Nothing has entered the admission count yet.

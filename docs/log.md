@@ -1,5 +1,13 @@
 # Documentation update log
 
+## 2026-10-28
+
+- Added an explicitly simulated institution approval workflow. An officer reviews source-bound institution/year/programme evidence from a checked-in synthetic catalogue; colleges see their own status and cannot approve themselves. The overview/upload pages show the gate and the officer has a dedicated task/page, confirmation dialog, evidence validity and decision history.
+- Admission upload, pending commit, correction preview/apply and identity retry now enforce institution and exact programme/intake evidence in the backend. An institution advisory lock before programme/person/enrolment locks serialises decisions and admission writes; audit-chain locking remains last. Expired, unknown, suspended, changed-source and intake-mismatch cases fail closed. Completed operations can still be replayed read-only. Existing admissions/history and lifecycle updates remain available.
+- The additive c8 migration never grants approval or resets records. The ordinary seed also never approves institutions. After upgrade, the officer reviews both synthetic colleges once. A cloned populated dataset retained all 72 admissions and seven accounts; fresh upgrade/downgrade and Alembic schema comparison passed.
+- Verification: 128 backend tests passed in 88.45 s, eight frontend tests plus lint/format/types/build passed, and seven real-browser journeys passed in 17.1 s. Fixed and inspected the approval page's phone-width action/table wrapping. New synthetic screenshots and native Windows upgrade instructions are linked in Document 15. Windows/hosting/remote CI and actual authoritative approval verification remain unverified.
+- Added a 20–35 second captioned institution-onboarding sequence that can run over the user's completed introduction voice-over, with College B prepared before recording and College A approved on screen. Existing narration files remain unchanged; use the actual recorded audio for timing and keep the final video under 8:30.
+
 ## 2026-10-27
 
 - Fixed institution upload/report layout: direct-child guidance paragraph rules prevent inline code from becoming a separate flex column; the native file control is readable; issue fields/messages/help and case buttons have distinct space; corrected source rows have a plain Corrected label and retained-history explanation.

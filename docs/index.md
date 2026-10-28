@@ -14,6 +14,8 @@ This is the entry point for people and AI coding assistants. Core application co
 
 ## Delivery
 
+- [Institution approval demo](15-institution-approval-demo.md) - Review synthetic institution/year/programme evidence, enable admissions as an officer, and add the approval scene to an existing voice-over.
+
 - [Timed demo video script](14-demo-video-script.md) - Follow the 7:20 screen/voice-over plan, preparation notes, and narration-only text.
 
 - [Demo interface and role flows](13-demo-interface.md) - See the student card, student/verifier navigation, officer review queue, and actual local screen previews.

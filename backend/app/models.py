@@ -61,6 +61,46 @@ class Programme(Base):
     approved_intake: Mapped[int] = mapped_column(Integer)
 
 
+class InstitutionApproval(Base):
+    __tablename__ = "institution_approvals"
+    __table_args__ = (
+        UniqueConstraint("institution_id", "academic_year"),
+        CheckConstraint("status IN ('APPROVED','SUSPENDED')"),
+        CheckConstraint("version >= 1"),
+        CheckConstraint("evidence_mode = 'DEMO_FIXTURE'"),
+        CheckConstraint(
+            "status <> 'APPROVED' OR (evidence_snapshot IS NOT NULL AND reviewed_at IS NOT NULL)",
+            name="approval_evidence_required",
+        ),
+    )
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    institution_id: Mapped[str] = mapped_column(ForeignKey("institutions.id"), index=True)
+    academic_year: Mapped[str] = mapped_column(String(7))
+    status: Mapped[str] = mapped_column(String(20))
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    evidence_mode: Mapped[str] = mapped_column(String(20), default="DEMO_FIXTURE")
+    evidence_snapshot: Mapped[dict | None] = mapped_column(JSON(none_as_null=True))
+    reviewer_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class InstitutionApprovalEvent(Base):
+    __tablename__ = "institution_approval_events"
+    __table_args__ = (
+        UniqueConstraint("approval_id", "version"),
+        CheckConstraint("status IN ('APPROVED','SUSPENDED')"),
+        CheckConstraint("version >= 1"),
+    )
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)
+    approval_id: Mapped[str] = mapped_column(ForeignKey("institution_approvals.id"), index=True)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    version: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(20))
+    reason: Mapped[str] = mapped_column(String(40))
+    evidence_snapshot: Mapped[dict | None] = mapped_column(JSON(none_as_null=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
 class Person(Base):
     __tablename__ = "persons"
     id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uid)

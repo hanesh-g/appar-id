@@ -42,6 +42,8 @@ E0 enforcement: core-read and institution-write capabilities are explicit. Futur
 
 **Acceptance:** A valid programme appears in upload selection. Invalid intake is refused. A committed programme's revised intake changes the dashboard and creates an audit event.
 
+**Institution approval addition:** Admission submissions require an officer-reviewed institution/year and matching programme/intake evidence. The new **Institution approval** page uses a clearly labelled synthetic catalogue for the demo. Programme setup remains available, but a new programme or changed intake does not silently gain approval. Upload, commit, correction preview/apply, and identity retry enforce the gate server-side. Existing records/history and lifecycle status changes remain available. See [the full contract and limitations](15-institution-approval-demo.md).
+
 ## F03 — CSV template and bounded upload · CORE
 
 **User value:** An institution can submit many admissions through one supported format.

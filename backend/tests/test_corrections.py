@@ -115,7 +115,9 @@ def test_changed_case_intake_or_encrypted_payload_refuses_apply(client, headers,
             record.payload_enc = record.payload_enc[:-1] + bytes([record.payload_enc[-1] ^ 1])
             db.commit()
     result = apply(client, headers, proposal)
-    assert result.status_code == 409, result.text
+    assert result.status_code == (403 if change == "intake" else 409), result.text
+    if change == "intake":
+        assert result.json()["code"] == "PROGRAMME_APPROVAL_REQUIRED"
     with Session(client.app.state.engine) as db:
         assert db.scalar(select(func.count()).select_from(Enrolment)) == 0
         assert db.scalar(select(func.count()).select_from(Batch)) == 1

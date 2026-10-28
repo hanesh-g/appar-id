@@ -1,0 +1,111 @@
+.approval-notice,
+.approval-scope {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid #d9e5de;
+  border-radius: 10px;
+  background: #eef5f0;
+  margin-bottom: 24px;
+}
+.approval-notice > svg,
+.approval-scope > svg {
+  flex-shrink: 0;
+  color: #48786b;
+}
+.approval-notice > div,
+.approval-scope > div {
+  flex: 1;
+  min-width: 0;
+}
+.approval-notice p,
+.approval-scope p {
+  margin: 5px 0 0;
+  color: #516b72;
+  line-height: 1.6;
+}
+.approval-notice > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+.approval-card {
+  margin-bottom: 24px;
+}
+.approval-card .actions {
+  flex-wrap: wrap;
+}
+.approval-card-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+.approval-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+}
+.approval-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  padding: 20px;
+  background: #f6f8f6;
+  border-radius: 8px;
+}
+.approval-facts dt {
+  color: #52696f;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.approval-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.approval-history {
+  margin-top: 24px;
+  border-top: 1px solid #e2e9e5;
+  padding-top: 16px;
+}
+.approval-history summary {
+  cursor: pointer;
+  color: #266b60;
+}
+.approval-confirm {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.6;
+}
+.approval-confirm input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+@media (max-width: 700px) {
+  .approval-notice,
+  .approval-card-heading {
+    flex-wrap: wrap;
+  }
+  .approval-facts {
+    grid-template-columns: 1fr;
+  }
+  .approval-card th {
+    white-space: normal;
+  }
+  .approval-card .status-pill {
+    white-space: normal;
+  }
+  .approval-card td,
+  .approval-card th {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}

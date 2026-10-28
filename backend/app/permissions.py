@@ -13,6 +13,7 @@ class Permission(StrEnum):
     CASE_MANAGE = "case_manage"
     OVERLAP_REVIEW = "overlap_review"
     AUDIT_VERIFY = "audit_verify"
+    INSTITUTION_APPROVAL = "institution_approval"
     STUDENT_SELF = "student_self"
     VERIFIER_REQUEST = "verifier_request"
     VERIFIER_RESOLVE = "verifier_resolve"
@@ -23,7 +24,13 @@ ROLE_PERMISSIONS = {
         {Permission.SESSION, Permission.CORE_READ, Permission.INSTITUTION_WRITE, Permission.CASE_MANAGE}
     ),
     "officer": frozenset(
-        {Permission.SESSION, Permission.CORE_READ, Permission.OVERLAP_REVIEW, Permission.AUDIT_VERIFY}
+        {
+            Permission.SESSION,
+            Permission.CORE_READ,
+            Permission.OVERLAP_REVIEW,
+            Permission.AUDIT_VERIFY,
+            Permission.INSTITUTION_APPROVAL,
+        }
     ),
     "student": frozenset({Permission.SESSION, Permission.STUDENT_SELF}),
     "verifier": frozenset({Permission.SESSION, Permission.VERIFIER_REQUEST, Permission.VERIFIER_RESOLVE}),

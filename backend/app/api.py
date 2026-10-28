@@ -175,6 +175,9 @@ def programmes(db: DB, user: Actor, academic_year: str | None = None):
 
 @router.post("/programmes", response_model=ProgrammeOut, status_code=201)
 def create_programme(data: ProgrammeCreate, db: DB, user: Editor):
+    from .institution_approval import lock_scope
+
+    lock_scope(db, user.institution_id)
     programme = Programme(institution_id=user.institution_id, **data.model_dump())
     db.add(programme)
     db.flush()
@@ -187,6 +190,9 @@ def create_programme(data: ProgrammeCreate, db: DB, user: Editor):
 
 @router.patch("/programmes/{programme_id}", response_model=ProgrammeOut)
 def edit_programme(programme_id: UUID, data: ProgrammePatch, db: DB, user: Editor):
+    from .institution_approval import lock_scope
+
+    lock_scope(db, user.institution_id)
     programme = services.owned(db, Programme, str(programme_id), user)
     programme.approved_intake = data.approved_intake
     services.audit(db, user, "INTAKE_UPDATED", programme.id, {"approved_intake": programme.approved_intake})

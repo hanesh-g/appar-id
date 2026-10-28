@@ -6,6 +6,8 @@ An AI-assisted SIH 2026 prototype with a Python FastAPI backend, PostgreSQL, and
 
 The demo now has dedicated student, verifier, and officer interfaces with guided actions and compact forms. The student record card is available at **My records → View student card**; the consent QR appears after approval under **Shared access**. See [the actual screen previews and role flows](docs/13-demo-interface.md).
 
+Institution onboarding now includes **Institution approval**: an officer reviews a synthetic institution/year/programme catalogue before admission submissions are enabled. Unreviewed, suspended, expired, or mismatched programme evidence blocks new admission writes. This is a simulated approval workflow, not AICTE integration. After upgrading, migrate and have the officer review both demo colleges once; existing admissions/history remain intact. See [the approval setup and recording steps](docs/15-institution-approval-demo.md).
+
 For your screen recording, use the [timed demo script](docs/14-demo-video-script.md) and [voice-over-only text](docs/demo-voiceover.txt): planned 7:20, with an 8:30 hard stop.
 
 ## Start on Windows

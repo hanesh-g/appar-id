@@ -117,6 +117,19 @@ export default function OfficerOverview({ auditEnabled }: { auditEnabled: boolea
         <QueryState pending={false} error={schools.error} retry={() => void schools.refetch()} />
       )}
       <div className="officer-task-grid">
+        <Link className="officer-task" to="/institution-approval">
+          <span className="task-icon">
+            <Building2 size={23} />
+          </span>
+          <div>
+            <h3>Review institution approval</h3>
+            <p>
+              Check synthetic institution and programme evidence before enabling admission
+              submissions.
+            </p>
+          </div>
+          <ArrowRight size={18} />
+        </Link>
         <Link className="officer-task" to="/history">
           <span className="task-icon">
             <ShieldCheck size={23} />

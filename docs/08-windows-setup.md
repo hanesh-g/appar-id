@@ -117,6 +117,8 @@ Use the demo password you chose during initialization. Changing `DEMO_PASSWORD` 
 
 For the new correction, audit, student, and verifier features, follow [the safe update and complete demo walkthrough](12-demo-walkthrough.md). It adds extension keys, migrates, and creates four additional synthetic accounts while preserving existing data/passwords.
 
+After migration/seed, sign in as `officer@example.test` and review both demo colleges under **Institution approval** for 2026-27. The seed never approves institutions. New admission submissions remain blocked until that review; existing records are retained. The evidence is synthetic, not actual AICTE verification. See [the approval guide](15-institution-approval-demo.md).
+
 ## 6. Start both applications
 
 VS Code terminal 1, from the repository root:
@@ -173,7 +175,7 @@ npx.cmd playwright install chromium
 npm.cmd run smoke
 ```
 
-The smoke mutates the synthetic first-institution dataset. It expects a fresh synthetic dataset plus both extension flags, their retained keys, all migrations, and seven seeded accounts. It must not be pointed at a real-data deployment. A run changes admission/case/review/consent history, so repeating exact-count tests needs another explicitly disposable database; do not reset shared data.
+The smoke mutates the synthetic first-institution dataset. It expects a fresh synthetic dataset plus both extension flags, their retained keys, all migrations, seven seeded accounts, and no previous approval decisions. The first browser journey demonstrates blocked access and approves both demo colleges before the existing admission journeys. It must not be pointed at a real-data deployment. A run changes admission/case/review/consent history, so repeating exact-count tests needs another explicitly disposable database; do not reset shared data.
 
 ## 9. Continue with Codex
 
